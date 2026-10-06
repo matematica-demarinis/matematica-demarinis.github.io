@@ -1032,7 +1032,7 @@ a.btn { text-decoration: none; }
 			text: st => P('Vorremmo definire la moltiplicazione come addizione ripetuta.') +
 				P(`Prendiamo ad esempio il fattore 4: ${m('4 · 3')} è 4 sommato 3 volte, ${m('4 + 4 + 4')}.`) +
 				P('Ogni volta che il secondo fattore cala di 1, il prodotto cala di 4.') +
-				P(`Ma «sommare 4 zero volte» non ha senso: l’addizione ripetuta non dice quanto fa ${m('4 · 0')}.`) +
+				P(`Ma l’addizione ripetuta non dice quanto fa ${m('4 · 0')}: non ci sono addendi da sommare.`) +
 				P('Il caso con 0 allora si <b>decide</b>, in modo da non rompere la regola.') +
 				(st.o ? P(`<b>Quindi ${m('4 · 0 = 4 − 4 = 0')}.</b>`) : ''),
 			init: () => ({ o: 0 }),
@@ -1116,7 +1116,7 @@ a.btn { text-decoration: none; }
 		},
 		// 9
 		{ ch: 2, title: 'La divisione',
-			text: st => DL('Definizione (Divisione)', P(`${m('<i>a</i> : <i>b</i> = <i>q</i>')} vuol dire: cerco ${m(`<i>q</i> ∈ ${NN}`)} tale che`) + F('<i>b</i> · <i>q</i> = <i>a</i>')) +
+			text: st => DL('Definizione (Divisione)', P(`Siano ${m(`<i>a</i>, <i>b</i> ∈ ${NN}`)}, con ${m('<i>b</i> ≠ 0')}.`) + P(`${m('<i>a</i> : <i>b</i> = <i>q</i>')} vuol dire: cerco ${m(`<i>q</i> ∈ ${NN}`)} tale che`) + F('<i>b</i> · <i>q</i> = <i>a</i>')) +
 				P(`Ad esempio ${m('12 : 3')}: cerco ${q_} tale che ${m('3 · <i>q</i> = 12')}.`) +
 				P('Quanti salti da 3 servono per arrivare a 12?') +
 				(st.p === 4 ? P(`${m('12 : 3 = 4')} perché ${m('3 · 4 = 12')}.`) : ''),
@@ -1350,7 +1350,8 @@ a.btn { text-decoration: none; }
 		// 25
 		{ ch: 6, title: 'L’esponente 0',
 			text: st => P('Ogni volta che l’esponente cala di 1, si divide per 2.') +
-				P(`«Moltiplicare 2 zero volte» non ha senso: come per ${m('4 · 0')}, il caso con esponente 0 si <b>decide</b>.`) +
+				P(`Ma la moltiplicazione ripetuta non dice quanto fa ${m(pw(2, 0))}: non ci sono fattori.`) +
+				P(`Come per ${m('4 · 0')}, il caso con esponente 0 si <b>decide</b>.`) +
 				(st.o ? P(`<b>Quindi ${m(`${pw(2, 0)} = 1`)}.</b>`) : ''),
 			init: () => ({ o: 0 }),
 			view(st) {
@@ -1427,7 +1428,7 @@ a.btn { text-decoration: none; }
 					<section class="mb"><h3>Le operazioni inverse</h3><div class="mbody">
 						<div class="mg"><div class="mf"><span class="wl">la sottrazione è l’inversa dell’addizione</span>${m('<span class="fg"><i>a</i> − <i>b</i> = <i>x</i></span>&ensp; <span class="fg">se &nbsp; <i>b</i> + <i>x</i> = <i>a</i></span>')}</div>
 						<p class="fline"><span class="in">${m('7 − 3 = 4')}</span><span class="out">${m(`3 − 7 ∉ ${NN}`)}</span></p></div>
-						<div class="mg"><div class="mf"><span class="wl">la divisione è l’inversa della moltiplicazione</span>${m('<span class="fg"><i>a</i> : <i>b</i> = <i>q</i></span>&ensp; <span class="fg">se &nbsp; <i>b</i> · <i>q</i> = <i>a</i></span>')}</div>
+						<div class="mg"><div class="mf"><span class="wl">la divisione è l’inversa della moltiplicazione</span>${m('<span class="fg"><i>a</i> : <i>b</i> = <i>q</i></span>&ensp; <span class="fg">se &nbsp; <i>b</i> · <i>q</i> = <i>a</i>, &nbsp;con <i>b</i> ≠ 0</span>')}</div>
 						<p class="fline"><span class="in">${m('12 : 3 = 4')}</span><span class="out">${m(`5 : 2 ∉ ${NN}`)}</span></p></div>
 						<p>${NN} <b>non è chiuso</b> rispetto alla sottrazione e alla divisione.</p>
 					</div></section>${MAP_ARROW}
