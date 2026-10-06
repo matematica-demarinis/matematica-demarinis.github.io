@@ -119,7 +119,8 @@ main.step { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax
 .def .dl { font-size: 0.95rem; letter-spacing: 0.01em; font-weight: 700; color: var(--acc); margin-bottom: 0.15rem; }
 .def p { margin: 0 0 0.3em; }
 
-.m { font-family: var(--math); font-size: 1.25em; line-height: 1; white-space: nowrap; }
+/* 1.08em: le cifre di STIX hanno la stessa altezza di quelle di Lexend, così i numeri nel testo e nelle formule sono uguali */
+.m { font-family: var(--math); font-size: 1.08em; line-height: 1; white-space: nowrap; }
 .m .m { font-size: 1em; }
 .m i, i.m { font-style: italic; }
 .m sup { font-size: 0.64em; line-height: 0; }
@@ -161,7 +162,6 @@ button.chip:hover { border-color: var(--acc); }
 .msg.in { background: var(--in-bg); border-left-color: var(--in); }
 .msg.out { background: var(--out-bg); border-left-color: var(--out); }
 .msg.empty { visibility: hidden; }
-.msg .m { font-size: 1.3em; }
 .msg.tall { min-height: 3.9rem; display: flex; align-items: center; justify-content: center; }
 
 .bigf { font-size: 2.6rem; text-align: center; margin: 0; }
@@ -534,12 +534,9 @@ const C = (() => {
 	const frac = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
 	const R = (v, t) => ({ v, t });
 	const SETS = ['N', 'Z', 'Q', 'R'];
-	// in quale insieme sta un numero razionale (quelli usati qui)
-	const inSet = (v, s) => s === 'N' ? Number.isInteger(v) && v >= 0 : s === 'Z' ? Number.isInteger(v) : true;
 	const sq9 = x => R(x * x, eq(sq(p(x)), x * x));
-	const mul = (a, x, xs = p(x)) => R(a * x, eq(`${a} · ${xs}`, n(a * x)));
 	return {
-		n, p, frac, SETS, inSet,
+		n, p, frac, SETS,
 		// i numeri del primo passo: s = l'insieme più piccolo che li contiene; q = la frazione che li scrive
 		NUMS: [
 			{ k: '7', h: '7', v: 7, s: 'N' },
@@ -550,13 +547,6 @@ const C = (() => {
 			{ k: 'p03', h: '0,<span class="ov">3</span>', v: 1 / 3, s: 'Q', q: [1, 3] },
 			{ k: 'r2', h: '√2', v: Math.SQRT2, s: 'R', irr: 2 },
 			{ k: 'pi', h: 'π', v: Math.PI, s: 'R', irr: 'pi' }
-		],
-		// esercizio: l'insieme più piccolo
-		NUMQ: [
-			{ h: '−12', v: -12, s: 'Z' },
-			{ h: '0,25', v: 0.25, s: 'Q', q: [1, 4] },
-			{ h: '√9', v: 3, s: 'N', root: 9 },
-			{ h: '√5', v: Math.sqrt(5), s: 'R', irr: 5 }
 		],
 		// (a + b)² e a² + b²
 		sqSum: (a, b) => R((a + b) ** 2, eq(sq(`(${n(a)} + ${p(b)})`), sq(p(a + b)), (a + b) ** 2)),
@@ -579,21 +569,6 @@ const C = (() => {
 		// x(x + 3) − 4 = (x + 1)²
 		pt3L: x => R(x * (x + 3) - 4, eq(`${p(x)} · (${n(x)} + 3) − 4`, `${p(x)} · ${p(x + 3)} − 4`, `${n(x * (x + 3))} − 4`, n(x * (x + 3) - 4))),
 		pt3R: x => R((x + 1) ** 2, eq(sq(`(${n(x)} + 1)`), sq(p(x + 1)), (x + 1) ** 2)),
-		// esercizio: soluzioni in insiemi diversi
-		PT4chk: [R(-14, eq('2 · (−7)', '−14')), R(2, eq(`5 · ${frac(2, 5)}`, 2)), [R(5, eq(sq('(−√5)'), 5)), R(5, eq(sq('(√5)'), 5))]],
-		PT4: [
-			{ f: '2x = −14', test: x => 2 * x === -14, sol: -7, h: '−7', why: {
-				N: [mul(2, 0)], Z: [mul(2, -7)], Q: [mul(2, -7)] } },
-			{ f: '5x = 2', test: x => 5 * x === 2, sol: 2 / 5, h: frac(2, 5), why: {
-				N: [0, 1].map(x => mul(5, x)), Z: [-1, 0, 1].map(x => mul(5, x)), Q: [mul(5, 2 / 5, frac(2, 5))] } },
-			{ f: 'x^2 = 5', h: '−√5, √5' }
-		],
-		// dove cerchiamo: x² = 9 in ℕ, ℤ, ℚ (soluzioni in ℝ e conti che spiegano il risultato)
-		WHERE: { f: 'x^2 = 9', sols: [-3, 3], why: { N: [sq9(3)], Z: [sq9(3), sq9(-3)], Q: [sq9(3), sq9(-3)], R: [sq9(3), sq9(-3)] } },
-		// x² = 2: soluzioni ±√2, che stanno solo in ℝ
-		WHERE2: { f: 'x^2 = 2', sols: [{ v: -Math.SQRT2, h: '−√2' }, { v: Math.SQRT2, h: '√2' }],
-			why: { N: [R(1, eq(sq(1), 1)), R(4, eq(sq(2), 4))], Z: [R(1, eq(sq(1), 1)), R(4, eq(sq(2), 4))], Q: [], R: [R(2, eq(sq('(√2)'), 2)), R(2, eq(sq('(−√2)'), 2))] },
-			note: { N: 'il 2 viene saltato', Z: 'il 2 viene saltato', Q: 'nessuna frazione ha per quadrato 2', R: '' } },
 		// quanti elementi ha S?
 		HOW: [
 			{ f: 'x − 4 = 6', test: x => x - 4 === 6, S: [10], chk: [R(6, eq('10 − 4', 6))] },
@@ -676,7 +651,6 @@ const C = (() => {
 	const SYM = { N: 'ℕ', Z: 'ℤ', Q: 'ℚ', R: 'ℝ' };
 	const NAME = { N: 'numeri naturali', Z: 'numeri interi', Q: 'numeri razionali', R: 'numeri reali' };
 	const NN = m('ℕ'), ZZ = m('ℤ'), QQ = m('ℚ'), RR = m('ℝ');
-	const bset = inner => `<span class="bset${inner.includes('class="frac"') ? ' tall' : ''}"><span class="br">{</span>${inner}<span class="br">}</span></span>`;
 	const sost = x => `Sostituendo <span class="xbox">${m(`${F('x')} = ${C.n(x)}`)}</span>`;
 	const msg = (h, c = '') => `<p class="msg ${h ? c : 'empty'}">${h || '&nbsp;'}</p>`;
 	const fig = (W, H, inner, label, cls = '') => `<div class="fig ${cls}"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${label}">${inner}</svg></div>`;
@@ -689,14 +663,6 @@ const C = (() => {
 		<div class="mbox ${same ? 'in' : 'out'}">${L.lab ? `<div class="ml">${L.lab}</div>` : ''}<div class="mh">${L.h}</div>${calc(L.t)}</div>
 		<span class="rel ${same ? 'in' : 'out'}" role="img" aria-label="${same ? 'uguale' : 'diverso'}">${same ? '=' : '≠'}</span>
 		<div class="mbox ${same ? 'in' : 'out'}">${R.lab ? `<div class="ml">${R.lab}</div>` : ''}<div class="mh">${R.h}</div>${calc(R.t)}</div></div>`;
-	// esercizio: una riga per voce, risposta subito
-	const quiz = (st, items, opts, cls = '') => `<div class="exl">${items.map((it, i) => {
-		const a = st.ans[i], ok = a === it.ans;
-		return `<span class="lt">${'abcd'[i]}.</span><span class="xf">${it.h ?? f(it.f)}</span><span class="bs">${opts.map(([t, v]) =>
-			`<button type="button" class="btn opt ${cls} ${a === v ? (ok ? 'ok' : 'no') : ''} ${a != null && v === it.ans ? 'right' : ''}" data-act="ans" data-v="${i},${v}" data-k="a${i}-${v}" aria-pressed="${a === v}">${t}</button>`).join('')}</span>` +
-			(a != null ? `<p class="fb ${ok ? 'ok' : 'no'}">${it.fb}</p>` : '');
-	}).join('')}</div>`;
-	const ansAct = (st, a, v) => { const [i, x] = v.split(','); st.ans[+i] = x; };
 	// passaggi scoperti uno alla volta
 	const drow = (e, why, show, cls = '') => `<div class="drow ${show ? cls : 'hide'}"${show ? '' : ' aria-hidden="true"'}><span class="e">${e}</span><span class="why">${why}</span></div>`;
 	const nextCtl = (k, max, lab) => `<div class="ctl"><button type="button" class="btn pri" data-act="next" data-k="next"${k >= max ? ' disabled' : ''}>passaggio successivo</button><button type="button" class="btn" data-act="reset" data-k="reset" aria-label="${lab}">↺</button></div>`;
@@ -708,54 +674,6 @@ const C = (() => {
 	const yn = (st, ans, fb) => `<div class="ctl yn">${[['sì', '1'], ['no', '0']].map(([t, v]) =>
 		`<button type="button" class="btn opt ${st.ans === v ? (v === ans ? 'ok' : 'no') : ''} ${st.ans != null && v === ans ? 'right' : ''}" data-act="ans" data-v="${v}" data-k="ans${v}" aria-pressed="${st.ans === v}">${t}</button>`).join('')}</div>` +
 		(st.ans != null ? `<p class="fb ${st.ans === ans ? 'ok' : 'no'}">${fb}</p>` : '');
-	const setBtns = (act, on, extra = '', keys = ['N', 'Z', 'Q']) => `<div class="ctl">${keys.map(k => `<button type="button" class="btn set" data-act="${act}" data-v="${extra}${k}" data-k="${act}${extra}${k}" aria-pressed="${on(k)}" aria-label="${NAME[k]}">${SYM[k]}</button>`).join('')}</div>`;
-
-	// ---------- retta dei numeri ----------
-	function nline(o) {
-		const { n0, n1, x0, x1, y } = o, k = (x1 - x0) / (n1 - n0), X = v => x0 + (v - n0) * k;
-		let s = `<line class="ax" x1="${x0 - 0.6 * k}" y1="${y}" x2="${x1 + 0.75 * k}" y2="${y}" marker-end="url(#ah-ink)"/>`;
-		for (let v = n0; v <= n1; v++) {
-			const x = X(v);
-			s += `<line class="tk" x1="${x}" y1="${y - 11}" x2="${x}" y2="${y + 11}"/><text class="tl" x="${x}" y="${y + 51}">${C.n(v)}</text>`;
-		}
-		return { s, X, k };
-	}
-
-	// ---------- dove cerchiamo: un'equazione, le sue soluzioni sulla retta e S nell'insieme scelto ----------
-	function whereView(st, which) {
-		const s = st.s, L = nline({ n0: -4, n1: 4, x0: 110, x1: 870, y: 170 }), X = L.X;
-		let g = L.s;
-		if (s === 'R') g += `<line class="rline" x1="${X(-4) - 0.5 * L.k}" y1="170" x2="${X(4) + 0.5 * L.k}" y2="170"/>`;   // in ℝ la retta è piena
-		else {
-			// in ℚ tutte le frazioni con denominatore fino a 8: fitte e non equidistanti
-			const pts = new Set();
-			if (s === 'Q') { for (let d = 1; d <= 8; d++) for (let k = -4 * d; k <= 4 * d; k++) pts.add(k / d); }
-			else for (let v = s === 'N' ? 0 : -4; v <= 4; v++) pts.add(v);
-			for (const v of pts) g += `<circle class="dot" cx="${X(v)}" cy="170" r="${Number.isInteger(v) ? 8 : 2.5}"/>`;
-		}
-		let ff, SS, ww, ok;
-		if (which === 0) {
-			const e = C.WHERE;
-			for (const v of e.sols) {
-				const o = C.inSet(v, s), c = o ? 'in' : 'out', x = X(v);
-				g += `<circle class="${o ? 'ringin' : 'ring'}" cx="${x}" cy="170" r="10"/><text class="sm ${c}" x="${x}" y="100">${C.n(v)}</text>`;
-			}
-			const S = e.sols.filter(v => C.inSet(v, s)), t = s === 'N' ? `${m('−3')} non è in ${NN}` : '';
-			ff = e.f; SS = setS(S); ww = why(e.why[s]) + (t ? ': ' + t : ''); ok = S.length > 0;
-		} else {
-			const e = C.WHERE2;
-			ok = s === 'R';
-			for (const q of e.sols) {
-				const x = X(q.v);
-				g += `<circle class="${ok ? 'ringin' : 'ring'}" cx="${x}" cy="170" r="10"/><text class="sm ${ok ? 'in' : 'out'}" x="${x}" y="100">${q.h}</text>`;
-			}
-			const w = why(e.why[s]), t = e.note[s];
-			ff = e.f; SS = ok ? `{${e.sols.map(q => q.h).join(', ')}}` : '∅'; ww = w + (w && t ? ': ' : '') + (t || '');
-		}
-		return setBtns('s', k => k === s, '', ['N', 'Z', 'Q', 'R']) + fig(1000, 250, g, 'le soluzioni sulla retta dei numeri') +
-			`<div class="col"><div class="kc wk ${ok ? 'in' : 'out'}"><div class="kf">${f(ff)}</div><div class="ks">${f(`U = ${SYM[s]}`)}: ${m(`${F('S')} = ${SS}`)}</div><div class="kw">${ww}</div></div></div>`;
-	}
-
 	// ---------- (a + b)² = (a + b)(a + b) con gli archetti: ogni termine della prima parentesi per ogni termine della seconda ----------
 	function prodArcs(k) {
 		// un simbolo alla volta, centrato nella sua posizione: con qualunque font nulla esce dal disegno
@@ -793,9 +711,10 @@ const C = (() => {
 	function nestMsg(st) {
 		const x = C.NUMS.find(q => q.k === st.cur);
 		if (!x) return '<p class="msg tall empty">&nbsp;</p>';
-		const i = idx(x.s), yes = ORD.slice(i).map(s => SYM[s]).join(', '), no = ORD.slice(0, i).map(s => SYM[s]).join(', ');
+		const list = L => L.length > 1 ? L.slice(0, -1).join(', ') + ' e ' + L.at(-1) : L[0] || '';   // «ℤ, ℚ e ℝ»
+		const i = idx(x.s), yes = list(ORD.slice(i).map(s => m(SYM[s]))), no = list(ORD.slice(0, i).map(s => m(SYM[s])));
 		const pre = x.q && x.h.includes(',') ? `${m(`${x.h} = ${x.q[0] < 0 ? '−' : ''}${C.frac(Math.abs(x.q[0]), x.q[1])}`)}: ` : '';
-		return `<p class="msg tall in"><span>${pre}${m(`${x.h} ∈ ${yes}`)}${no ? ` ma ${m(`${x.h} ∉ ${no}`)}` : ''}</span></p>`;
+		return `<p class="msg tall in"><span>${pre}${m(x.h)} sta in ${yes}${no ? `, ma non in ${no}` : ''}</span></p>`;
 	}
 
 	// ---------- i passi ----------
@@ -816,24 +735,13 @@ const C = (() => {
 			view: st => `<div class="col"><p class="ncap top">Alcuni esempi:</p><div class="chips">${C.NUMS.map(x => `<button type="button" class="chip" data-act="n" data-v="${x.k}" data-k="n${x.k}" aria-pressed="${x.k === st.cur}">${m(x.h)}</button>`).join('')}</div>${nest(st)}</div>` + nestMsg(st),
 			act(st, a, v) { st.placed[v] = 1; st.cur = v; }
 		},
-		// 2
-		{ ch: 0, title: 'Esercizio: l’insieme più piccolo',
-			text: P(`Qual è il più piccolo tra ${NN}, ${ZZ}, ${QQ}, ${RR} che contiene il numero?`),
-			init: () => ({ ans: [] }),
-			view: st => `<div class="col">${quiz(st, C.NUMQ.map((q, i) => ({ h: m(q.h), ans: q.s, fb: [
-				`${m('−12')} è un intero negativo: sta in ${ZZ}, ${QQ}, ${RR}, ma non in ${NN}: il più piccolo è ${ZZ}.`,
-				`${m(`0,25 = ${C.frac(q.q ? q.q[0] : 1, q.q ? q.q[1] : 1)}`)}: è una frazione che non è un intero, sta in ${QQ} ma non in ${ZZ}: il più piccolo è ${QQ}.`,
-				`${m(`√9 = ${q.v}`)}, perché ${m(`${q.v} · ${q.v} = 9`)}: è un numero naturale, quindi il più piccolo è ${NN}.`,
-				`${m('√5')} non si scrive come frazione: sta in ${RR} ma non in ${QQ}: il più piccolo è ${RR}.`][i] })), ORD.map(s => [SYM[s], s]), 'set')}</div>`,
-			act: ansAct
-		},
 		// ---------- capitolo «Un prodotto notevole» ----------
 		// 3
-		{ ch: 1, title: `${f('(a + b)^2')} è uguale ad ${f('a^2 + b^2')}?`,
-			text: P('Vi ho chiesto di controllare se questo prodotto notevole era scritto bene.') +
+		{ ch: 1, title: 'Il controesempio',
+			text: DL('Definizione (Controesempio)', P('Un <b>controesempio</b> è un caso in cui le due espressioni danno risultati diversi.')) +
+				P(`Ad esempio: il prodotto notevole ${f('(a + b)^2 = a^2 + b^2')} è scritto bene?`) +
 				P('Qualcuno ha risposto di sì: invece non è vero, e si può vedere in due modi.') +
-				P('<b>Primo modo</b>: mettiamo dei numeri al posto delle lettere.') +
-				P('Basta un solo caso in cui le due espressioni danno risultati diversi: si chiama <b>controesempio</b>.'),
+				P('<b>Primo modo</b>: mettiamo dei numeri al posto delle lettere.'),
 			init: () => ({ a: null, b: null }),
 			view(st) {
 				const P2 = pick('a', AB, st.a, 'a') + pick('b', AB, st.b, 'b');
@@ -841,12 +749,12 @@ const C = (() => {
 				const L = C.sqSum(st.a, st.b), R = C.sumSq(st.a, st.b), same = L.v === R.v;
 				return `<div class="col">${P2}
 					${mems({ h: f('(a + b)^2'), t: L.t }, { h: f('a^2 + b^2'), t: R.t }, same)}</div>` +
-					msg(same ? `Qui vengono uguali, ${m(`${L.v} = ${R.v}`)}: un caso che funziona non basta, proviamo altri numeri.` : `${m(`${L.v} ≠ ${R.v}`)}: è un <b>controesempio</b>.<br>Quindi <b>${f('(a + b)^2 = a^2 + b^2')} è sbagliata</b>.`, same ? '' : 'out');
+					msg(same ? `Qui vengono uguali, ${m(`${L.v} = ${R.v}`)}: un caso che funziona non basta, proviamo altri numeri.` : `${m(`${L.v} ≠ ${R.v}`)}: è un <b>controesempio</b>.<br><b>Quindi ${f('(a + b)^2 = a^2 + b^2')} è sbagliata</b>.`, same ? '' : 'out');
 			},
 			act(st, a, v) { st[a] = +v; }
 		},
 		// 4
-		{ ch: 1, title: `${f('(a + b)^2')} è uguale ad ${f('a^2 + b^2')}?`,
+		{ ch: 1, title: 'Il quadrato di un binomio',
 			text: P('<b>Secondo modo</b>: facciamo il prodotto.') +
 				P('Ogni termine della prima parentesi si moltiplica per ogni termine della seconda.'),
 			init: () => ({ k: 0 }),
@@ -855,25 +763,26 @@ const C = (() => {
 				const r1 = k >= 6 ? `${F('a^2 + ')}${hl('ab')} + ${hl('ba')}${F(' + b^2')}` : F(Q.rows[1]);
 				return prodArcs(k) + `<div class="dblk"${k < 5 ? ' style="visibility:hidden"' : ''}>${drow('= ' + r1, 'proprietà distributiva', k >= 5)}${drow(`= ${F('a^2 + ')}${hl('ab')} + ${hl('ab')}${F(' + b^2')}`, 'proprietà commutativa', k >= 6)}${drow('= ' + F(Q.rows[2]), 'termini simili', k >= 7, 'ok')}</div>` +
 					nextCtl(k, 7, 'Ricomincia') +
-					msg(k >= 7 ? `${f('(a + b)^2 = ' + Q.rows[2])}: rispetto ad ${f(Q.not)} c’è in più ${f(Q.more)}.<br>Quindi il prodotto notevole giusto è <b>${f('(a + b)^2 = ' + Q.rows[2])}</b>.` : '', 'in');
+					msg(k >= 7 ? `${f('(a + b)^2 = ' + Q.rows[2])}: rispetto ad ${f(Q.not)} c’è in più ${f(Q.more)}.<br><b>Quindi il prodotto notevole giusto è ${f('(a + b)^2 = ' + Q.rows[2])}</b>.` : '', 'in');
 			},
 			act(st, a) { st.k = a === 'next' ? Math.min(7, st.k + 1) : 0; }
 		},
 		// ---------- capitolo «Le identità» ----------
 		// 5
 		{ ch: 2, title: 'Che cos’è un’identità?',
-			text: P('In questo e in altri esercizi ho visto che pensavate: «se funziona con qualche esempio, funziona sempre».') +
-				P('Controllare pochi esempi non basta: per dire con precisione quando un’uguaglianza vale sempre serve una definizione.') +
-				DL('Definizione (Identità)', P('Un’<b>identità</b> è un’uguaglianza tra due espressioni letterali che è vera <b>qualunque</b> numero si metta al posto delle lettere.') +
-				P('L’espressione a sinistra dell’uguale è il <b>primo membro</b>, quella a destra il <b>secondo membro</b>.')),
+			text: DL('Definizione (Identità)', P('Un’<b>identità</b> è un’uguaglianza tra due espressioni letterali che è vera <b>qualunque</b> numero si metta al posto delle lettere.') +
+				P('L’espressione a sinistra dell’uguale è il <b>primo membro</b>, quella a destra il <b>secondo membro</b>.')) +
+				P(`Ad esempio ${f('(a + b)^2 = a^2 + 2ab + b^2')} è un’identità: l’abbiamo ottenuta con le regole del calcolo, senza provare numeri.`) +
+				P('In questo e in altri esercizi ho visto che pensavate: «se funziona con qualche esempio, funziona sempre».') +
+				P('Non basta: un’identità deve valere per <b>qualunque</b> numero.'),
 			view: () => `<div class="col"><div><p class="bigf">${m(`${ub(F('(a + b)^2'), 'primo membro')} = ${ub(F('a^2 + 2ab + b^2'), 'secondo membro')}`)}</p><p class="midf">${m(`∀ ${F('a')}, ${F('b')} ∈ ℝ`)}</p><p class="cap sp">${m('∀')} si legge «per ogni»</p></div>
-				<div class="legend"><p>Vale per ogni ${f('a')} e ${f('b')}, perché l’abbiamo ottenuta con le regole del calcolo, senza provare numeri.</p></div>
 				<div><p class="cap">Un altro esempio</p><p class="midf">${m(`${F('a(b − c) = ab − ac')} &nbsp; ∀ ${F('a')}, ${F('b')}, ${F('c')} ∈ ℝ`)}</p></div></div>`
 		},
 		// 6
-		{ ch: 2, title: 'Come si verifica un’identità?',
-			text: P('Per dire che <b>non</b> è un’identità basta un <b>controesempio</b>.') +
-				P('Per dire che <b>è</b> un’identità si semplifica <b>ogni membro per conto suo</b>: se alla fine i due membri contengono la stessa espressione letterale, è un’identità.'),
+		{ ch: 2, title: 'Come si verifica un’identità',
+			text: DL('Metodo (Verificare un’identità)', P('Per dire che <b>non</b> è un’identità basta un <b>controesempio</b>.') +
+				P('Per dire che <b>è</b> un’identità si semplifica <b>ogni membro per conto suo</b>: se alla fine i due membri diventano la stessa espressione, è un’identità.')) +
+				P(`Ad esempio ${f(C.P5.L[0] + ' = ' + C.P5.R[0])}.`),
 			init: () => ({ k: 0 }),
 			view(st) {
 				const k = st.k, done = k >= 3, Q = C.P5;
@@ -882,7 +791,7 @@ const C = (() => {
 					<div class="dblk"><div class="ml">primo membro</div>${drow(F(Q.L[0]), '', true)}${drow('= ' + F(Q.L[1]), 'proprietà distributiva', k >= 1, done ? 'ok' : '')}</div>
 					<div class="dblk"><div class="ml">secondo membro</div>${drow(F(Q.R[0]), '', true)}${drow('= ' + r4, 'quadrato di binomio', k >= 2)}${drow('= ' + F(Q.R[2]), 'termini simili', k >= 3, 'ok')}</div>
 					${nextCtl(k, 3, 'Ricomincia')}</div>` +
-					msg(done ? `I due membri sono diventati la stessa espressione, ${f('3a^2 + 6ab')}.<br>Quindi <b>è un’identità</b>.` : '', 'in');
+					msg(done ? `I due membri sono diventati la stessa espressione, ${f('3a^2 + 6ab')}.<br><b>Quindi è un’identità</b>.` : '', 'in');
 			},
 			act(st, a) { st.k = a === 'next' ? Math.min(3, st.k + 1) : 0; }
 		},
@@ -899,7 +808,7 @@ const C = (() => {
 				let out = '';
 				if (x != null) {
 					const L = C.cubeL(x), R = C.cubeR(x), same = L.v === R.v;
-					out = msg(`${sost(x)}<br>${m(L.t)}<br>${m(R.t)}${same ? '' : `<br>${m(`${L.v} ≠ ${R.v}`)}.<br>Quindi <b>non è un’identità</b>.`}`, same ? 'in' : 'out');
+					out = msg(`${sost(x)}<br>${m(L.t)}<br>${m(R.t)}${same ? '' : `<br>${m(`${L.v} ≠ ${R.v}`)}.<br><b>Quindi non è un’identità</b>.`}`, same ? 'in' : 'out');
 				} else out = msg('');
 				return `<div class="col"><table class="tt">
 					<tr><th class="rh">${f('x')}</th>${X4.map(x => `<th><button type="button" class="chip" data-act="x" data-v="${x}" data-k="x${x}" aria-pressed="${x === st.last}">${x}</button></th>`).join('')}</tr>
@@ -915,7 +824,7 @@ const C = (() => {
 			const FB = [
 				`No: con ${f(`a = ${E.ce?.a}`)} il primo membro vale ${m(E.ce?.L.t)} e il secondo ${m(E.ce?.R.t)}.`,
 				`Sì: tutti e due i membri diventano ${f(fin)}.`,
-				`Sì: è il prodotto di una somma per una differenza, ${f(fin)}.`,
+				`Sì: il primo membro è la somma di due termini per la loro differenza, ${f('(a + 7)(a − 7) = a^2 − 7^2 = ' + fin)}.`,
 				`Sì: tutti e due i membri diventano ${f(fin)}.`][i];
 			return { ch: 2, title: `Esercizio ${'abcd'[i]}: è un’identità?`,
 				text: st => yn(st, E.id ? '1' : '0', FB),
@@ -925,8 +834,8 @@ const C = (() => {
 					const blk = (lab, rows, off) => `<div class="dblk"><div class="ml">${lab}</div>${rows.map(([e, w], j) =>
 						drow((j ? '= ' : '') + F(e), w, j === 0 || k >= off + j, done && j === rows.length - 1 ? (E.id ? 'ok' : 'no') : '')).join('')}</div>`;
 					return `<div class="col"><p class="midf">${f(E.f)}</p>${blk('primo membro', E.L, 0)}${blk('secondo membro', E.R, nL)}${nextCtl(k, max, 'Ricomincia')}</div>` +
-						msg(!done ? '' : E.id ? `Alla fine i due membri sono la stessa espressione, ${f(fin)}.<br>Quindi <b>è un’identità</b>.`
-							: `Nel secondo membro c’è in più ${f(E.more)} (con ${f(`a = ${E.ce.a}`)} si ottiene ${m(`${E.ce.L.v} ≠ ${E.ce.R.v}`)}).<br>Quindi <b>non è un’identità</b>.`, E.id ? 'in' : 'out');
+						msg(!done ? '' : E.id ? `Alla fine i due membri sono la stessa espressione, ${f(fin)}.<br><b>Quindi è un’identità</b>.`
+							: `Nel secondo membro c’è in più ${f(E.more)} (con ${f(`a = ${E.ce.a}`)} si ottiene ${m(`${E.ce.L.v} ≠ ${E.ce.R.v}`)}).<br><b>Quindi non è un’identità</b>.`, E.id ? 'in' : 'out');
 				},
 				act(st, a, v) { if (a === 'ans') st.ans = v; else st.k = a === 'next' ? Math.min(max, st.k + 1) : 0; }
 			};
@@ -934,11 +843,12 @@ const C = (() => {
 		// ---------- capitolo «Le equazioni» ----------
 		// 12
 		{ ch: 3, title: 'E se l’uguaglianza non vale sempre?',
-			text: P('Un’identità vale per ogni valore delle lettere.') +
+			text: st => P('Un’identità vale per ogni valore delle lettere.') +
 				P('E se un’uguaglianza non vale sempre?') +
 				P('Ci sono valori che la rendono vera?') +
 				P('Quanti?') +
-				P(`Prendiamo ${f('7 + x = 3x − 1')}.`),
+				P(`Prendiamo ${f('7 + x = 3x − 1')}.`) +
+				(st.seen[4] ? P(`<b>Quindi l’uguaglianza è vera per alcuni valori di ${f('x')} e falsa per altri.</b>`) : ''),
 			init: () => ({ seen: { 0: 1 }, x: 0 }),
 			view(st) {
 				const Y0 = 300, K = 13, W = 44;
@@ -958,30 +868,33 @@ const C = (() => {
 				const x = st.x, L = C.linL(x), R = C.linR(x), same = L.v === R.v;
 				return `<div class="key"><span><span class="sw s1"></span>primo membro ${f('7 + x')}</span><span><span class="sw s2"></span>secondo membro ${f('3x − 1')}</span></div>` +
 					fig(1000, 410, s, 'i due membri per x da 0 a 6', 'wide') +
-					msg(`${sost(x)}<br>${m(L.t)}<br>${m(R.t)}<br>${same ? '<b>vera</b>' : '<b>falsa</b>'}`, same ? 'in' : 'out');
+					msg(`${sost(x)}<br>${m(L.t)}<br>${m(R.t)}<br><b>Quindi con ${f(`x = ${x}`)} è ${same ? 'vera' : 'falsa'}</b>`, same ? 'in' : 'out');
 			},
 			act(st, a, v) { st.x = +v; st.seen[+v] = 1; }
 		},
 		// 13
 		{ ch: 3, title: 'Che cos’è un’equazione?',
 			text: DL('Definizione (Equazione)', P('Un’<b>equazione</b> è un’uguaglianza tra due espressioni letterali, per la quale ci chiediamo <b>per quali valori</b> delle lettere è vera.') +
-				P('La lettera di cui cerchiamo i valori è l’<b>incognita</b>; i valori che rendono vera l’uguaglianza sono le <b>soluzioni</b> (o <b>radici</b>).')) +
-				P('Primo e secondo membro si chiamano come nelle identità.'),
+				P('La lettera di cui cerchiamo i valori è l’<b>incognita</b>.') +
+				P('I valori che rendono vera l’uguaglianza sono le <b>soluzioni</b> (o <b>radici</b>).')) +
+				P(`Ad esempio in ${f('7 + x = 3x − 1')} l’incognita è ${f('x')} e la soluzione è ${f('x = 4')}.`),
 			view: () => `<div class="col"><p class="bigf">${m(`${ub(F('7 + x'), 'primo membro')} = ${ub(F('3x − 1'), 'secondo membro')}`)}</p>
 				<table class="symt nar"><tr><td>incognita</td><td>${f('x')}</td></tr><tr><td>soluzione</td><td>${f('x = 4')}</td></tr></table>
 				<p class="cap sp">L’incognita non si chiama per forza ${f('x')}</p><p class="midf">${f('5 − 2t = 1')}</p>
 				<table class="symt nar"><tr><td>incognita</td><td>${f('t')}</td></tr><tr><td>soluzione</td><td>${f('t = 2')}, infatti ${m(C.tSol.t)}</td></tr></table></div>`
 		},
 		// 14
-		{ ch: 3, title: `L’insieme delle soluzioni ${f('S')}`,
-			text: P(`Le soluzioni di un’equazione formano l’<b>insieme delle soluzioni</b> ${f('S')}, che può essere <b>vuoto</b> (${m(`${F('S')} = ∅`)}), avere un numero <b>finito</b> di elementi oppure <b>infiniti</b> elementi.`) +
-				DL('Definizione (Risolvere un’equazione)', P(`<b>Risolvere</b> un’equazione vuol dire capire <b>quanti</b> e <b>quali</b> elementi ci sono nell’insieme delle soluzioni ${f('S')}.`)),
+		{ ch: 3, title: 'L’insieme delle soluzioni',
+			text: DL('Definizione (Insieme delle soluzioni)', P(`Le soluzioni di un’equazione formano l’<b>insieme delle soluzioni</b> ${f('S')}.`) +
+				P(`<b>Risolvere</b> un’equazione vuol dire trovare <b>tutte</b> le sue soluzioni, cioè determinare ${f('S')}.`)) +
+				P(`${f('S')} può essere <b>vuoto</b> (${m(`${F('S')} = ∅`)}), <b>finito</b> e non vuoto oppure <b>infinito</b>.`) +
+				P('Ad esempio:'),
 			init: () => ({ open: {} }),
 			view(st) {
 				const INFO = [
 					['finito: un elemento', `${m('10')} è l’unico numero che, diminuito di 4, dà 6: ${why(C.HOW[0].chk)}`],
 					['vuoto', 'nessun numero, aumentato di 5, resta uguale a sé stesso'],
-					['infiniti elementi', `è un’identità: è vera per ogni ${f('x')}, per la proprietà distributiva`]];
+					['infinito', `è un’identità: è vera per ogni ${f('x')}, per la proprietà distributiva`]];
 				return `<div class="col"><div class="kgrid three">${C.HOW.map((e, i) => {
 					const o = st.open[i], S = e.S === 'R' ? 'ℝ' : setS(e.S);
 					return `<button type="button" class="kc ${o ? 'in' : ''}" data-act="o" data-v="${i}" data-k="o${i}" aria-expanded="${!!o}"><span class="kf">${f(e.f)}</span>` +
@@ -990,37 +903,10 @@ const C = (() => {
 			},
 			act(st, a, v) { st.open[+v] = 1; }
 		},
-		// 18
-		{ ch: 3, title: 'Come si verifica una soluzione?',
-			text: P('Si mette il numero al posto dell’incognita e si calcolano i due membri <b>separatamente</b>: se vengono uguali, il numero è una soluzione.') +
-				P('Si chiama <b>verifica per sostituzione</b>.'),
-			init: () => ({ x: -2 }),
-			view(st) {
-				const L = C.verL(st.x), R = C.verR(st.x), same = L.v === R.v;
-				return `<div class="col"><p class="bigf">${f('5x + 4 = x − 4')}</p>${pick('x', [-2, 1], st.x, 'x')}
-					${mems({ lab: 'primo membro', h: f('5x + 4'), t: L.t }, { lab: 'secondo membro', h: f('x − 4'), t: R.t }, same)}</div>` +
-					msg(same ? `${m(`${C.n(L.v)} = ${C.n(R.v)}`)}.<br>Quindi <b>${f(`x = ${C.n(st.x)}`)} è una soluzione</b>.` : `${m(`${C.n(L.v)} ≠ ${C.n(R.v)}`)}.<br>Quindi <b>${f(`x = ${C.n(st.x)}`)} non è una soluzione</b>.`, same ? 'in' : 'out');
-			},
-			act(st, a, v) { st.x = +v; }
-		},
-		// esercizio: è una soluzione? (Prova tu 3)
-		{ ch: 3, title: 'Esercizio: è una soluzione?',
-			text: P(`Quali di questi numeri sono soluzioni di ${f('x(x + 3) − 4 = (x + 1)^2')}?`),
-			init: () => ({ x: null }),
-			view(st) {
-				let out = msg(''), mm = '';
-				if (st.x != null) {
-					const L = C.pt3L(st.x), R = C.pt3R(st.x), same = L.v === R.v;
-					mm = mems({ lab: 'primo membro', h: f('x(x + 3) − 4'), t: L.t }, { lab: 'secondo membro', h: f('(x + 1)^2'), t: R.t }, same);
-					out = msg(same ? `${m(`${C.n(L.v)} = ${C.n(R.v)}`)}.<br>Quindi <b>${f(`x = ${C.n(st.x)}`)} è una soluzione</b>.` : `${m(`${C.n(L.v)} ≠ ${C.n(R.v)}`)}.<br>Quindi <b>${f(`x = ${C.n(st.x)}`)} non è una soluzione</b>.`, same ? 'in' : 'out');
-				}
-				return `<div class="col"><p class="bigf">${f('x(x + 3) − 4 = (x + 1)^2')}</p>${pick('x', [5, -1], st.x, 'x')}${mm}</div>` + out;
-			},
-			act(st, a, v) { st.x = +v; }
-		},
 		// 15
-		{ ch: 3, title: `Un esempio: ${f('x^2 = 9')}`,
-			text: P(`Quali numeri, messi al posto di ${f('x')}, rendono vera l’uguaglianza?`),
+		{ ch: 3, title: 'Soluzioni per tentativi',
+			text: P('Per ora cerchiamo le soluzioni per tentativi.') +
+				P(`Ad esempio ${f('x^2 = 9')}: quali numeri, messi al posto di ${f('x')}, rendono vera l’uguaglianza?`),
 			init: () => ({ seen: {}, last: null }),
 			view(st) {
 				const V = [-4, -3, -2, -1, 0, 1, 2, 3, 4], ok = x => C.sq9(x).v === 9;
@@ -1029,7 +915,7 @@ const C = (() => {
 				let out = msg('');
 				if (x != null) {
 					const r = C.sq9(x);
-					out = msg(ok(x) ? `${m(r.t)}: ${m(C.n(x))} è una soluzione.${all ? '<br>Quindi <b>abbiamo trovato due soluzioni</b>.' : '<br>Ce ne sono altre?'}` : `${m(`${r.t} ≠ 9`)}: ${m(C.n(x))} non è una soluzione.`, ok(x) ? 'in' : 'out');
+					out = msg(ok(x) ? `${m(r.t)}: ${m(C.n(x))} è una soluzione.${all ? '<br><b>Quindi abbiamo trovato due soluzioni</b>.' : '<br>Ce ne sono altre?'}` : `${m(`${r.t} ≠ 9`)}: ${m(C.n(x))} non è una soluzione.`, ok(x) ? 'in' : 'out');
 				}
 				return `<div class="col"><p class="bigf">${f('x^2 = 9')}</p>` +
 					pick('x', V, x, 'x', v => st.seen[v] ? (ok(v) ? 'in' : 'out') : '') +
@@ -1037,54 +923,10 @@ const C = (() => {
 			},
 			act(st, a, v) { st.seen[+v] = 1; st.last = +v; }
 		},
-		// 16
-		{ ch: 3, title: 'Dove cerchiamo le soluzioni?',
-			text: P('Conta anche <b>dove</b> cerchiamo le soluzioni.') +
-				DL('Definizione (Insieme universo)', P(`L’insieme nel quale cerchiamo le soluzioni di un’equazione si chiama <b>insieme universo</b> e si indica con ${f('U')}.`)) +
-				P(`Quindi ${f('S ⊆ U')}.`) +
-				P(`Cambiando ${f('U')} può cambiare ${f('S')}.`) +
-				P(`Se non specifichiamo diversamente, useremo ${f('U = ℝ')}, che contiene tutti i numeri che conosciamo.`),
-			init: () => ({ s: 'N' }),
-			view: st => whereView(st, 0),
-			act(st, a, v) { st.s = v; }
-		},
-		{ ch: 3, title: 'Dove cerchiamo le soluzioni?',
-			text: P(`Un altro esempio: ${f('x^2 = 2')}.`) +
-				P(`Con ${f('U = ℝ')} le sue soluzioni sono ${m('√2')} e ${m('−√2')}, che non si scrivono come frazione.`),
-			init: () => ({ s: 'N' }),
-			view: st => whereView(st, 1),
-			act(st, a, v) { st.s = v; }
-		},
-		// esercizi: soluzioni in insiemi diversi (Prova tu 4): S è dato, si verifica e si dice dove sta
-		...[0, 1, 2].map(j => ({ ch: 3, title: 'Esercizio: soluzioni in insiemi diversi',
-			text: P(`Con ${f('U = ℝ')}, l’insieme delle soluzioni di ${f(C.PT4[j].f)} è ${m(`${F('S')} = ${bset(C.PT4[j].h)}`)}.`) +
-				P(j < 2 ? `Verifica che ${m(C.PT4[j].h)} è una soluzione.` : `Verifica che ${m('−√5')} e ${m('√5')} sono soluzioni.`) +
-				P(`Qual è il più piccolo tra ${NN}, ${ZZ}, ${QQ}, ${RR} che contiene ${f('S')}?`),
-			init: () => ({ ver: 0, ans: [] }),
-			view(st) {
-				const e = C.PT4[j], chk = C.PT4chk[j], small = ['Z', 'Q', 'R'][j];
-				const vbox = !st.ver ? `<div class="ctl"><button type="button" class="btn pri" data-act="ver" data-k="ver">verifica</button></div>`
-					: j < 2 ? `<p class="msg in">${sost(e.sol).replace(C.n(e.sol), e.h)}<br>${m(chk.t)}<br>Quindi <b>${m(e.h)} è una soluzione</b>.</p>`
-					: `<p class="msg in">Sostituendo <span class="xbox">${m(`${F('x')} = −√5`)}</span><br>${m(chk[0].t)}<br>Sostituendo <span class="xbox">${m(`${F('x')} = √5`)}</span><br>${m(chk[1].t)}<br>Quindi <b>${m('−√5')} e ${m('√5')} sono soluzioni</b>.</p>`;
-				const fb = [
-					`${m('−7')} è un intero negativo: ${m('−7 ∈ ℤ')} (quindi anche in ${QQ} e ${RR}), ma ${m('−7 ∉ ℕ')}.`,
-					`${m(`${e.h} ∈ ℚ`)} (quindi anche in ${RR}), ma non è un intero: ${m(`${e.h} ∉ ℤ`)}, ${m(`${e.h} ∉ ℕ`)}.`,
-					`${m('√5')} e ${m('−√5')} non si scrivono come frazione: stanno in ${RR}, ma non in ${QQ} (e quindi nemmeno in ${ZZ} e ${NN}).`][j];
-				const who = `il più piccolo che contiene ${f('S')} è`;
-				const q = st.ver ? quiz(st, [{ h: who, ans: small, fb }], ORD.map(k => [SYM[k], k]), 'set').replace('<span class="lt">a.</span>', '') : '';
-				const done = st.ans[0] === small;
-				const out = !done ? msg('') : msg([
-					`${m(`${F('S')} = {−7} ⊂ ℤ`)}.<br>Se ${f('U')} è ${ZZ}, ${QQ} o ${RR}: ${m(`${F('S')} = {−7}`)}.<br>Se ${f('U')} è ${NN}: ${m(`${F('S')} = ∅`)}.`,
-					`${m(`${F('S')} = ${bset(e.h)} ⊂ ℚ`)}.<br>Se ${f('U')} è ${QQ} o ${RR}: ${m(`${F('S')} = ${bset(e.h)}`)}.<br>Se ${f('U')} è ${NN} o ${ZZ}: ${m(`${F('S')} = ∅`)}.`,
-					`${m(`${F('S')} = {−√5, √5} ⊂ ℝ`)}.<br>Se ${f('U')} è ${RR}: ${m(`${F('S')} = {−√5, √5}`)}.<br>Se ${f('U')} è ${NN}, ${ZZ} o ${QQ}: ${m(`${F('S')} = ∅`)}.`][j], 'in');
-				const big = `<p class="bigf">${f(e.f)} &nbsp;&nbsp; ${m(`${F('S')} = ${bset(e.h)}`)}</p>`;
-				return `<div class="col">${st.ver ? `<div class="vrow">${big}${vbox}</div>` : big + vbox}${q}</div>` + out;   // dopo la verifica affiancati: con le frazioni non ci starebbe
-			},
-			act(st, a, v) { if (a === 'ver') st.ver = 1; else ansAct(st, a, v); }
-		})),
 		// 17
-		{ ch: 3, title: `Un altro esempio: ${f('4 + 3x = 19')}`,
-			text: P('Proviamo i numeri naturali: quali rendono vera l’uguaglianza?'),
+		{ ch: 3, title: 'Per tentativi tra i naturali',
+			text: P(`Un’altra equazione: ${f('4 + 3x = 19')}.`) +
+				P('Proviamo i numeri naturali: quali rendono vera l’uguaglianza?'),
 			init: () => ({ seen: {}, last: null }),
 			view(st) {
 				const X8 = [0, 1, 2, 3, 4, 5, 6, 7], ok = x => C.pt2L(x).v === 19, x = st.last;
@@ -1097,9 +939,38 @@ const C = (() => {
 					<tr><th class="rh">primo membro ${f('4 + 3x')}</th>${X8.map(x => cell(x, C.pt2L(x).v)).join('')}</tr>
 					<tr><th class="rh">secondo membro ${m('19')}</th>${X8.map(x => `<td class="${st.seen[x] ? (ok(x) ? 'in' : 'out') : ''}">19</td>`).join('')}</tr></table></div>` + out +
 					`<div class="legend">${bad != null ? `<p class="late">Con ${f(`x = ${bad}`)} è falsa: basta questo per dire che non è un’identità.</p>` : ''}` +
-					(st.seen[5] ? `<p class="late">Con ${f('x = 5')}: ${m(C.pt2L(5).t.split(' = ')[0] + ' = 19')}.<br>Quindi <b>${f('x = 5')} è una soluzione</b>.</p>` : '') + '</div></div>';
+					(st.seen[5] ? `<p class="late">Con ${f('x = 5')}: ${m(C.pt2L(5).t.split(' = ')[0] + ' = 19')}.<br><b>Quindi ${f('x = 5')} è una soluzione</b>.</p>` : '') + '</div></div>';
 			},
 			act(st, a, v) { st.seen[+v] = 1; st.last = +v; }
+		},
+		// 18
+		{ ch: 3, title: 'La verifica per sostituzione',
+			text: DL('Definizione (Verifica per sostituzione)', P('Si mette il numero al posto dell’incognita e si calcolano i due membri <b>separatamente</b>.') +
+				P('Se vengono uguali, il numero è una soluzione.')) +
+				P(`Ad esempio ${f('5x + 4 = x − 4')}, con ${f('x = −2')} e con ${f('x = 1')}.`),
+			init: () => ({ x: -2 }),
+			view(st) {
+				const L = C.verL(st.x), R = C.verR(st.x), same = L.v === R.v;
+				return `<div class="col"><p class="bigf">${f('5x + 4 = x − 4')}</p>${pick('x', [-2, 1], st.x, 'x')}
+					${mems({ lab: 'primo membro', h: f('5x + 4'), t: L.t }, { lab: 'secondo membro', h: f('x − 4'), t: R.t }, same)}</div>` +
+					msg(same ? `${m(`${C.n(L.v)} = ${C.n(R.v)}`)}.<br><b>Quindi ${f(`x = ${C.n(st.x)}`)} è una soluzione</b>.` : `${m(`${C.n(L.v)} ≠ ${C.n(R.v)}`)}.<br><b>Quindi ${f(`x = ${C.n(st.x)}`)} non è una soluzione</b>.`, same ? 'in' : 'out');
+			},
+			act(st, a, v) { st.x = +v; }
+		},
+		// esercizio: è una soluzione? (Prova tu 3)
+		{ ch: 3, title: 'Esercizio: è una soluzione?',
+			text: P(`Quali di questi numeri sono soluzioni di ${f('x(x + 3) − 4 = (x + 1)^2')}?`),
+			init: () => ({ x: null }),
+			view(st) {
+				let out = msg(''), mm = '';
+				if (st.x != null) {
+					const L = C.pt3L(st.x), R = C.pt3R(st.x), same = L.v === R.v;
+					mm = mems({ lab: 'primo membro', h: f('x(x + 3) − 4'), t: L.t }, { lab: 'secondo membro', h: f('(x + 1)^2'), t: R.t }, same);
+					out = msg(same ? `${m(`${C.n(L.v)} = ${C.n(R.v)}`)}.<br><b>Quindi ${f(`x = ${C.n(st.x)}`)} è una soluzione</b>.` : `${m(`${C.n(L.v)} ≠ ${C.n(R.v)}`)}.<br><b>Quindi ${f(`x = ${C.n(st.x)}`)} non è una soluzione</b>.`, same ? 'in' : 'out');
+				}
+				return `<div class="col"><p class="bigf">${f('x(x + 3) − 4 = (x + 1)^2')}</p>${pick('x', [5, -1], st.x, 'x')}${mm}</div>` + out;
+			},
+			act(st, a, v) { st.x = +v; }
 		},
 		// 19
 		{ ch: 3, title: 'Sono tutte?',
@@ -1119,14 +990,14 @@ const C = (() => {
 				return `<div class="map">
 					<section class="mb"><h3>Gli insiemi numerici</h3>
 						<p class="mbig">${m('ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ')}</p>
-						<table class="mt"><tr><th></th><th>numeri</th><th>per esempio</th></tr>${EX.map(([s, e]) => `<tr><td class="s">${m(SYM[s])}</td><td>${NAME[s].replace('numeri ', '')}${s === 'Z' ? ' (relativi)' : ''}</td><td>${m(e)}</td></tr>`).join('')}</table>
+						<table class="mt"><tr><th></th><th>numeri</th><th>ad esempio</th></tr>${EX.map(([s, e]) => `<tr><td class="s">${m(SYM[s])}</td><td>${NAME[s].replace('numeri ', '')}${s === 'Z' ? ' (relativi)' : ''}</td><td>${m(e)}</td></tr>`).join('')}</table>
 						<p>Ogni insieme contiene il precedente e ha numeri in più: <span class="in">${m('−3 ∈ ℤ')}</span> ma <span class="out">${m('−3 ∉ ℕ')}</span>.</p>
 					</section>${MAP_ARROW}
 					<section class="mb"><h3>Le identità</h3>
 						<p>Un’<b>identità</b> è un’uguaglianza tra due espressioni letterali che è vera <b>qualunque</b> numero si metta al posto delle lettere.</p>
 						<p>Per dire che <b>non</b> lo è basta un <b>controesempio</b>: ${f('(a + b)^2 = a^2 + b^2')} è sbagliata, con ${f('a = b = 1')} si ottiene ${m(`${C.sqSum(1, 1).v} ≠ ${C.sumSq(1, 1).v}`)}.</p>
 						<p>Qualche esempio che funziona non basta: ${f('x^3 + 2x = 3x^2')} è vera per ${f('x = 0, 1, 2')} ma non per ${f('x = 3')} (${m(`${C.cubeL(3).v} ≠ ${C.cubeR(3).v}`)}).</p>
-						<p>Per dire che <b>è</b> un’identità si semplifica <b>ogni membro per conto suo</b>: se alla fine i due membri contengono la stessa espressione letterale, è un’identità.<br>Facendo il prodotto ${f('(a + b)(a + b)')} si trova il prodotto notevole giusto:</p>
+						<p>Per dire che <b>è</b> un’identità si semplifica <b>ogni membro per conto suo</b>: se alla fine i due membri diventano la stessa espressione, è un’identità.<br>Facendo il prodotto ${f('(a + b)(a + b)')} si trova il prodotto notevole giusto:</p>
 						<p class="mcen">${f('(a + b)^2 = a^2 + 2ab + b^2')} &nbsp;${m(`∀ ${F('a')}, ${F('b')} ∈ ℝ`)}</p>
 					</section></div>`;
 			}
@@ -1142,12 +1013,11 @@ const C = (() => {
 						<p><b>Verifica per sostituzione</b>: si mette il numero al posto dell’incognita e si calcolano i due membri separatamente.<br>In ${f('5x + 4 = x − 4')} con ${f('x = −2')}: ${m(V.t)} e ${m(W.t)}: sono uguali, ${f('x = −2')} è una soluzione.</p>
 					</section>${MAP_ARROW}
 					<section class="mb"><h3>L’insieme delle soluzioni ${f('S')}</h3>
-						<table class="mt"><tr><th>${f('S')} può essere</th><th>per esempio</th><th></th></tr>
+						<table class="mt"><tr><th>${f('S')} può essere</th><th>ad esempio</th><th></th></tr>
 							<tr><td>vuoto</td><td>${f('x + 5 = x')}</td><td>${m(`${F('S')} = ∅`)}</td></tr>
-							<tr><td>un numero finito di elementi</td><td>${f('x − 4 = 6')}</td><td>${m(`${F('S')} = {10}`)}</td></tr>
-							<tr><td>infiniti elementi</td><td>${f('2(x + 3) = 2x + 6')}</td><td>${m(`${F('S')} = ℝ`)}</td></tr></table>
-						<p><b>Risolvere</b> un’equazione vuol dire capire <b>quanti</b> e <b>quali</b> elementi ci sono in ${f('S')}.</p>
-						<p>L’<b>insieme universo</b> ${f('U')} è l’insieme in cui cerchiamo le soluzioni: ${f('S ⊆ U')}.<br>${f('x^2 = 9')}: con ${f('U = ℕ')}, ${f('S = {3}')}; con ${f('U = ℤ')}, ${f('S = {−3, 3}')}.<br>Se non specifichiamo diversamente, ${f('U = ℝ')}.</p>
+							<tr><td>finito e non vuoto</td><td>${f('x − 4 = 6')}</td><td>${m(`${F('S')} = {10}`)}</td></tr>
+							<tr><td>infinito</td><td>${f('2(x + 3) = 2x + 6')}</td><td>${m(`${F('S')} = ℝ`)}</td></tr></table>
+						<p><b>Risolvere</b> un’equazione vuol dire trovare <b>tutte</b> le soluzioni, cioè determinare ${f('S')}.</p>
 						<p><b>Sono tutte?</b><br>Per tentativi non possiamo saperlo: i numeri sono infiniti.<br>Nella prossima lezione: procedimenti per ricavare le soluzioni.</p>
 					</section></div>`;
 			}
