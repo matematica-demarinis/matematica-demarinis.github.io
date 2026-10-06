@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try { const r = document.documentElement, t = localStorage.getItem('matematica-tema'), z = localStorage.getItem('matematica-zoom'); if (t === 'dark') r.dataset.theme = 'dark'; if (['115', '130', '150'].includes(z)) r.dataset.zoom = z; } catch (e) {}</script>
+<title>Equazioni – Lezione 3: regole, dominio e strategia</title>
+<link rel="stylesheet" href="../../assets/fonts/lezioni.css">
+<style>
+:root {
+	--bg: #F3F6F9;
+	--grid: #E2E8EF;
+	--panel: #FFFFFF;
+	--ink: #17212E;
+	--ink2: #4A5566;
+	--line: #D3DBE4;
+	--acc: #2A4DB5;
+	--on-acc: #FFFFFF;
+	--acc-fill: rgba(42, 77, 181, 0.08);
+	--acc-soft: rgba(42, 77, 181, 0.30);
+	--two: #B35C00;
+	--in: #13804A;
+	--in-bg: #DFF3E7;
+	--out: #BE3131;
+	--out-bg: #FBE3E3;
+	--hl: #FFEFA8;
+	--hover: #EAF0F8;
+	--chip: #F3F6F9;
+	--focus: #2A4DB5;
+	--ctl: #8C9AAB;
+	--shadow: rgba(0, 0, 0, 0.25);
+	--ui: "Lexend", system-ui, "Segoe UI", Roboto, sans-serif;
+	--math: "STIX Two Text", "STIX Two Math", "Cambria Math", "DejaVu Serif", "Noto Sans Math", Cambria, "Times New Roman", serif;
+}
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--bg: #0F141A;
+	--grid: #19212B;
+	--panel: #161D26;
+	--ink: #E6EBF1;
+	--ink2: #A8B3C0;
+	--line: #2A3440;
+	--acc: #86A5F7;
+	--on-acc: #0F141A;
+	--acc-fill: rgba(134, 165, 247, 0.10);
+	--acc-soft: rgba(134, 165, 247, 0.34);
+	--two: #F2A65A;
+	--in: #4FC98C;
+	--in-bg: #173327;
+	--out: #FF7C7C;
+	--out-bg: #3A1D20;
+	--hl: #3D3517;
+	--hover: #1E2835;
+	--chip: #1B232E;
+	--focus: #86A5F7;
+	--ctl: #56657A;
+	--shadow: rgba(0, 0, 0, 0.5);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { height: 100%; font-size: clamp(14px, min(1.05vw, 1.9vh), 21px); }
+body {
+	margin: 0; height: 100%;
+	background-color: var(--bg);
+	background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+	background-size: 24px 24px;
+	color: var(--ink); font-family: var(--ui); line-height: 1.4;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.app { height: 100%; max-width: 1800px; margin: 0 auto; padding: 0.8rem 16px 0.9rem; display: flex; flex-direction: column; gap: 0.7rem; }
+
+/* ---------- barra in alto ---------- */
+header.top { display: flex; align-items: center; gap: 0.6rem 2rem; }
+h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; min-width: 10.5ch; white-space: nowrap; }
+.prog { flex: 1; display: flex; gap: 0.7rem; min-width: 0; }
+.pch { flex: var(--n) 1 0; min-width: max-content; display: flex; flex-direction: column; gap: 0.1rem; }
+.segs { display: flex; gap: 3px; }
+.seg { flex: 1; min-width: 0; height: 1.5rem; padding: 0; border: 0; background: none; cursor: pointer; position: relative; border-radius: 4px; }
+.seg::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 0.5rem; transform: translateY(-50%); border-radius: 3px; background: var(--line); }
+.seg.done::before { background: var(--acc-soft); }
+.seg.cur::before { background: var(--acc); height: 0.75rem; }
+.pname { font-size: 0.95rem; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pch.cur .pname { color: var(--ink); font-weight: 700; }
+#theme { flex: none; width: 2.75rem; height: 2.75rem; min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; font-size: 1.3rem; line-height: 1; padding: 0; }
+#theme:hover { border-color: var(--acc); }
+.tools { flex: none; display: flex; align-items: center; gap: 0.5rem; position: relative; }   /* il pannello dello zoom si allinea al bordo destro dei due bottoni */
+.zmenu { position: static; }
+#homeBtn { width: 2.75rem; height: 2.75rem; min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid var(--ctl); background: var(--panel); color: var(--ink); display: grid; place-items: center; }
+#homeBtn:hover { border-color: var(--acc); }
+#homeBtn svg { width: 1.4rem; height: 1.4rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#zoomBtn { width: 2.75rem; height: 2.75rem; min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; padding: 0; display: grid; place-items: center; }
+#zoomBtn:hover, #zoomBtn[aria-expanded="true"] { border-color: var(--acc); }
+#zoomBtn svg { width: 1.45rem; height: 1.45rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.zpanel { position: absolute; top: calc(100% + 0.6rem); right: 0; z-index: 30; width: min(21rem, calc(100vw - 2rem)); padding: 0.8rem 0.9rem 0.9rem; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px var(--shadow); }
+.zhead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.55rem; font-weight: 700; }
+.zhead button { width: 2.4rem; height: 2.4rem; min-width: 40px; min-height: 40px; border-radius: 50%; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; padding: 0; display: grid; place-items: center; }
+.zhead button svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.zopts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
+.zopts label { position: relative; display: grid; place-items: center; min-height: 44px; border: 2px solid var(--ctl); border-radius: 10px; cursor: pointer; font-weight: 700; font-variant-numeric: tabular-nums; }
+.zopts input { position: absolute; opacity: 0; pointer-events: none; }
+.zopts label:has(input:checked) { border-color: var(--acc); background: var(--acc-fill); color: var(--acc); }
+.zopts label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+:root[data-zoom="115"] main.step { zoom: 1.15; }
+:root[data-zoom="130"] main.step { zoom: 1.3; }
+:root[data-zoom="150"] main.step { zoom: 1.5; }
+
+/* ---------- il passo ---------- */
+main.step { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 1.4rem; }
+.left { display: flex; flex-direction: column; gap: 0.75rem; min-height: 0; overflow: auto; padding: 0.2rem 0.3rem 0.2rem 0; }
+.left h2 { margin: 0; font-size: 1.9rem; line-height: 1.2; text-wrap: balance; letter-spacing: -0.01em; }
+.tag { display: inline-block; vertical-align: 0.3em; margin-left: 0.6rem; padding: 0.1rem 0.65rem; border: 2px solid var(--ctl); border-radius: 999px; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.02em; color: var(--ink2); white-space: nowrap; }
+.txt { font-size: 1.35rem; line-height: 1.45; }
+.txt p { margin: 0 0 0.45em; }
+.txt p:last-child { margin-bottom: 0; }
+.def { background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--acc); border-radius: 0 12px 12px 0; padding: 0.6rem 1rem 0.7rem; margin-bottom: 0.5em; }
+.def .dl { font-size: 0.95rem; letter-spacing: 0.01em; font-weight: 700; color: var(--acc); margin-bottom: 0.15rem; }
+.def p { margin: 0 0 0.3em; }
+.def .fm { text-align: center; margin: 0.35em 0 0.2em; font-size: 1.1em; }
+
+/* 1.08em: le cifre di STIX hanno la stessa altezza di quelle di Lexend, così i numeri nel testo e nelle formule sono uguali */
+.m { font-family: var(--math); font-size: 1.08em; line-height: 1; white-space: nowrap; }
+.m .m { font-size: 1em; }
+.m i, i.m { font-style: italic; }
+.m sup { font-size: 0.64em; line-height: 0; }
+.m sub { font-size: 0.64em; line-height: 0; }
+b { font-weight: 700; }
+.frac { display: inline-flex; flex-direction: column; align-items: stretch; text-align: center; vertical-align: middle; line-height: 1.1; margin: 0 0.1em; }
+.frac > span { padding: 0 0.15em; }
+.frac > span:first-child { border-bottom: 0.06em solid currentColor; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.8rem; min-height: 0; overflow: auto; }
+.fig { flex: 1 1 auto; min-height: 7rem; position: relative; }
+.fig > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.col > .fig { align-self: stretch; }
+.col { flex: 1 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.1rem; min-height: 0; }
+.ctl { display: flex; gap: 0.8rem; justify-content: center; align-items: center; flex-wrap: wrap; }
+.fb { margin: 0; padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 1.25rem; border-left: 5px solid; }
+.fb.ok { background: var(--in-bg); border-color: var(--in); }
+.fb.no { background: var(--out-bg); border-color: var(--out); }
+
+/* bottoni */
+.btn { font-size: 1.25rem; font-weight: 500; min-height: max(3rem, 44px); min-width: max(3rem, 44px); padding: 0 1.2rem; border-radius: 12px; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; box-shadow: 0 2px 0 var(--ctl); }
+.btn:hover:not(:disabled) { border-color: var(--acc); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn.pri { background: var(--acc); color: var(--on-acc); border-color: var(--acc); box-shadow: 0 2px 0 var(--shadow); }
+.btn[aria-pressed="true"] { background: var(--acc); color: var(--on-acc); border-color: var(--acc); }
+.btn.opt[aria-pressed="true"] { color: inherit; }
+.opt.ok { background: var(--in-bg) !important; border-color: var(--in) !important; color: var(--in) !important; }
+.opt.no { background: var(--out-bg) !important; border-color: var(--out) !important; color: var(--out) !important; }
+.opt.right:not(.ok) { border-color: var(--in); }
+.btn.set { font-family: var(--math); font-size: 1.8rem; min-width: 4rem; }
+
+
+.msg { margin: 0; min-height: 2.6rem; padding: 0.45rem 1rem; border-radius: 10px; font-size: 1.35rem; text-align: center; background: var(--chip); border-left: 5px solid var(--line); }
+.msg.in { background: var(--in-bg); border-left-color: var(--in); }
+.msg.out { background: var(--out-bg); border-left-color: var(--out); }
+.msg.empty { visibility: hidden; }
+
+.bigf { font-size: 2.6rem; text-align: center; margin: 0; }
+.midf { font-size: 1.7rem; text-align: center; margin: 0; }
+
+/* scelta dei valori */
+.pl { font-size: 1.6rem; min-width: 2.6ch; text-align: right; margin-right: 0.2rem; }
+
+/* i due membri */
+.mems { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 0.7rem; width: 100%; }
+.mbox { border: 2px solid var(--line); border-radius: 12px; padding: 0.45rem 0.8rem 0.6rem; background: var(--panel); min-width: 0; text-align: center; }
+.mbox .ml { font-size: 1.1rem; color: var(--ink2); }
+.mbox .mh { font-size: 1.35rem; margin: 0.15rem 0 0.35rem; }
+.mbox.in { border-color: var(--in); background: var(--in-bg); }
+.mbox.out { border-color: var(--out); background: var(--out-bg); }
+.calc { font-family: var(--math); font-size: 1.6rem; line-height: 1.4; }
+.calc .cs { white-space: nowrap; }
+.rel { font-family: var(--math); font-size: 2.6rem; line-height: 1; }
+.rel.in { color: var(--in); }
+.rel.out { color: var(--out); }
+.tarr { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 0.7rem; width: 100%; margin: -0.4rem 0; color: var(--acc); font-size: 1.35rem; text-align: center; }
+.tarr .rel { visibility: hidden; }
+
+/* tabelle */
+.ttw { max-width: 100%; overflow-x: auto; }
+.tt { border-collapse: collapse; }
+.tt th, .tt td { border: 1px solid var(--line); padding: 0.3rem 0.7rem; text-align: center; }
+.tt th { font-weight: 400; font-size: 1.15rem; }
+.tt th.rh { text-align: left; }
+.tt th.rh .m { font-size: 1.5rem; }
+.tt td { font-family: var(--math); font-size: 1.7rem; min-width: 5.5rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tt td.in { background: var(--in-bg); color: var(--in); }
+.tt td.out { background: var(--out-bg); color: var(--out); font-weight: 700; }
+.tt td.vd { font-family: var(--ui); font-size: 1.3rem; font-weight: 700; }
+.tt .cb { font-family: var(--math); font-size: 1em; min-width: 3.2rem; min-height: 44px; padding: 0 0.6rem; border: 2px dashed var(--ctl); border-radius: 10px; background: var(--chip); color: var(--ink2); cursor: pointer; }
+.tt .cb:hover { border-color: var(--acc); }
+.dt { border-collapse: collapse; width: min(100%, 40rem); }
+.dt th { font-weight: 400; font-size: 1rem; color: var(--ink2); padding: 0.2rem 0.4rem; border-bottom: 2px solid var(--line); }
+.dt th .m { font-size: 1.45rem; color: var(--ink); }
+.dt td { padding: 0.35rem 0.4rem; border-bottom: 1px solid var(--line); text-align: center; }
+.dt td.v { font-family: var(--math); font-size: 1.4rem; white-space: nowrap; }
+.dt td.in { color: var(--in); font-weight: 700; }
+.dt td.out { color: var(--out); }
+
+/* passaggi */
+.dblk { width: 100%; border: 2px solid var(--line); border-radius: 12px; padding: 0.4rem 1rem 0.55rem; background: var(--panel); }
+.dblk .ml { font-size: 1.1rem; color: var(--ink2); }
+.drow { display: flex; align-items: baseline; justify-content: space-between; gap: 0.2rem 1rem; flex-wrap: wrap; }
+.drow .e { font-family: var(--math); font-size: 1.75rem; line-height: 1.45; }
+.drow .e sup, .drow .e sub { font-size: 0.64em; line-height: 0; }
+.drow .e i { font-style: italic; }
+.drow .why { font-size: 1.25rem; color: var(--ink); }
+.drow.hide { visibility: hidden; }
+.drow.ok .e, .drow.no .e { background: var(--in-bg); color: var(--in); border-radius: 6px; padding: 0 0.3rem; margin-left: -0.3rem; }
+.drow.no .e { background: var(--out-bg); color: var(--out); }
+/* esercizi «soluzioni in insiemi diversi» */
+.vrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem 2.2rem; }
+.exl { display: grid; grid-template-columns: max-content max-content minmax(max-content, 1fr); justify-content: center; gap: 0.55rem 1rem; align-items: center; width: min(100%, 52rem); max-width: 100%; }
+.exl .lt { font-weight: 700; font-size: 1.3rem; }
+.exl .xf { font-size: 1.3rem; }
+.exl .bs { display: flex; gap: 0.5rem; }
+.exl .fb { grid-column: 1 / -1; margin-top: -0.25rem; width: 0; min-width: 100%; }
+.cx { text-decoration: line-through; text-decoration-color: var(--out); text-decoration-thickness: 0.09em; color: var(--ink2); }
+.tn { background: var(--hl); border-radius: 4px; padding: 0 0.12em; }
+
+/* parentesi sotto una parte della formula */
+.ub { display: inline-flex; flex-direction: column; align-items: center; vertical-align: top; }
+.ub .br { align-self: stretch; height: 0.4rem; border: 2px solid var(--acc); border-top: 0; border-radius: 0 0 8px 8px; margin-top: 0.3rem; }
+.ub .lab { font-family: var(--ui); font-size: 1.1rem; font-style: normal; color: var(--acc); white-space: nowrap; margin-top: 0.25rem; line-height: 1.25; }
+.cap { font-size: 1.05rem; color: var(--ink2); text-align: center; margin: 0; }
+
+/* schede */
+.kgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.8rem; width: 100%; }
+.kgrid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.kc { border: 2px solid var(--line); border-radius: 12px; padding: 0.5rem 0.7rem 0.6rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem; min-width: 0; text-align: center; }
+.kc.in { border-color: var(--in); background: var(--in-bg); }
+.kc.out { border-color: var(--out); background: var(--out-bg); }
+.kf { font-size: 1.4rem; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.2rem 0.6rem; }
+.kt { font-size: 1.05rem; font-family: var(--ui); font-weight: 700; color: var(--acc); background: var(--acc-fill); border-radius: 999px; padding: 0.1rem 0.8rem; }
+.kc.in .kv { color: var(--in); }
+.kc.out .kv { color: var(--out); }
+.kv { font-weight: 700; font-size: 1.2rem; }
+.ks { font-size: 1.2rem; font-weight: 500; }
+.kw { font-size: 1.05rem; color: var(--ink2); text-align: center; }
+button.kc { font: inherit; color: inherit; background: var(--panel); border-color: var(--ctl); box-shadow: 0 2px 0 var(--ctl); cursor: pointer; min-height: 7rem; }
+button.kc:hover { border-color: var(--acc); }
+button.kc.in, button.kc.out { box-shadow: none; }
+button.kc.in { background: var(--in-bg); border-color: var(--in); }
+button.kc.out { background: var(--out-bg); border-color: var(--out); }
+button.kc > span { display: block; }
+button.kc > span.kf { display: flex; }
+.kc .qs { font-size: 1.6rem; color: var(--ctl); font-family: var(--math); }
+.krs { display: flex; flex-direction: column; gap: 0.3rem; width: 100%; }
+.kr { font-size: 1.15rem; text-align: center; padding: 0.25rem 0.6rem; border-radius: 8px; border-left: 4px solid var(--line); background: var(--chip); width: 100%; }
+.kr.in { background: var(--panel); border-color: var(--in); }
+.kr.out { background: var(--panel); border-color: var(--out); }
+.xbox { display: inline-block; border: 2px solid currentColor; border-radius: 6px; padding: 0 0.35em; margin-left: 0.2em; }
+.bset { display: inline-flex; align-items: center; vertical-align: middle; }
+.bset.tall .br { display: inline-block; transform: scaleY(1.9); margin: 0 0.06em; }
+
+/* riquadro di una formula (come \boxed) */
+/* schema ad albero: dal principio generale ai due princìpi */
+.tree { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 54rem; }
+.tree .tr { border: 2px solid var(--acc); border-radius: 12px; padding: 0.4rem 1.2rem; font-size: 1.35rem; font-weight: 700; color: var(--acc); background: var(--panel); text-align: center; }
+.tree .fork { display: block; width: 50%; height: 2rem; overflow: visible; }
+.tree .fork path { fill: none; stroke: var(--acc); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+.chip { display: inline-flex; align-items: center; justify-content: center; gap: 0.3em; font-size: 1.5rem; font-weight: 500; font-variant-numeric: tabular-nums; min-height: max(2.8rem, 44px); min-width: max(2.8rem, 44px); padding: 0.3em 0.85em; border-radius: 999px; border: 2px solid var(--ctl); background: var(--panel); color: var(--ink); box-shadow: 0 2px 0 var(--ctl); line-height: 1; }
+button.chip { cursor: pointer; }
+button.chip:hover { border-color: var(--acc); }
+.chip[aria-pressed="true"] { background: var(--acc); border-color: var(--acc); color: var(--on-acc); box-shadow: none; }
+.pick { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+.pl { font-size: 1.6rem; min-width: 2.6ch; text-align: right; margin-right: 0.2rem; }
+/* ℝ con dentro D e U; S nell’intersezione */
+.vr { fill: none; stroke: var(--line); stroke-width: 3; }
+.vd { fill: none; stroke: var(--two); stroke-width: 4; }
+.vu2 { fill: none; stroke: var(--acc); stroke-width: 4; }
+.vi { fill: var(--acc-fill); }
+.vl.r { fill: var(--ink2); font-style: normal; }
+.vl.d { fill: var(--two); }
+.cu { color: var(--acc); }
+.cd { color: var(--two); }
+.kc.lu { border-color: var(--acc); }
+.kc.ld { border-color: var(--two); }
+.kc.ld .kt { color: var(--two); }
+.rline.dl { stroke: var(--two); }
+.rline.ii { stroke: var(--ink2); }
+.slab.ii { fill: var(--ink2); }
+.slab.dl { fill: var(--two); }
+/* i passi del metodo, in elenco puntato */
+.def ul.steps { margin: 0.1rem 0 0.45rem; padding-left: 1.25em; }
+.def ul.steps li { margin: 0.25rem 0; }
+.def ul.steps li::marker { color: var(--acc); }
+/* la griglia dei tipi di equazioni */
+.tt td.kind { font-family: var(--ui); font-size: 1.15rem; font-weight: 700; color: var(--ink2); text-align: left; }
+.tt td .tag { margin-left: 0.4rem; vertical-align: 0.15em; font-family: var(--ui); }
+.bx { display: inline-block; border: 2px solid var(--acc); border-radius: 10px; padding: 0.2em 0.65em; background: var(--panel); }
+.midf .bx { line-height: 1.45; }
+
+/* freccia con l'operazione sopra (e, se serve, la freccia di ritorno sotto) */
+.xa { display: inline-flex; flex-direction: column; align-items: stretch; vertical-align: middle; margin: 0 0.3em; color: var(--acc); line-height: 1.1; font-style: normal; }
+.xa .xt { font-family: var(--math); font-size: 0.72em; text-align: center; padding: 0 0.45em; white-space: nowrap; }
+.xa .xr { position: relative; height: 0.08em; min-width: 2.1em; margin: 0.14em 0.34em 0.14em 0; background: currentColor; }
+.xa .xr::after { content: ""; position: absolute; top: 50%; right: -0.34em; transform: translateY(-50%); border-left: 0.42em solid currentColor; border-top: 0.21em solid transparent; border-bottom: 0.21em solid transparent; }
+.xa .xr.back { margin: 0.14em 0 0.14em 0.34em; }
+.xa .xr.back::after { right: auto; left: -0.34em; border-left: 0; border-right: 0.42em solid currentColor; }
+.xa .off { visibility: hidden; }
+.kc:has(> .kf.rv) { container-type: inline-size; }
+.kf.rv { flex-wrap: nowrap; gap: 0; font-size: min(1.6rem, 10.5cqi); }   /* grande sulla LIM, ma dentro la scheda anche con lo zoom */
+
+/* equazioni in catena: andata e ritorno */
+.chain { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.5rem 0.2rem; font-size: 1.75rem; }
+.chain .m { font-size: 1.15em; }
+.eqb { display: inline-flex; flex-direction: column; align-items: center; gap: 0.3rem; border: 2px solid var(--line); border-radius: 12px; padding: 0.35rem 0.9rem 0.45rem; background: var(--panel); }
+.eqb .sv { font-size: 0.8em; color: var(--in); }
+.eqb.off, .eqb .off { visibility: hidden; }
+
+
+
+/* universo e insieme delle soluzioni */
+.vu { fill: var(--acc-fill); stroke: var(--acc); stroke-width: 4; }
+.vs { fill: var(--in-bg); stroke: var(--in); stroke-width: 4; }
+.vl { font-family: var(--math); font-style: italic; font-size: 46px; fill: var(--acc); }
+.vl.s { fill: var(--in); }
+
+/* tentativi */
+.inp { font-family: var(--math); font-size: 1.6rem; width: 7em; min-height: max(3rem, 44px); padding: 0 0.6rem; border: 2px solid var(--ctl); border-radius: 12px; background: var(--panel); color: var(--ink); }
+.inp:hover { border-color: var(--acc); }
+
+/* ---------- navigazione ---------- */
+footer.nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.nb { font-size: 1.25rem; font-weight: 500; min-height: max(3.1rem, 44px); min-width: 44px; padding: 0 1.7rem; border-radius: 999px; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; box-shadow: 0 2px 0 var(--ctl); }
+.nb:hover:not(:disabled) { border-color: var(--acc); }
+.nb.pri { background: var(--acc); color: var(--on-acc); border-color: var(--acc); }
+.nb:disabled { opacity: 0.35; cursor: default; }
+.count { color: var(--ink2); font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+
+/* ---------- SVG ---------- */
+svg text { font-family: var(--ui); }
+.ax { stroke: var(--ink); stroke-width: 3; }
+.tk { stroke: var(--ink); stroke-width: 3; }
+.tl { font-size: 30px; fill: var(--ink); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.mk-ink { fill: var(--ink); }
+.dot { fill: var(--acc); }
+.ring { fill: var(--panel); stroke: var(--out); stroke-width: 4; }
+.ringin { fill: var(--in); stroke: var(--panel); stroke-width: 3; }
+.ringadd { fill: var(--two); stroke: var(--panel); stroke-width: 3; }
+.rline { stroke: var(--acc); stroke-width: 7; stroke-linecap: round; opacity: 0.85; }
+.sm { font-family: var(--math); font-size: 34px; text-anchor: middle; }
+.sm.in { fill: var(--in); }
+.sm.out { fill: var(--out); }
+.sm.add { fill: var(--two); }
+.slab { font-size: 26px; text-anchor: middle; }
+.slab.add { fill: var(--two); }
+.slab.acc { fill: var(--acc); }
+.ks { font-size: 1.2rem; font-weight: 500; }
+
+/* ---------- animazioni ---------- */
+.late { animation: appear 0.25s both; }
+@keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* passi di riepilogo: uno schema a tutta larghezza */
+main.step.full { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 0.7rem; }
+.step.full .left { overflow: visible; padding: 0; }
+.step.full .panel { background: none; border: 0; border-radius: 0; padding: 0.2rem 0.2rem 0.4rem; }
+.map { flex: 1 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 2.6rem minmax(0, 1fr); }
+.map.m3 { grid-template-columns: minmax(0, 1fr) 2.6rem minmax(0, 1fr) 2.6rem minmax(0, 1fr); }
+.mc { display: grid; place-items: center; }
+.mc svg { width: 100%; height: auto; overflow: visible; }
+.mc path { fill: none; stroke: var(--acc); stroke-width: 3; }
+.mk-acc { fill: var(--acc); }
+.mb { min-width: 0; container-type: inline-size; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 0.9rem 1.1rem 1rem; display: flex; flex-direction: column; gap: 0.75rem; font-size: 1.4rem; }
+.mb h3 { margin: 0; font-size: 1.5rem; line-height: 1.2; color: var(--acc); }
+.mb p { margin: 0; text-wrap: pretty; }
+.mb .mbig { font-size: min(1.75rem, 9cqi); text-align: center; }
+.mb .mcen { text-align: center; }
+.mt { border-collapse: collapse; width: 100%; font-size: 1.2rem; line-height: 1.25; }
+.mt th { text-align: left; font-weight: 500; color: var(--ink2); font-size: 1rem; padding: 0.1rem 0.35rem; border-bottom: 2px solid var(--line); }
+.mt td { padding: 0.3rem 0.35rem; border-bottom: 1px solid var(--line); }
+.mt tr:last-child td { border-bottom: 0; }
+.mres { margin: 0.9rem 0 0; padding: 0.7rem 1.2rem; border: 2px solid var(--acc); border-radius: 14px; background: var(--acc-fill); font-size: 1.45rem; text-align: center; text-wrap: balance; }
+.thead { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; flex-wrap: wrap; }
+.thead .btn { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; min-height: 2.75rem; }
+.thead .tacts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+a.btn { text-decoration: none; }
+.thead .btn svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+
+/* ---------- schermi stretti ---------- */
+@media (max-width: 820px) {
+	.exl { grid-template-columns: auto minmax(0, 1fr); justify-content: stretch; }
+	.exl .bs { grid-column: 2; flex-wrap: wrap; }   /* sul telefono i bottoni vanno a capo */
+	.exl .xf .m { white-space: normal; }
+	html, body { height: auto; }
+	.app { height: auto; min-height: 100%; }
+	header.top { flex-wrap: wrap; }
+	h1 { font-size: 1.4rem; min-width: 0; flex: 1; white-space: normal; }
+	.prog { order: 3; flex-basis: 100%; }
+	.pname { display: none; }
+	.pch { min-width: 0; }
+	main.step { grid-template-columns: minmax(0, 1fr); }
+	.left, .panel { overflow: visible; }
+	.panel { padding: 0.8rem 0.7rem; }
+	.left h2 { font-size: 1.5rem; }
+	.txt { font-size: 1.15rem; }
+	.fig { flex: none; min-height: 0; }
+	.fig > svg { position: static; height: auto; }
+	.bigf { font-size: 1.7rem; }
+	.midf { font-size: 1.35rem; }
+	.mems { grid-template-columns: minmax(0, 1fr); justify-items: stretch; }
+	.mems .rel { text-align: center; }
+	.tarr { grid-template-columns: minmax(0, 1fr); margin: 0; }
+	.tarr > :not(:first-child) { display: none; }
+	.calc { font-size: 1.35rem; }
+	.drow .e { font-size: 1.3rem; white-space: normal; }
+	.dt td.v { font-size: 1.1rem; padding: 0.3rem 0.15rem; }
+	.tt td { font-size: 1.3rem; min-width: 3.4rem; padding: 0.3rem 0.4rem; }
+	.tt th.rh .m { font-size: 1.2rem; }
+	.kgrid, .kgrid.three { grid-template-columns: minmax(0, 1fr); }
+	.chip { font-size: 1.3rem; }
+	.pick { gap: 0.3rem; }
+	.pick .chip { padding: 0.3em 0.45em; }
+	.pl { font-size: 1.4rem; }
+	.tree .fork { display: none; }   /* schede una sotto l'altra: la biforcazione non torna */
+	.tree .tr { margin-bottom: 0.8rem; }
+	.pl { font-size: 1.4rem; }
+	.chain { font-size: 1.2rem; }
+	.map, .map.m3 { grid-template-columns: minmax(0, 1fr); }
+	.mc { height: 2.6rem; }
+	.mc svg { width: 2.6rem; transform: rotate(90deg); }
+	.mt { font-size: 1.1rem; }
+	.mres { font-size: 1.2rem; }
+	footer.nav { position: sticky; bottom: 0; background: var(--bg); padding: 0.5rem 0; }
+	.nb { padding: 0 1.1rem; }
+}
+@media (max-width: 480px) {
+	.m { white-space: normal; }
+	.tt .m, .bx .m { white-space: nowrap; }   /* la tabella scorre nel suo riquadro */
+	.tt th, .tt td { padding: 0.3rem; }   /* sul telefono le tabelle stanno nella larghezza */
+	.tt td { font-size: 1.15rem; min-width: 0; }
+	.tt th { font-size: 1rem; }
+	.tt th .m, .tt th.rh .m { font-size: 1.05rem; }
+	.tt td.vd { font-size: 1rem; }
+	.bigf { font-size: 1.45rem; }
+	.ub .lab { white-space: normal; }
+}
+
+/* stampa: solo il riepilogo, un foglio; in verticale righe da 2 riquadri, in orizzontale gli schemi con le frecce */
+.print-summary, .ps-land { display: none; }
+@media print {
+	@page { margin: 0; }   /* orientamento libero; margine 0 = niente intestazioni del browser, il margine è nella sezione */
+	:root, :root[data-theme="dark"] {
+		color-scheme: light;
+		--bg: #F3F6F9; --grid: #E2E8EF; --panel: #FFFFFF; --ink: #17212E; --ink2: #4A5566; --line: #D3DBE4;
+		--acc: #2A4DB5; --on-acc: #FFFFFF; --acc-fill: rgba(42, 77, 181, 0.08); --acc-soft: rgba(42, 77, 181, 0.30);
+		--two: #B35C00; --in: #13804A; --in-bg: #DFF3E7; --out: #BE3131; --out-bg: #FBE3E3; --hl: #FFEFA8; --hover: #EAF0F8;
+		--chip: #F3F6F9; --focus: #2A4DB5; --ctl: #8C9AAB; --shadow: rgba(0, 0, 0, 0.25);
+	}
+	html { font-size: 8.4pt; height: auto; }
+	body { height: auto; background: #FFFFFF; background-image: none; }
+	.app { display: none !important; }
+	.print-summary { display: block; padding: 8mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+	.ps-t { margin: 0 0 2.5mm; font-size: 1.7rem; }
+	.ps-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3mm; margin-bottom: 3mm; break-inside: avoid; }
+	.print-summary .map { margin-bottom: 3mm; }
+	.print-summary .mb { container-type: normal; break-inside: avoid; gap: 0.65rem; }
+	.ps-row:last-child, .print-summary .map:last-child { margin-bottom: 0; }
+	.print-summary .mb .mbig { font-size: 1.75rem; }
+	.print-summary .mres { margin: 0; }
+	.ps-row .mres { display: flex; align-items: center; justify-content: center; font-size: 1.75rem; }
+	.print-summary *, .print-summary *::before, .print-summary *::after { animation: none !important; transition: none !important; }
+}
+@media print and (orientation: landscape) {
+	html { font-size: 8.3pt; }
+	.ps-port { display: none; }
+	.ps-land { display: block; }
+	.ps-land .map.m3 { grid-template-columns: minmax(0, 1fr) 2rem minmax(0, 1fr) 2rem minmax(0, 1fr); }
+	.ps-land .map:not(.m3) { grid-template-columns: minmax(0, 1fr) 2rem minmax(0, 1fr); }
+	.ps-land .mres { margin-top: 3mm; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+	<defs>
+		<marker id="ah-ink" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="mk-ink" d="M0,0 L10,5 L0,10 z"/></marker>
+		<marker id="ah-acc" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto"><path class="mk-acc" d="M0,0 L10,5 L0,10 z"/></marker>
+	</defs>
+</svg>
+
+<div class="app">
+	<header class="top">
+		<h1 id="h1">Il principio generale e i due princìpi</h1>
+		<nav class="prog" id="prog" aria-label="Avanzamento"></nav>
+		<div class="tools">
+		<a id="homeBtn" href="../../index.html" aria-label="Tutte le lezioni" title="Tutte le lezioni" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7M6 9v11h4.5v-6h3v6H18V9"/></svg></a>
+		<div class="zmenu" id="zmenu">
+			<button type="button" id="zoomBtn" aria-label="Dimensione dei contenuti" title="Dimensione dei contenuti" aria-haspopup="dialog" aria-expanded="false" aria-controls="zpanel">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3 20.5 20.5M8 10.5h5M10.5 8v5"/></svg>
+			</button>
+			<section class="zpanel" id="zpanel" role="dialog" aria-labelledby="ztitle" hidden>
+				<div class="zhead"><span id="ztitle">Dimensione dei contenuti</span><button type="button" id="zclose" aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7 17 17M17 7 7 17"/></svg></button></div>
+				<div class="zopts">
+					<label><input type="radio" name="zoomLevel" value="100" checked>100%</label>
+					<label><input type="radio" name="zoomLevel" value="115">115%</label>
+					<label><input type="radio" name="zoomLevel" value="130">130%</label>
+					<label><input type="radio" name="zoomLevel" value="150">150%</label>
+				</div>
+			</section>
+		</div>
+		<button type="button" id="theme" aria-label="Attiva il tema scuro" title="Tema scuro"><span id="themeGlyph" aria-hidden="true">☾</span></button>
+		</div>
+	</header>
+	<main class="step" id="main">
+		<section class="left" id="left" aria-live="off"></section>
+		<section class="panel" id="stage"></section>
+		<p class="sr" id="live" aria-live="polite"></p>
+	</main>
+	<footer class="nav">
+		<button type="button" class="nb" id="prev">← Indietro</button>
+		<span class="count" id="count"></span>
+		<button type="button" class="nb pri" id="next">Avanti →</button>
+	</footer>
+</div>
+
+<!-- Conti mostrati nella pagina: funzioni pure, controllate anche fuori dal browser (C.check()). -->
+<script id="calc">
+const C = (() => {
+	const n = v => v < 0 ? '−' + (-v) : String(v + 0);          // segno meno vero (e niente «−0»)
+	const frac = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+	const SETS = ['N', 'Z', 'Q', 'R'];
+	const inSet = (v, s) => s === 'N' ? Number.isInteger(v) && v >= 0 : s === 'Z' ? Number.isInteger(v) : true;
+	// ax + 5 = 7 con a fissato
+	const co = a => a === 1 ? '' : a === -1 ? '−' : n(a);
+
+	// Le righe dei calcoli sono testo: [num|den] è una frazione, {…} un addendo cancellato, #…# un addendo che ha cambiato membro,
+	// ⟨…⟩ una parentesi alta (attorno alle frazioni).
+	// Lo stesso testo diventa JavaScript, così si controlla che ogni riga sia equivalente alla prima.
+	const toJS = t => t.replace(/[{}#]/g, '').replace(/⟨/g, '(').replace(/⟩/g, ')').replace(/\[([^|\]]+)\|([^\]]+)\]/g, '(($1)/($2))')
+		.replace(/−/g, '-').replace(/·/g, '*').replace(/\^(\d)/g, '**$1').replace(/(\d|\)|x)\s*(?=[x(])/g, '$1*');
+	const side = t => new Function('x', `return ${toJS(t)};`);
+	const dif = t => { const [a, b] = t.split(' = ').map(side); return x => a(x) - b(x); };
+	const XS = [-3.5, -1, 0.25, 2, 7.5];   // nessuna è soluzione delle equazioni della lezione
+	const near = (a, b) => Math.abs(a - b) < 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
+	// ogni passaggio deve fare ai due membri, ciascuno per conto suo, proprio ciò che dice la sua etichetta:
+	// «… da tutti e due i lati» aggiunge quella quantità a ogni membro; «moltiplico per c» / «divido per c» li moltiplica / divide;
+	// il cambio di segno li moltiplica per −1; trasporto e cancellazione tolgono da tutti e due la stessa quantità;
+	// calcoli, proprietà, prodotti notevoli, termini simili lasciano ogni membro uguale a prima
+	const sides = t => t.split(' = ').map(side);
+	const lab = w => { const r = /\$([^$]+)\$/.exec(w); return r ? side(r[1]) : null; };
+	function stepOK(prev, t, w, q) {
+		const [A0, B0] = sides(prev), [A, B] = sides(t), c = lab(w);
+		const all = f => XS.every(x => f(x));
+		if (/da tutti e due i lati/.test(w)) return all(x => near(A(x), A0(x) + c(x)) && near(B(x), B0(x) + c(x)));
+		if (/^moltiplico/.test(w)) return !near(c(0), 0) && all(x => near(A(x), c(x) * A0(x)) && near(B(x), c(x) * B0(x)));
+		if (/^divido/.test(w)) return !near(c(0), 0) && all(x => near(A(x), A0(x) / c(x)) && near(B(x), B0(x) / c(x)));
+		if (/cambio di segno/.test(w)) return all(x => near(A(x), -A0(x)) && near(B(x), -B0(x)));
+		if (/trasporto|cancellazione/.test(w)) { if (!q) return false; const T = side(q); return all(x => near(A0(x) - A(x), T(x)) && near(B0(x) - B(x), T(x))); }
+		return all(x => near(A(x), A0(x)) && near(B(x), B0(x)));
+	}
+	const stepsOK = list => list.every(([t, w, q], i) => !i || stepOK(list[i - 1][0], t, w, q));
+	// che cosa è S per un'equazione di primo grado (o che si riduce a 0x = b): un numero, 'none' o 'all'
+	function kind(t) {
+		const d = dif(t), b = d(0), a = d(1) - b;
+		if (!XS.every(x => near(d(x), a * x + b))) return 'nonlin';
+		return near(a, 0) ? (near(b, 0) ? 'all' : 'none') : -b / a;
+	}
+
+	// le regole: con il principio e con la regola (le due catene finiscono nella stessa equazione)
+	const TR = {
+		A: [['5x + 3 = 4x + 10', ''], ['5x + 3 − 3 = 4x + 10 − 3', '$− 3$ da tutti e due i lati (primo principio)'], ['5x = 4x + 10 #− 3#', 'calcoli']],
+		B: [['5x + 3 = 4x + 10', ''], ['5x = 4x + 10 #− 3#', 'trasporto', '3']]
+	};
+	const CA = {
+		A: [['x + 4 = 2x + 4', ''], ['x + 4 − 4 = 2x + 4 − 4', '$− 4$ da tutti e due i lati (primo principio)'], ['x = 2x', 'calcoli']],
+		B: [['x + {4} = 2x + {4}', ''], ['x = 2x', 'cancellazione', '4']]
+	};
+	const CS = {
+		A: [['−x + 2 = −7', ''], ['(−1)(−x + 2) = (−1)(−7)', 'moltiplico per $−1$ (secondo principio)'], ['x − 2 = 7', 'calcoli']],
+		B: [['−x + 2 = −7', ''], ['x − 2 = 7', 'cambio di segno']]
+	};
+	// la strategia: 3(x − 2) + 5 = x + 9
+	const STRAT = { S: 5, rows: [['3(x − 2) + 5 = x + 9', ''], ['3x − 6 + 5 = x + 9', 'proprietà distributiva'], ['3x − x = 9 + 6 − 5', 'trasporto', 'x − 6 + 5'], ['2x = 10', 'termini simili'],
+		['[2x|2] = [10|2]', 'divido i due membri per $2$ (secondo principio)'], ['x = 5', 'calcoli']],
+		Lt: '3 · (5 − 2) + 5 = 3 · 3 + 5 = ' + (3 * (5 - 2) + 5), Rt: '5 + 9 = ' + (5 + 9) };
+	// se davanti alla x resta 0 (n. 119)
+	const ZX = [['2x − 5 = x + 4 + x', '2x − x − x = 4 + 5', '0 = 9'], ['−6x + 7 = 7 − 6x', '−6x + 6x = 7 − 7', '0 = 0']];
+
+	// n. 101: quali sono impossibili?
+	const E101 = [
+		{ t: 'x = −x', k: 'd' }, { t: '7x = 8x', k: 'd' }, { t: '3x − x = 2x', k: 'n' }, { t: '0x = 6', k: 'i' }, { t: '3x = −6 + 3x', k: 'i' }
+	];
+	// n. 115: in ℕ
+	const E115 = [
+		{ rows: [['2x = 10x + 8', ''], ['2x − 10x = 8', 'trasporto', '10x'], ['−8x = 8', 'termini simili'], ['[−8x|−8] = [8|−8]', 'divido i due membri per $−8$ (secondo principio)'], ['x = −1', 'calcoli']], S: -1 },
+		{ rows: [['3(1 − x) = 2x − 2', ''], ['3 − 3x = 2x − 2', 'proprietà distributiva'], ['−3x − 2x = −2 − 3', 'trasporto', '2x + 3'], ['−5x = −5', 'termini simili'], ['[−5x|−5] = [−5|−5]', 'divido i due membri per $−5$ (secondo principio)'], ['x = 1', 'calcoli']], S: 1 },
+		{ rows: [['6x − 1 = 2(x − 3)', ''], ['6x − 1 = 2x − 6', 'proprietà distributiva'], ['6x − 2x = −6 + 1', 'trasporto', '2x − 1'], ['4x = −5', 'termini simili'], ['[4x|4] = [−5|4]', 'divido i due membri per $4$ (secondo principio)'], ['x = −[5|4]', 'calcoli']], S: -5 / 4 }
+	];
+	// p. 409 e p. 410: i vari casi
+	const E409 = {
+		e118: { rows: [['4(1 − x) − 2x = 3x + 1', ''], ['4 − 4x − 2x = 3x + 1', 'proprietà distributiva'], ['−4x − 2x − 3x = 1 − 4', 'trasporto', '3x + 4'], ['−9x = −3', 'termini simili'],
+			['[−9x|−9] = [−3|−9]', 'divido i due membri per $−9$ (secondo principio)'], ['x = [1|3]', 'calcoli']], S: 1 / 3 },
+		e133: { rows: [['(2x + 1)(x − 3) − 2x = 2(x − 1)^2 + 1', ''], ['2x^2 − 6x + x − 3 − 2x = 2(x^2 − 2x + 1) + 1', 'calcoli e prodotto notevole'], ['2x^2 − 7x − 3 = 2x^2 − 4x + 3', 'proprietà distributiva e termini simili'],
+			['−7x − 3 = −4x + 3', 'cancellazione', '2x^2'], ['−7x + 4x = 3 + 3', 'trasporto', '−4x − 3'], ['−3x = 6', 'termini simili'], ['[−3x|−3] = [6|−3]', 'divido i due membri per $−3$ (secondo principio)'], ['x = −2', 'calcoli']], S: -2 },
+		e124: { rows: [['5(2x − 3) + 2(3 − x) = 5 − (x − 1) + 3(3x + 1)', ''], ['10x − 15 + 6 − 2x = 5 − x + 1 + 9x + 3', 'proprietà distributiva'], ['8x − 9 = 8x + 9', 'termini simili'], ['−9 = 9', 'cancellazione', '8x']], S: 'none' },
+		e136: { rows: [['x(x + 7) + 9 = x + (x + 3)^2', ''], ['x^2 + 7x + 9 = x + x^2 + 6x + 9', 'proprietà distributiva e prodotto notevole'], ['x^2 + 7x + 9 = x^2 + 7x + 9', 'termini simili'], ['0 = 0', 'cancellazione', 'x^2 + 7x + 9']], S: 'all' },
+		e143: { rows: [['[x + 1|3] − [2(x − 1)|5] + [2|3] = [x − 4|5] − [4|15]x', ''], ['15⟨[x + 1|3] − [2(x − 1)|5] + [2|3]⟩ = 15⟨[x − 4|5] − [4|15]x⟩', 'moltiplico per $15$'],
+			['5(x + 1) − 6(x − 1) + 10 = 3(x − 4) − 4x', 'calcoli'], ['5x + 5 − 6x + 6 + 10 = 3x − 12 − 4x', 'proprietà distributiva'], ['−x + 21 = −x − 12', 'termini simili'], ['21 = −12', 'cancellazione', '−x']], S: 'none' }
+	};
+	// la fratta (x + 3)/(x − 3) = 0
+	const FR = { L: x => (x + 3) / (x - 3), hole: 3, S: -3 };
+
+	// controllo di tutti i conti mostrati: restituisce l'elenco di ciò che non torna
+	function check() {
+		const bad = [], ok = (c, s) => { if (!c) bad.push(s); };
+		const same = (a, b) => typeof a === 'number' && typeof b === 'number' ? near(a, b) : a === b;
+		const chain = (L, s) => ok(stepsOK(L), s);
+		for (const [nm, R] of [['trasporto', TR], ['cancellazione', CA], ['cambio di segno', CS]]) {
+			chain(R.A, nm + ' con il principio'); chain(R.B, nm + ' con la regola');
+			ok(toJS(R.A[0][0]) === toJS(R.B[0][0]) && toJS(R.A.at(-1)[0]) === toJS(R.B.at(-1)[0]), nm + ': stesse equazioni all’inizio e alla fine');
+		}
+		chain(STRAT.rows, 'strategia'); ok(same(kind(STRAT.rows[0][0]), STRAT.S) && 3 * (5 - 2) + 5 === 14 && 5 + 9 === 14, 'strategia: S e verifica');
+		ok([['x + x − 5'], ['7 − 6x']].every(([q], i) => stepsOK([[ZX[i][0], ''], [ZX[i][1], 'trasporto', q], [ZX[i][2], 'calcoli']])) && kind(ZX[0][0]) === 'none' && kind(ZX[1][0]) === 'all', 'se resta 0');
+		ok(E101.every(e => ({ d: typeof kind(e.t) === 'number', i: kind(e.t) === 'none', n: kind(e.t) === 'all' })[e.k]) && near(kind(E101[0].t), 0) && near(kind(E101[1].t), 0), 'n. 101');
+		E115.forEach((e, i) => { chain(e.rows, 'n. 115 ' + 'abc'[i]); ok(same(kind(e.rows[0][0]), e.S), 'n. 115 ' + 'abc'[i] + ': S'); });
+		ok(!inSet(E115[0].S, 'N') && inSet(E115[1].S, 'N') && !inSet(E115[2].S, 'N'), 'n. 115: in ℕ');
+		for (const [nm, e] of Object.entries(E409)) { chain(e.rows, nm); ok(same(kind(e.rows[0][0]), e.S), nm + ': S'); }
+		ok(FR.L(FR.S) === 0 && !Number.isFinite(FR.L(FR.hole)) && XS.every(x => FR.L(x) !== 0), 'fratta');
+		ok(co(1) === '' && co(-1) === '−' && co(2) === '2', 'parametro');
+		return bad;
+	}
+
+	return { n, frac, SETS, inSet, co, TR, CA, CS, STRAT, ZX, E101, E115, E409, FR, check };
+})();
+</script>
+
+<script>
+(() => {
+	'use strict';
+	const $ = id => document.getElementById(id);
+	const root = document.documentElement;
+
+	// ---------- tema: chiaro di default, la scelta resta salvata ----------
+	function applyTheme(dark, save) {
+		root.dataset.theme = dark ? 'dark' : 'light';
+		$('themeGlyph').textContent = dark ? '☀' : '☾';
+		$('theme').setAttribute('aria-label', dark ? 'Attiva il tema chiaro' : 'Attiva il tema scuro');
+		$('theme').title = dark ? 'Tema chiaro' : 'Tema scuro';
+		if (save) { try { localStorage.setItem('matematica-tema', dark ? 'dark' : 'light'); } catch (e) {} }
+	}
+	let saved = null;
+	try { saved = localStorage.getItem('matematica-tema'); } catch (e) {}
+	applyTheme(saved === 'dark', false);
+	$('theme').addEventListener('click', () => applyTheme(root.dataset.theme !== 'dark', true));
+
+	// ---------- dimensione dei contenuti (zoom del passo), scelta salvata ----------
+	const zInputs = [...document.querySelectorAll('[name="zoomLevel"]')];
+	function applyZoom(v, save) {
+		const z = ['100', '115', '130', '150'].includes(v) ? v : '100';
+		root.dataset.zoom = z;
+		zInputs.forEach(i => { i.checked = i.value === z; });
+		if (save) { try { localStorage.setItem('matematica-zoom', z); } catch (e) {} }
+	}
+	let zSaved = null;
+	try { zSaved = localStorage.getItem('matematica-zoom'); } catch (e) {}
+	applyZoom(zSaved, false);
+	zInputs.forEach(i => i.addEventListener('change', () => { if (i.checked) applyZoom(i.value, true); }));
+	function setZoomMenu(open, back) {
+		$('zpanel').hidden = !open;
+		$('zoomBtn').setAttribute('aria-expanded', String(open));
+		if (open) (zInputs.find(i => i.checked) || zInputs[0]).focus();
+		else if (back) $('zoomBtn').focus();
+	}
+	$('zoomBtn').addEventListener('click', () => setZoomMenu($('zpanel').hidden));
+	$('zclose').addEventListener('click', () => setZoomMenu(false, true));
+	document.addEventListener('pointerdown', e => { if (!$('zpanel').hidden && !$('zmenu').contains(e.target)) setZoomMenu(false, false); });
+	document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('zpanel').hidden) { e.preventDefault(); setZoomMenu(false, true); } }, true);
+
+	// ---------- piccoli aiuti per il testo ----------
+	const m = s => `<span class="m">${s}</span>`;
+	// lettere in corsivo, potenze in apice, indici in pedice (x_0 → x₀); solo formule, mai testo o HTML
+	const F = s => s.replace(/[abctxyABDEPSTU]/g, '<i>$&</i>').replace(/\^(\d)/g, '<sup>$1</sup>').replace(/_(\d)/g, '<sub>$1</sub>');
+	const f = s => m(F(s));
+	const P = s => `<p>${s}</p>`;
+	const DL = (lab, s) => `<div class="def"><div class="dl">${lab}</div>${s}</div>`;
+	const FM = s => `<p class="fm">${s}</p>`;
+	const SYM = { N: 'ℕ', Z: 'ℤ', Q: 'ℚ', R: 'ℝ' };
+	const NAME = { N: 'numeri naturali', Z: 'numeri interi', Q: 'numeri razionali', R: 'numeri reali' };
+	const NN = m('ℕ'), ZZ = m('ℤ'), QQ = m('ℚ'), RR = m('ℝ');
+	const bset = (inner, o = '{', c = '}') => `<span class="bset${inner.includes('class="frac"') ? ' tall' : ''}"><span class="br">${o}</span><span>${inner}</span><span class="br">${c}</span></span>`;
+	const msg = (h, c = '') => `<p class="msg ${h ? c : 'empty'}">${h || '&nbsp;'}</p>`;
+	const fig = (W, H, inner, label, cls = '') => `<div class="fig ${cls}"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${label}">${inner}</svg></div>`;
+	const calc = t => `<span class="calc">${t.split(' = ').map((s, i) => `<span class="cs">${i ? '= ' : ''}${s}</span>`).join(' ')}</span>`;
+	const ub = (e, lab) => `<span class="ub"><span class="e">${e}</span><span class="br"></span><span class="lab">${lab}</span></span>`;
+	// due membri affiancati, con = in mezzo
+	const mems = (L, R) => `<div class="mems">
+		<div class="mbox in">${L.lab ? `<div class="ml">${L.lab}</div>` : ''}<div class="mh">${L.h}</div>${calc(L.t)}</div>
+		<span class="rel in" role="img" aria-label="uguale">=</span>
+		<div class="mbox in">${R.lab ? `<div class="ml">${R.lab}</div>` : ''}<div class="mh">${R.h}</div>${calc(R.t)}</div></div>`;
+	// passaggi scoperti uno alla volta
+	const drow = (e, why, show, cls = '') => `<div class="drow ${show ? cls : 'hide'}"${show ? '' : ' aria-hidden="true"'}><span class="e">${e}</span><span class="why">${why}</span></div>`;
+	const rows = (k, list, lab = '', okLast = '') => `<div class="dblk">${lab ? `<div class="ml">${lab}</div>` : ''}${list.map(([e, w], j) => drow(typeof e === 'string' ? F(e) : e.h, w, j <= k, okLast && j === list.length - 1 ? okLast : '')).join('')}</div>`;
+	const nextCtl = (k, max, lab = 'Ricomincia') => `<div class="ctl"><button type="button" class="btn pri" data-act="next" data-k="next"${k >= max ? ' disabled' : ''}>passaggio successivo</button><button type="button" class="btn" data-act="reset" data-k="reset" aria-label="${lab}">↺</button></div>`;
+	const stepAct = max => (st, a) => { st.k = a === 'next' ? Math.min(max, st.k + 1) : 0; };
+	const tn = s => `<span class="tn">${s}</span>`;
+	// divisioni scritte come frazioni (in seconda niente «:» nei calcoli)
+	const fr = (a, b) => C.frac(F(a), F(b));
+	const frEq = (a, b, c, d) => ({ h: `${fr(a, b)} = ${fr(c, d)}` });
+	const bx = s => `<span class="bx">${s}</span>`;
+	// righe dei calcoli scritte come testo (vedi C): [num|den] frazione, {…} cancellato, #…# cambia membro; $…$ nelle etichette è una formula
+	const disp0 = t => t.split(/(\[[^\]]+\]|\{[^}]+\}|#[^#]+#)/).map(p => p[0] === '[' ? fr(...p.slice(1, -1).split('|'))
+		: p[0] === '{' ? `<span class="cx">${F(p.slice(1, -1))}</span>` : p[0] === '#' ? tn(F(p.slice(1, -1))) : F(p)).join('');
+	const disp = t => t.split(/(⟨[^⟩]+⟩)/).map(p => p[0] === '⟨' ? bset(disp0(p.slice(1, -1)), '(', ')') : disp0(p)).join('');
+	const lab = w => w.replace(/\$([^$]+)\$/g, (_, x) => f(x));
+	const rowsD = (k, list, title = '', end = 'ok') => rows(k, list.map(([t, w]) => [{ h: disp(t) }, lab(w)]), title, end);
+	const dm = t => m(disp(t));
+	const pick = (lab, vals, cur, act) => `<div class="pick"><span class="pl m"><i>${lab}</i> =</span>${vals.map(v =>
+		`<button type="button" class="chip" data-act="${act}" data-v="${v}" data-k="${act}${v}" aria-pressed="${v === cur}">${C.n(v)}</button>`).join('')}</div>`;
+	// freccia con l'operazione sopra; con due etichette: andata sopra, ritorno sotto
+	const xa = t => `<span class="xa"><span class="xt">${t}</span><span class="xr"></span><span class="xt">&nbsp;</span></span>`;
+	const xab = (t, b, s1 = true, s2 = true) => `<span class="xa"><span class="xt${s1 ? '' : ' off'}">${t}</span><span class="xr${s1 ? '' : ' off'}"></span><span class="xr back${s2 ? '' : ' off'}"></span><span class="xt${s2 ? '' : ' off'}">${b}</span></span>`;
+	const eqb = (e, sv = '', show = true, svShow = true) => `<span class="eqb${show ? '' : ' off'}">${e}${sv ? `<span class="sv${svShow ? '' : ' off'}">${sv}</span>` : ''}</span>`;
+	const setS = (vals, h = C.n) => vals.length ? `{${vals.map(h).join(', ')}}` : '∅';
+	const SS = (i, vals) => m(`${F(`S_${i}`)} = ${setS(vals)}`);
+	const why = rs => rs.map(r => m(r.t)).join(', ');
+	const setBtns = (act, on, keys) => `<div class="ctl">${keys.map(k => `<button type="button" class="btn set" data-act="${act}" data-v="${k}" data-k="${act}${k}" aria-pressed="${on(k)}" aria-label="${NAME[k]}">${SYM[k]}</button>`).join('')}</div>`;
+	// schede da scoprire: davanti sempre visibile, dietro dopo il tocco
+	const card = (st, i, front, back, cls = 'in', hid = '?') => `<button type="button" class="kc ${st.open[i] ? cls : ''}" data-act="o" data-v="${i}" data-k="o${i}" aria-expanded="${!!st.open[i]}">${front}${st.open[i] ? back : `<span class="qs">${hid}</span>`}</button>`;
+	const openAct = (st, a, v) => { st.open[v] = 1; };
+	const ORD = C.SETS;
+	const sost = x => `Sostituendo <span class="xbox">${m(`${F('x')} = ${C.n(x)}`)}</span>`;
+	// esercizio: una riga per voce, risposta subito
+	const quiz = (st, items, opts, cls = '') => `<div class="exl">${items.map((it, i) => {
+		const a = st.ans[i], ok = a === it.ans;
+		return `<span class="lt">${'abcdefgh'[i]}.</span><span class="xf">${it.h ?? f(it.f)}</span><span class="bs">${opts.map(([t, v]) =>
+			`<button type="button" class="btn opt ${cls} ${a === v ? (ok ? 'ok' : 'no') : ''} ${a != null && v === it.ans ? 'right' : ''}" data-act="ans" data-v="${i},${v}" data-k="a${i}-${v}" aria-pressed="${a === v}">${t}</button>`).join('')}</span>` +
+			(a != null ? `<p class="fb ${ok ? 'ok' : 'no'}">${it.fb}</p>` : '');
+	}).join('')}</div>`;
+	const ansAct = (st, a, v) => { const [i, x] = v.split(','); st.ans[+i] = x; };
+
+	// ---------- retta dei numeri ----------
+	function nline(o) {
+		const { n0, n1, x0, x1, y } = o, k = (x1 - x0) / (n1 - n0), X = v => x0 + (v - n0) * k;
+		let s = `<line class="ax" x1="${x0 - 0.6 * k}" y1="${y}" x2="${x1 + 0.75 * k}" y2="${y}" marker-end="url(#ah-ink)"/>`;
+		for (let v = n0; v <= n1; v++) {
+			const x = X(v);
+			s += `<line class="tk" x1="${x}" y1="${y - 11}" x2="${x}" y2="${y + 11}"/><text class="tl" x="${x}" y="${y + 51}">${C.n(v)}</text>`;
+		}
+		return { s, X, k };
+	}
+	// il dominio di (x + 3)/(x − 3) = 0: tutta la retta tranne 3; poi la soluzione −3
+	// tre righe: l'universo U (blu), il dominio D (arancio, senza il 3), la loro intersezione sulla retta; poi la soluzione
+	function domLine(k) {
+		const L = nline({ n0: -4, n1: 4, x0: 110, x1: 870, y: 230 }), X = L.X, a = X(-4) - 0.5 * L.k, b = X(4) + 0.5 * L.k;
+		const band = (y, cls) => `<line class="rline ${cls}" x1="${a}" y1="${y}" x2="${b}" y2="${y}"/>`;
+		const hole = y => `<circle class="ring" cx="${X(3)}" cy="${y}" r="12"/>`;
+		const lab = (y, cls, t) => `<text class="slab ${cls}" x="${b}" y="${y - 24}" style="text-anchor:end">${t}</text>`;   // .slab è centrata: qui allineata a destra
+		const it = t => `<tspan font-style="italic">${t}</tspan>`;
+		let g = L.s;
+		if (k >= 1) g += band(70, '') + lab(70, 'acc', `l’universo ${it('U')} = ℝ`);
+		if (k >= 2) g += band(150, 'dl') + hole(150) + lab(150, 'dl', `il dominio ${it('D')} = ℝ ∖ {3}`);
+		if (k >= 3) g += band(230, 'ii') + hole(230) + lab(230, 'ii', `l’intersezione ${it('U')} ∩ ${it('D')}`);
+		if (k >= 4) g += `<circle class="ringin" cx="${X(-3)}" cy="230" r="11"/><text class="sm in" x="${X(-3)}" y="200">−3</text>`;
+		return fig(1000, 300, g, 'l’universo, il dominio, la loro intersezione e la soluzione sulla retta dei numeri');
+	}
+
+	// nei numeri reali: il dominio D e l'universo U; le soluzioni S stanno nell'intersezione
+	const vennDU = () => `<div class="fig" style="max-height:17rem"><svg viewBox="0 0 1000 380" role="img" aria-label="nei numeri reali il dominio D e l’universo U; le soluzioni S stanno nella loro intersezione">
+		<defs><clipPath id="cpD"><ellipse cx="410" cy="200" rx="260" ry="140"/></clipPath></defs>
+		<rect class="vr" x="40" y="20" width="920" height="345" rx="30"/><text class="vl r" x="74" y="76">ℝ</text>
+		<ellipse class="vi" cx="590" cy="200" rx="260" ry="140" clip-path="url(#cpD)"/>
+		<ellipse class="vd" cx="410" cy="200" rx="260" ry="140"/><ellipse class="vu2" cx="590" cy="200" rx="260" ry="140"/>
+		<text class="vl d" x="220" y="215">D</text><text class="vl" x="760" y="215">U</text>
+		<ellipse class="vs" cx="500" cy="200" rx="62" ry="52"/><text class="vl s" x="500" y="216" text-anchor="middle">S</text></svg></div>`;
+
+	// ---------- i passi ----------
+	const CH = [
+		['Il principio generale e i due princìpi', 'Princìpi'],
+		['Le regole che vengono dai princìpi', 'Regole'],
+		['Tassonomia, dominio e universo', 'Tassonomia e dominio'],
+		['La strategia', 'Strategia'],
+		['Esercizi', 'Esercizi'],
+		['Riepilogo', 'Riepilogo']
+	];
+	const plain = s => s.replace(/<[^>]+>/g, '');
+	const MAP_ARROW = '<span class="mc" aria-hidden="true"><svg viewBox="0 0 48 24"><path d="M4,12 H38" marker-end="url(#ah-acc)"/></svg></span>';
+	const FRAT = `${fr('x + 3', 'x − 3')} = 0`;
+	const sol = v => typeof v === 'number' ? m(`${F('S')} = ${bset(disp(v === 1 / 3 ? '[1|3]' : C.n(v)))}`) : v === 'none' ? f('S = ∅') : f('S = ℝ');
+	// una regola: la catena con il principio, poi quella con la regola
+	const ruleStep = (R, title, text, end) => ({ ch: 1, title, text,
+		init: () => ({ k: 0 }),
+		view(st) {
+			const k = st.k, a = R.A.length, max = a + R.B.length - 1;
+			return `<div class="col">${rowsD(k, R.A, R === C.CS ? 'con il secondo principio' : 'con il primo principio', '')}${rowsD(k - a, R.B, 'con la regola')}${nextCtl(k, max)}</div>` +
+				msg(k >= max ? end : '', 'in');
+		},
+		act: stepAct(R.A.length + R.B.length - 1)
+	});
+	// un esercizio: i passaggi uno alla volta, poi la conclusione
+	const exStep = (E, title, tag, text, end, cls, last = cls === 'out' ? 'no' : 'ok') => ({ ch: 4, title, tag, text,
+		init: () => ({ k: 0 }),
+		view(st) {
+			const k = st.k, max = E.rows.length - 1;
+			return `<div class="col">${rowsD(k, E.rows, '', last)}${nextCtl(k, max)}</div>` + msg(k >= max ? end : '', cls);
+		},
+		act: stepAct(E.rows.length - 1)
+	});
+	const KIND = { d: 'determinata', i: 'impossibile', n: 'indeterminata' };
+	const FB101 = [
+		`Trasporto: ${f('x + x = 0')}, cioè ${f('2x = 0')}, quindi ${f('x = 0')}.<br>${f('S = {0}')}: lo 0 è una soluzione.`,
+		`Trasporto: ${f('7x − 8x = 0')}, cioè ${f('−x = 0')}, quindi ${f('x = 0')}.<br>${f('S = {0}')}.`,
+		`${f('2x = 2x')} è vera per ogni ${f('x')}, quindi ${f('S = ℝ')}.`,
+		`Nessun numero moltiplicato per ${m('0')} dà ${m('6')}, quindi ${f('S = ∅')}.`,
+		`Cancellazione di ${f('3x')}: rimane ${m('0 = −6')}, falsa per ogni ${f('x')}, quindi ${f('S = ∅')}.`
+	];
+
+	const STEPS = [
+		// ---------- ripasso ----------
+		{ ch: 0, tag: 'ripasso', title: 'Il principio generale di equivalenza',
+			text: DL('Proprietà (Principio generale di equivalenza)', P('Applicando ai due membri di un’equazione la stessa operazione reversibile, definita per tutti i valori che i membri possono assumere, si ottiene un’equazione equivalente.') +
+				P('Andata: non perdiamo soluzioni.') + P('Ritorno: non aggiungiamo soluzioni.')),
+			// come nella lezione 2: a sinistra l'operazione reversibile (verde), a destra il quadrato (rosso)
+			view: () => `<div class="col"><div class="kgrid">
+				<div class="kc in"><span class="kt">aggiungo 2: reversibile</span><span class="kf">${f('3x − 2 = 7')}<span>e</span>${f('3x = 9')}</span><span class="kf">${f('S_1 = {3}')}</span><span class="kf">${f('S_2 = {3}')}</span>
+					<span class="krs"><span class="kr in">andata: sì</span><span class="kr in">ritorno: sì</span></span><span class="kv">${f('S_1 = S_2')}: equivalenti</span></div>
+				<div class="kc out"><span class="kt">elevo al quadrato: non reversibile</span><span class="kf">${f('x = 1')}<span>e</span>${f('x^2 = 1')}</span><span class="kf">${f('S_1 = {1}')}</span><span class="kf">${f('S_2 = {−1, 1}')}</span>
+					<span class="krs"><span class="kr in">andata: sì, ${m('1 ∈')} ${f('S_2')}</span><span class="kr out">ritorno: no, ${m('−1 ∈')} ${f('S_2')} ma ${m('−1 ∉')} ${f('S_1')}</span></span><span class="kv">${f('S_1 ≠ S_2')}: non equivalenti</span></div>
+			</div></div>` + msg(`Con il quadrato vale solo l’andata: è comparsa la soluzione ${m('−1')}.<br><b>Quindi con un’operazione non reversibile l’equivalenza non è garantita</b>.`, 'out')
+		},
+		{ ch: 0, tag: 'ripasso', title: 'I due princìpi di equivalenza',
+			text: P('Il principio generale con l’addizione e la sottrazione è il primo principio.') + P(`Con la moltiplicazione e la divisione per un numero diverso da ${m('0')} è il secondo principio.`),
+			view: () => `<div class="col"><div class="tree"><div class="tr">principio generale di equivalenza</div>` +
+				'<svg class="fork" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path d="M50,0 L0,40 M50,0 L100,40"/></svg><div class="kgrid">' +
+				`<div class="kc in"><span class="kt">addizione e sottrazione</span><span class="kf">${f('A(x) + c = B(x) + c')}</span><span class="kf">${f('A(x) − c = B(x) − c')}</span><span class="kw">${f('c')} numero oppure espressione polinomiale in ${f('x')}</span><span class="kv">primo principio</span></div>` +
+				`<div class="kc in"><span class="kt">moltiplicazione e divisione</span><span class="kf">${f('c · A(x) = c · B(x)')}</span><span class="kf">${m(`${fr('A(x)', 'c')} = ${fr('B(x)', 'c')}`)}</span><span class="kw">${f('c ≠ 0')}</span><span class="kv">secondo principio</span></div>` +
+				'</div></div></div>'
+		},
+		// ---------- le regole ----------
+		ruleStep(C.TR, 'La regola del trasporto',
+			DL('Proprietà (Regola del trasporto)', P('Un addendo si può spostare da un membro all’altro, cambiandogli il segno.')) +
+				P('Viene dal primo principio: si applica il principio e si semplifica.') + P('La regola permette di saltare il passaggio intermedio.'),
+			`Il ${m('+ 3')} ha cambiato membro e segno.<br><b>Quindi il trasporto è il primo principio con un passaggio in meno.</b>`),
+		ruleStep(C.CA, 'La regola di cancellazione',
+			DL('Proprietà (Regola di cancellazione)', P('Un addendo che compare uguale, con lo stesso segno, in tutti e due i membri si può cancellare.')) +
+				P('Viene anch’essa dal primo principio.') + P('L’addendo deve essere lo stesso, segno compreso.'),
+			`Il ${m('+ 4')} c’era in tutti e due i membri, con lo stesso segno.<br><b>Quindi la cancellazione è il primo principio con un passaggio in meno.</b>`),
+		ruleStep(C.CS, 'La regola del cambio di segno',
+			DL('Proprietà (Regola del cambio di segno)', P('Cambiando il segno a tutti i termini dei due membri si ottiene un’equazione equivalente.')) +
+				P(`Viene dal secondo principio: si moltiplicano i due membri per ${m('−1')}.`),
+			`Tutti i termini hanno cambiato segno.<br><b>Quindi il cambio di segno è il secondo principio con un passaggio in meno.</b>`),
+		// ---------- tassonomia, dominio, universo ----------
+		{ ch: 2, title: 'Equazioni numeriche e letterali',
+			text: DL('Definizione (Equazione letterale)', P('Un’equazione è <b>letterale</b> se, oltre all’incognita, contiene altre lettere, dette <b>parametri</b>.') + P('Altrimenti è <b>numerica</b>.') +
+					P('Un parametro è un numero che non abbiamo ancora fissato.')) +
+				P(`Ad esempio in ${f('ax + 5 = 7')} il parametro è ${f('a')}.`),
+			init: () => ({ a: null }),
+			view(st) {
+				const a = st.a;
+				return `<div class="col"><div class="kgrid">
+					<div class="kc"><span class="kt">numerica</span><span class="kf">${f('3x + 5 = 7')}</span></div>
+					<div class="kc"><span class="kt">letterale</span><span class="kf">${m(`${tn(F('a'))}${F('x + 5 = 7')}`)}</span><span class="kw">${f('a')} parametro, ${f('x')} incognita</span></div></div>
+					${pick('a', [1, 2, 3, -1], a, 'a')}</div>` +
+					msg(a == null ? '' : `Con ${f(`a = ${C.n(a)}`)} diventa ${f(`${C.co(a)}x + 5 = 7`)}.<br><b>Quindi, fissato il parametro, l’equazione diventa numerica</b>.`, 'in');
+			},
+			act(st, a, v) { st.a = +v; }
+		},
+		{ ch: 2, title: 'Equazioni intere e fratte',
+			text: DL('Definizione (Equazione fratta)', P('Un’equazione è <b>fratta</b> se l’incognita compare in un denominatore.') + P('Altrimenti è <b>intera</b>.')),
+			view: () => `<div class="col"><div class="kgrid">
+				<div class="kc"><span class="kt">intera</span><span class="kf">${f('3x + 5 = 7')}</span></div>
+				<div class="kc"><span class="kt">fratta</span><span class="kf">${m(FRAT)}</span><span class="kw">la ${f('x')} è al denominatore</span></div></div></div>`
+		},
+		{ ch: 2, title: 'Dominio e insieme universo',
+			text: DL('Definizione (Dominio)', P(`Il <b>dominio</b> ${f('D')} di un’equazione è l’insieme dei numeri reali per cui i due membri hanno senso.`) + P('È dove le soluzioni possono esistere.')) +
+				P(`Ad esempio in ${m(FRAT)} il denominatore non può essere ${m('0')}, quindi ${f('D = ℝ ∖ {3}')}.`) +
+				P(`L’insieme universo ${f('U')} è invece dove noi cerchiamo le soluzioni.`) + P('Nel libro c’è solo il dominio, ma dominio e universo sono due cose diverse.') +
+				P(`L’universo lo possiamo restringere, ad esempio a ${NN} o a ${ZZ}, mentre il dominio lo valutiamo sempre in ${RR}.`) +
+				P(`<b>Quindi le soluzioni stanno sempre in tutti e due: ${f('S ⊆ U ∩ D')}.</b>`),
+			view: () => `<div class="col"><div class="kgrid">
+				<div class="kc"><span class="kt">dominio ${f('D')}</span><span class="ks">dove le soluzioni possono esistere</span><span class="kw">lo decide l’equazione: i due membri devono avere senso</span></div>
+				<div class="kc"><span class="kt">insieme universo ${f('U')}</span><span class="ks">dove cerchiamo le soluzioni</span><span class="kw">lo scegliamo noi; se non diciamo diversamente, ${f('U = ℝ')}</span></div></div>${vennDU()}</div>`
+		},
+		{ ch: 2, title: 'Dominio e universo in un’equazione fratta',
+			text: P(`In ${m(`${F('S')} = ${bset(`${F('x ∈ U')} | ${F('A(x) = B(x)')}`)}`)} la prima parte dice dove cerchiamo: dipende da ${f('U')}.`) + P(`La seconda parte, l’equazione, decide il dominio ${f('D')}.`),
+			init: () => ({ k: 0 }),
+			view(st) {
+				const k = st.k;
+				return `<div class="col"><p class="bigf">${m(`${F('S')} = ${bset(`<span class="cu">${F('x ∈ U')}</span> &ensp;|&ensp; <span class="cd">${FRAT}</span>`)}`)}</p>
+					<div class="kgrid"><div class="kc lu"><span class="kt">la prima parte, ${f('x ∈ U')}</span><span class="ks">dove cerchiamo</span><span class="kf">${f('U = ℝ')}</span></div>
+					<div class="kc ld"><span class="kt">la seconda parte, l’equazione</span><span class="ks">ha senso solo se ${f('x ≠ 3')}</span><span class="kf">${f('D = ℝ ∖ {3}')}</span></div></div>` +
+					domLine(k) + nextCtl(k, 4) + '</div>' +
+					msg(k === 1 ? `Cerchiamo le soluzioni su tutta la retta: l’universo è ${f('U = ℝ')}.`
+						: k === 2 ? `Il denominatore ${f('x − 3')} vale ${m('0')} per ${f('x = 3')}.<br>Non si può dividere per ${m('0')}: togliamo ${m('3')}.<br>${f('D = ℝ ∖ {3}')} è diverso da ${f('U = ℝ')}.`
+						: k === 3 ? `Le soluzioni devono stare sia in ${f('U')} sia in ${f('D')}.<br>Cioè nell’intersezione ${f('U ∩ D = ℝ ∖ {3}')}.`
+						: k >= 4 ? `Una frazione vale ${m('0')} quando il numeratore è ${m('0')} e il denominatore no.<br>${f('x + 3 = 0')} per ${f('x = −3')}, che sta in ${f('U ∩ D')}.<br><b>Quindi ${f('S = {−3}')}: le soluzioni stanno sia in ${f('U')} sia in ${f('D')}, ${f('S ⊆ U ∩ D')}.</b>` : '', 'in');
+			},
+			act: stepAct(4)
+		},
+		{ ch: 2, title: 'Le equazioni che risolviamo',
+			text: P('Per ora non risolviamo le equazioni fratte né quelle letterali.') + P('Risolviamo le equazioni numeriche intere con membri polinomiali.') +
+				P(`<b>Quindi per noi ${f('D = ℝ')}: conta solo l’universo ${f('U')}.</b>`),
+			view: () => `<div class="col"><div class="ttw"><table class="tt"><tr><th></th><th>intera</th><th>fratta</th></tr>
+				<tr><th class="rh">numerica</th><td class="in">${f('3x + 5 = 7')}<span class="tag">per ora</span></td><td>${m(FRAT)}</td></tr>
+				<tr><th class="rh">letterale</th><td>${f('ax + 5 = 7')}</td><td>${m(`${fr('a', 'x − 1')} = 2`)}</td></tr></table></div></div>`
+		},
+		// ---------- la strategia ----------
+		{ ch: 3, title: 'Come si risolve un’equazione',
+			text: DL('Metodo (Risolvere un’equazione numerica intera)', '<ul class="steps">' + ['Si fanno i calcoli nei due membri: parentesi, prodotti notevoli.',
+					'Se ci sono denominatori, si moltiplicano i due membri per il loro m.c.m. (secondo principio).',
+					`Con il trasporto e la cancellazione si portano i termini con la ${f('x')} a sinistra e i numeri a destra.`,
+					'Si riducono i termini simili.',
+					`Si dividono i due membri per il numero davanti alla ${f('x')}, segno compreso, se non è ${m('0')} (secondo principio).`,
+					'Si verifica la soluzione nell’equazione di partenza.'].map(t => `<li>${t}</li>`).join('') + '</ul>' +
+					P(`Vale se, ridotti i termini simili, non restano potenze della ${f('x')} come ${f('x^2')}.`)),
+			init: () => ({ k: 0 }),
+			view(st) {
+				const k = st.k, V = C.STRAT, max = V.rows.length - 1;
+				return `<div class="col">${rowsD(k, V.rows)}${nextCtl(k, max)}</div>` +
+					msg(k >= max ? `Verifica: ${m(V.Lt)} e ${m(V.Rt)}.<br><b>Quindi ${f('S = {5}')}</b>.` : '', 'in');
+			},
+			act: stepAct(C.STRAT.rows.length - 1)
+		},
+		{ ch: 3, tag: 'n. 119, p. 409', title: `Se davanti alla ${f('x')} resta ${m('0')}`,
+			text: st => P(`A volte, riducendo i termini simili, davanti alla ${f('x')} resta ${m('0')}: la ${f('x')} sparisce.`) +
+				P('Allora basta guardare l’uguaglianza che rimane.') +
+				(st.open[0] && st.open[1] ? P(`<b>Quindi ${f('2x − 5 = x + 4 + x')} è impossibile e ${f('−6x + 7 = 7 − 6x')} è indeterminata.</b>`) : ''),
+			init: () => ({ open: {} }),
+			view: st => `<div class="col"><div class="kgrid">` +
+				card(st, 0, `<span class="kf">${f(C.ZX[0][0])}</span>`,
+					`<span class="kf">${f(C.ZX[0][1])}</span><span class="kf">${f(C.ZX[0][2])}</span><span class="kw">non vale mai</span><span class="kv">impossibile, ${f('S = ∅')}</span>`, 'out') +
+				card(st, 1, `<span class="kf">${f(C.ZX[1][0])}</span>`,
+					`<span class="kf">${f(C.ZX[1][1])}</span><span class="kf">${f(C.ZX[1][2])}</span><span class="kw">vale sempre</span><span class="kv">indeterminata, ${f('S = ℝ')}</span>`) +
+				'</div></div>',
+			act: openAct
+		},
+		// ---------- esercizi ----------
+		{ ch: 4, tag: 'n. 101, p. 407', title: 'Esercizio: quali sono impossibili?',
+			text: st => P('Per ogni equazione: è determinata, impossibile o indeterminata?') +
+				(C.E101.every((e, i) => st.ans[i]) ? P(`<b>Quindi sono impossibili ${f('0x = 6')} e ${f('3x = −6 + 3x')}.</b>`) : ''),
+			init: () => ({ ans: [] }),
+			view: st => `<div class="col">${quiz(st, C.E101.map((e, i) => ({ f: e.t, ans: e.k, fb: FB101[i] })), Object.entries(KIND).map(([v, t]) => [t, v]))}</div>`,
+			act: ansAct
+		},
+		...C.E115.map((E, i) => exStep(E, `Esercizio: risolvere in ${m('ℕ')}`, `n. 115 ${'abc'[i]}, p. 408`,
+			P(`Risolviamo in ${NN}, cioè con ${f('U = ℕ')}.`) + P(`Alla fine controlliamo se la soluzione sta in ${NN}.`),
+			[`${f('x = −1')} non è un numero naturale.<br><b>Quindi in ${NN} l’equazione è impossibile: ${f('S = ∅')}</b>.`,
+				`${f('x = 1')} è un numero naturale.<br><b>Quindi ${f('S = {1}')}</b>.`,
+				`${dm('x = −[5|4]')} non è un numero naturale.<br><b>Quindi in ${NN} l’equazione è impossibile: ${f('S = ∅')}</b>.`][i],
+			i === 1 ? 'in' : 'out')),
+		exStep(C.E409.e118, 'Esercizio: con le parentesi', 'n. 118, p. 409', P('Prima la proprietà distributiva, poi il trasporto.'),
+			`<b>Quindi ${sol(C.E409.e118.S)}: è determinata.</b>`, 'in'),
+		exStep(C.E409.e133, 'Esercizio: con i prodotti notevoli', 'n. 133, p. 409', P('Prima i prodotti notevoli.') + P(`Poi i termini con ${f('x^2')} si cancellano.`),
+			`<b>Quindi ${sol(C.E409.e133.S)}: è determinata.</b>`, 'in'),
+		exStep(C.E409.e124, `Esercizio: che cosa succede a ${f('S')}?`, 'n. 124, p. 409', P('Risolviamo con le regole.') + P('Guardiamo bene l’ultima uguaglianza.'),
+			`${m('−9 = 9')} è falsa per ogni ${f('x')}.<br><b>Quindi ${f('S = ∅')}: è impossibile.</b>`, 'out'),
+		exStep(C.E409.e136, `Esercizio: che cosa succede a ${f('S')}?`, 'n. 136, p. 409', P('Risolviamo con le regole.') + P('Guardiamo bene l’ultima uguaglianza.'),
+			`${m('0 = 0')} è vera per ogni ${f('x')}.<br><b>Quindi ${f('S = ℝ')}: è indeterminata.</b>`, 'in'),
+		exStep(C.E409.e143, 'Esercizio: con i denominatori', 'n. 143, p. 410', P('I denominatori sono 3, 5 e 15: il loro m.c.m. è 15.') + P('Moltiplichiamo i due membri per 15: è il secondo principio.'),
+			`${m('21 = −12')} è falsa per ogni ${f('x')}.<br><b>Quindi ${f('S = ∅')}: è impossibile.</b>`, 'out'),
+		// ---------- riepilogo ----------
+		{ ch: 5, full: true, title: 'Che cosa abbiamo visto: le regole e il dominio',
+			view: () => `<div class="map m3">
+				<section class="mb"><h3>Le regole</h3>
+					<p><b>Trasporto</b>: un addendo cambia membro e segno.<br>${f('A(x) + c = B(x)')} → ${f('A(x) = B(x) − c')}<br>Ad esempio ${f('5x + 3 = 4x + 10')} → ${f('5x = 4x + 10 − 3')}.</p>
+					<p><b>Cancellazione</b>: un addendo uguale, con lo stesso segno, nei due membri si cancella.<br>${f('A(x) + c = B(x) + c')} → ${f('A(x) = B(x)')}</p>
+					<p>Vengono dal primo principio.</p>
+					<p><b>Cambio di segno</b>: si cambia il segno a tutti i termini; viene dal secondo principio, per ${m('−1')}.<br>${f('A(x) = B(x)')} → ${f('−A(x) = −B(x)')}</p>
+					<p>Sono i princìpi con un passaggio in meno.</p>
+				</section>${MAP_ARROW}
+				<section class="mb"><h3>Tassonomia delle equazioni</h3>
+					<p><b>Letterale</b>: oltre all’incognita contiene altre lettere, i parametri; altrimenti <b>numerica</b>.<br>Ad esempio ${f('ax + 5 = 7')} è letterale.</p>
+					<p><b>Fratta</b>: l’incognita è in un denominatore; altrimenti <b>intera</b>.</p>
+					<p>Per ora: equazioni <b>numeriche intere</b> con membri polinomiali.</p>
+				</section>${MAP_ARROW}
+				<section class="mb"><h3>Dominio e universo</h3>
+					<p><b>Dominio</b> ${f('D')}: dove le soluzioni possono esistere, perché i due membri hanno senso.<br><b>Universo</b> ${f('U')}: dove cerchiamo le soluzioni.</p>
+					<p class="mcen">${f('S ⊆ U ∩ D')}</p>
+					<p>Ad esempio per ${m(FRAT)}:<br>${f('D = ℝ ∖ {3}')}, ${f('U = ℝ')}, ${f('S = {−3}')}.</p>
+					<p>Per le equazioni numeriche intere con membri polinomiali, ${f('D = ℝ')}.</p>
+				</section></div>`
+		},
+		{ ch: 5, full: true, title: 'Che cosa abbiamo visto: la strategia',
+			view: () => `<div class="map">
+				<section class="mb"><h3>La strategia</h3>
+					<p>Calcoli nei due membri.<br>Denominatori: si moltiplica per il m.c.m.<br>Trasporto e cancellazione: ${f('x')} a sinistra, numeri a destra.<br>Termini simili.<br>Si divide per il numero davanti alla ${f('x')}, segno compreso, se non è ${m('0')}.<br>Verifica.<br>Vale se, ridotti i termini simili, non restano potenze della ${f('x')} come ${f('x^2')}.</p>
+					<p>Ad esempio ${f('3(x − 2) + 5 = x + 9')} → ${f('2x = 10')} → ${f('x = 5')}.</p>
+				</section>${MAP_ARROW}
+				<section class="mb"><h3>Che cosa può succedere</h3>
+					<p>Se davanti alla ${f('x')} resta ${m('0')}, la ${f('x')} sparisce e resta un’uguaglianza tra numeri.<br>Se è falsa, l’equazione è impossibile, ${f('S = ∅')}: ad esempio ${m('0 = 9')}.<br>Se è vera, è indeterminata, ${f('S = U')}: ad esempio ${m('0 = 0')}.</p>
+					<p>La soluzione trovata deve stare in ${f('U')}, altrimenti non va bene.<br>Ad esempio in ${NN}, ${f('2x = 10x + 8')} dà ${f('x = −1')}, quindi ${f('S = ∅')}.</p>
+				</section></div>
+				<p class="mres"><span>Trasporto, cancellazione e cambio di segno non sono regole nuove: sono i due princìpi con un passaggio in meno.</span></p>`
+		}
+	];
+
+	// ---------- riepilogo da stampare: i due schemi ricomposti su un foglio ----------
+	(() => {
+		const ps = document.createElement('section');
+		ps.className = 'print-summary';
+		ps.setAttribute('aria-hidden', 'true');
+		const tmp = document.createElement('div');
+		tmp.innerHTML = STEPS.filter(x => x.full).map(x => x.view({})).join('');
+		const B = [...tmp.querySelectorAll('section.mb')].map(b => b.outerHTML);   // Regole, Tassonomia, Dominio, Strategia, Che cosa può succedere
+		const res = tmp.querySelector('.mres').outerHTML;
+		const T = '<h1 class="ps-t">Equazioni – Lezione 3: riepilogo</h1>';
+		ps.innerHTML = `<div class="ps-port">${T}<div class="ps-row">${B[0]}${B[1]}</div><div class="ps-row">${B[2]}${B[3]}</div><div class="ps-row">${B[4]}${res}</div></div>` +
+			`<div class="ps-land">${T}${tmp.innerHTML}</div>`;
+		document.body.appendChild(ps);
+		document.addEventListener('click', e => { if (e.target.closest?.('[data-print]')) window.print(); });
+	})();
+
+	// ---------- motore ----------
+	const S = {};
+	let cur = 0, lastLeft = '';
+	let nextLesson = null;   // indirizzo della lezione successiva, se sul sito c'è
+	const shown = new Set();   // testi con dissolvenza già comparsi nel passo
+	const main = $('main'), left = $('left'), stage = $('stage');
+	const stOf = i => S[i] ??= (STEPS[i].init ? STEPS[i].init() : {});
+
+	// barra di avanzamento
+	(() => {
+		let h = '', i = 0;
+		CH.forEach(([, name], c) => {
+			const n = STEPS.filter(s => s.ch === c).length;
+			h += `<div class="pch" style="--n:${n}" data-ch="${c}"><div class="segs">`;
+			for (let j = 0; j < n; j++, i++) h += `<button type="button" class="seg" data-go="${i}" aria-label="${plain(CH[c][0])}, passo ${i + 1}"></button>`;
+			h += `</div><span class="pname">${name}</span></div>`;
+		});
+		$('prog').innerHTML = h;
+		$('prog').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(+b.dataset.go); });
+	})();
+
+	function renderLeft() {
+		const P = STEPS[cur], st = stOf(cur);
+		const T = typeof P.text === 'function' ? P.text(st) : P.text;
+		const h = (P.full ? `<div class="thead"><h2>${P.title}</h2><span class="tacts"><button type="button" class="btn" data-print><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z"/></svg>Stampa il riepilogo</button>${cur === STEPS.length - 1 && nextLesson ? `<a class="btn pri" href="${nextLesson}">Prossima lezione →</a>` : ''}</span></div>` : `<h2>${P.title}${P.tag ? `<span class="tag">${P.tag}</span>` : ''}</h2>`) +
+			(T ? `<div class="txt">${T}</div>` : '');
+		if (h !== lastLeft) left.innerHTML = lastLeft = h;          // se non cambia, non si ridisegna
+	}
+	function renderStage() {
+		const old = stage.querySelector('.ttw')?.scrollLeft || 0;
+		stage.innerHTML = STEPS[cur].view(stOf(cur));
+		const w = stage.querySelector('.ttw');
+		if (w) w.scrollLeft = old;
+	}
+	// testo per chi usa un lettore di schermo: apici, pedici e frazioni si leggono
+	const say = e => {
+		const c = e.cloneNode(true);
+		c.querySelectorAll('sup').forEach(s => { s.textContent = ' alla ' + s.textContent; });
+		c.querySelectorAll('sub').forEach(s => { s.textContent = ' ' + s.textContent; });
+		c.querySelectorAll('.frac').forEach(q => { q.textContent = `${q.children[0].textContent} fratto ${q.children[1].textContent}`; });
+		c.querySelectorAll('br').forEach(b => b.replaceWith(' '));   // le righe a capo non devono attaccare le frasi
+		return c.textContent;
+	};
+	function renderChrome() {
+		const P = STEPS[cur];
+		$('h1').innerHTML = CH[P.ch][0];
+		document.querySelectorAll('.seg').forEach((b, i) => {
+			b.classList.toggle('cur', i === cur); b.classList.toggle('done', i < cur);
+			if (i === cur) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+		});
+		document.querySelectorAll('.pch').forEach(p => p.classList.toggle('cur', +p.dataset.ch === P.ch));
+		$('prev').disabled = cur === 0;
+		$('next').disabled = cur === STEPS.length - 1;
+		$('count').textContent = `${cur + 1} / ${STEPS.length}`;
+	}
+	function go(i) {
+		cur = Math.max(0, Math.min(STEPS.length - 1, i));
+		main.classList.toggle('full', !!STEPS[cur].full);
+		renderChrome(); renderLeft(); renderStage();
+		shown.clear(); stage.querySelectorAll('.late').forEach(e => shown.add(e.textContent));
+		left.scrollTop = 0; stage.scrollTop = 0;
+		const h = '#passo-' + (cur + 1);
+		if (location.hash !== h) { try { history.replaceState(null, '', h); } catch (e) {} }
+	}
+	// dopo un'azione: ridisegna e rimette il fuoco dov'era
+	function refresh() {
+		const fk = document.activeElement?.dataset?.k;
+		if (typeof STEPS[cur].text === 'function') { lastLeft = ''; renderLeft(); }
+		renderStage();
+		// la dissolvenza solo per ciò che compare adesso, non per ciò che si vedeva già
+		stage.querySelectorAll('.late').forEach(e => { if (shown.has(e.textContent)) e.classList.remove('late'); else shown.add(e.textContent); });
+		if (fk) {
+			const t = main.querySelector(`[data-k="${CSS.escape(fk)}"]`);
+			(t && !t.disabled ? t : main.querySelector('[data-k="reset"]'))?.focus({ preventScroll: true });
+		}
+		$('live').textContent = [...main.querySelectorAll('.fb, .msg:not(.empty), .kc[aria-expanded="true"]')].map(say).join(' ');
+	}
+	main.addEventListener('click', e => {
+		const t = e.target.closest('[data-act]');
+		if (!t || !main.contains(t) || t.disabled) return;
+		STEPS[cur].act(stOf(cur), t.dataset.act, t.dataset.v);
+		refresh();
+	});
+	main.addEventListener('keydown', e => {
+		if (e.key === 'Enter' && e.target.id === 'try') { e.preventDefault(); main.querySelector('[data-act="try"]')?.click(); }
+	});
+	document.addEventListener('keydown', e => {
+		if (e.altKey || e.ctrlKey || e.metaKey || e.defaultPrevented) return;
+		if (e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+		if (e.key === 'ArrowRight' && cur < STEPS.length - 1) { e.preventDefault(); go(cur + 1); }
+		if (e.key === 'ArrowLeft' && cur > 0) { e.preventDefault(); go(cur - 1); }
+	});
+	$('prev').addEventListener('click', () => go(cur - 1));
+	$('next').addEventListener('click', () => go(cur + 1));
+	const fromHash = () => { const r = /^#passo-(\d{1,2})$/.exec(location.hash); return r ? +r[1] - 1 : null; };
+	window.addEventListener('hashchange', () => { const i = fromHash(); if (i != null && i !== cur) go(i); });
+	// ---------- prossima lezione: solo sul sito, e solo se il file della lezione successiva c'è;
+	// il link compare nell'intestazione dell'ultimo riepilogo ----------
+	if (location.protocol.startsWith('http')) $('homeBtn').hidden = false;   // sul sito si torna all'elenco delle lezioni; da file no
+	const ln = /lezione-(\d+)(?:\.html)?$/.exec(location.pathname);
+	if (ln && location.protocol.startsWith('http')) {
+		const url = location.pathname.replace(/lezione-\d+(?:\.html)?$/, `lezione-${+ln[1] + 1}.html`);
+		fetch(url, { method: 'HEAD', cache: 'no-store' })
+			.then(r => { if (r.ok) { nextLesson = url; renderLeft(); } })
+			.catch(() => {});
+	}
+	go(fromHash() ?? 0);
+})();
+</script>
+</body>
+</html>

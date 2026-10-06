@@ -1,7 +1,7 @@
 /* Font delle lezioni, ospitati nel sito: stessi file e stesse regole che darebbe Google Fonts.
    Licenza SIL Open Font License (OFL.txt per Lexend, OFL-STIX.txt per STIX Two Text).
    Generato da integra_nel_sito.py: non modificare a mano. */
-/* simboli STIX: ·π…ℕℚℝℤ←→∀∅∈∉−√∼≈≤≥⊂⊆⋅⋆⋯⟹⟺ */
+/* simboli STIX: ·π…ℕℚℝℤ←→∀∅∈∉−∖√∩∼≈≤≥⊂⊆⋅⋆⋯⟹⟺ */
 
 @font-face {
   font-family: 'Lexend';
@@ -225,7 +225,7 @@
   font-weight: 400;
   font-display: swap;
   src: url("stix-italic-simboli.woff2") format('woff2');
-  unicode-range: U+b7, U+338, U+3c0, U+2026, U+2115, U+211a, U+211d, U+2124, U+2190, U+2192, U+219a-219b, U+2200, U+2205, U+2208-2209, U+2212, U+221a, U+223c, U+2241, U+2248-2249, U+2264-2265, U+2270-2271, U+2282, U+2284, U+2286, U+2288, U+22c5-22c6, U+22ef, U+27f9-27fa;
+  unicode-range: U+b7, U+338, U+3c0, U+2026, U+2115, U+211a, U+211d, U+2124, U+2190, U+2192, U+219a-219b, U+2200, U+2205, U+2208-2209, U+2212, U+2216, U+221a, U+2229, U+223c, U+2241, U+2248-2249, U+2264-2265, U+2270-2271, U+2282, U+2284, U+2286, U+2288, U+22c5-22c6, U+22ef, U+27f9-27fa;
 }
 @font-face {
   font-family: 'STIX Two Text';
@@ -233,7 +233,7 @@
   font-weight: 400;
   font-display: swap;
   src: url("stix-simboli.woff2") format('woff2');
-  unicode-range: U+b7, U+338, U+3c0, U+2026, U+2115, U+211a, U+211d, U+2124, U+2190, U+2192, U+219a-219b, U+2200, U+2205, U+2208-2209, U+2212, U+221a, U+223c, U+2241, U+2248-2249, U+2264-2265, U+2270-2271, U+2282, U+2284, U+2286, U+2288, U+22c5-22c6, U+22ef, U+27f9-27fa;
+  unicode-range: U+b7, U+338, U+3c0, U+2026, U+2115, U+211a, U+211d, U+2124, U+2190, U+2192, U+219a-219b, U+2200, U+2205, U+2208-2209, U+2212, U+2216, U+221a, U+2229, U+223c, U+2241, U+2248-2249, U+2264-2265, U+2270-2271, U+2282, U+2284, U+2286, U+2288, U+22c5-22c6, U+22ef, U+27f9-27fa;
 }
 @font-face {
   font-family: 'STIX Two Text';
@@ -241,5 +241,5 @@
   font-weight: 700;
   font-display: swap;
   src: url("stix-simboli.woff2") format('woff2');
-  unicode-range: U+b7, U+338, U+3c0, U+2026, U+2115, U+211a, U+211d, U+2124, U+2190, U+2192, U+219a-219b, U+2200, U+2205, U+2208-2209, U+2212, U+221a, U+223c, U+2241, U+2248-2249, U+2264-2265, U+2270-2271, U+2282, U+2284, U+2286, U+2288, U+22c5-22c6, U+22ef, U+27f9-27fa;
+  unicode-range: U+b7, U+338, U+3c0, U+2026, U+2115, U+211a, U+211d, U+2124, U+2190, U+2192, U+219a-219b, U+2200, U+2205, U+2208-2209, U+2212, U+2216, U+221a, U+2229, U+223c, U+2241, U+2248-2249, U+2264-2265, U+2270-2271, U+2282, U+2284, U+2286, U+2288, U+22c5-22c6, U+22ef, U+27f9-27fa;
 }
