@@ -361,7 +361,7 @@ a.btn { text-decoration: none; }
 /* ---------- schermi stretti ---------- */
 @media (max-width: 820px) {
 	.exl { grid-template-columns: auto minmax(0, 1fr); justify-content: stretch; }
-	.exl .bs { grid-column: 2; }
+	.exl .bs { grid-column: 2; flex-wrap: wrap; }   /* sul telefono i bottoni vanno a capo */
 	.exl .xf .m { white-space: normal; }
 	html, body { height: auto; }
 	.app { height: auto; min-height: 100%; }
@@ -791,7 +791,7 @@ const C = (() => {
 			ff = e.f; Sh = ok ? `{${e.sols.map(q => q.h).join(', ')}}` : '∅'; ww = w + (w && t ? ': ' : '') + (t || '');
 		}
 		return setBtns('s', k => k === s, ['N', 'Z', 'Q', 'R']) + fig(1000, 250, g, 'le soluzioni sulla retta dei numeri') +
-			`<div class="col"><div class="kc ${ok ? 'in' : 'out'}" style="width:min(100%,36rem)"><div class="kf">${f(ff)}</div><div class="ks">${f(`U = ${SYM[s]}`)}: ${m(`${F('S')} = ${Sh}`)}</div><div class="kw">${ww}</div></div></div>`;
+			`<div class="col"><div class="kc ${ok ? 'in' : 'out'}" style="width:min(100%,36rem)"><div class="kf">${f(ff)}</div><div class="ks">Con ${f(`U = ${SYM[s]}`)}, ${m(`${F('S')} = ${Sh}`)}</div><div class="kw">${ww}</div></div></div>`;
 	}
 
 	// U con dentro S (anche piccolo, per le inclusioni)
@@ -885,9 +885,9 @@ const C = (() => {
 				const q = st.ver ? quiz(st, [{ h: who, ans: small, fb }], ORD.map(k => [SYM[k], k]), 'set').replace('<span class="lt">a.</span>', '') : '';
 				const done = st.ans[0] === small;
 				const out = !done ? msg('') : msg([
-					`${m(`${F('S')} = {−7} ⊂ ℤ`)}.<br>Se ${f('U')} è ${ZZ}, ${QQ} o ${RR}: ${m(`${F('S')} = {−7}`)}.<br>Se ${f('U')} è ${NN}: ${m(`${F('S')} = ∅`)}.`,
-					`${m(`${F('S')} = ${bset(e.h)} ⊂ ℚ`)}.<br>Se ${f('U')} è ${QQ} o ${RR}: ${m(`${F('S')} = ${bset(e.h)}`)}.<br>Se ${f('U')} è ${NN} o ${ZZ}: ${m(`${F('S')} = ∅`)}.`,
-					`${m(`${F('S')} = {−√5, √5} ⊂ ℝ`)}.<br>Se ${f('U')} è ${RR}: ${m(`${F('S')} = {−√5, √5}`)}.<br>Se ${f('U')} è ${NN}, ${ZZ} o ${QQ}: ${m(`${F('S')} = ∅`)}.`][j], 'in');
+					`${m(`${F('S')} = {−7} ⊂ ℤ`)}.<br>Se ${f('U')} è ${ZZ}, ${QQ} o ${RR}, allora ${m(`${F('S')} = {−7}`)}.<br>Se ${f('U')} è ${NN}, allora ${m(`${F('S')} = ∅`)}.`,
+					`${m(`${F('S')} = ${bset(e.h)} ⊂ ℚ`)}.<br>Se ${f('U')} è ${QQ} o ${RR}, allora ${m(`${F('S')} = ${bset(e.h)}`)}.<br>Se ${f('U')} è ${NN} o ${ZZ}, allora ${m(`${F('S')} = ∅`)}.`,
+					`${m(`${F('S')} = {−√5, √5} ⊂ ℝ`)}.<br>Se ${f('U')} è ${RR}, allora ${m(`${F('S')} = {−√5, √5}`)}.<br>Se ${f('U')} è ${NN}, ${ZZ} o ${QQ}, allora ${m(`${F('S')} = ∅`)}.`][j], 'in');
 				const big = `<p class="bigf">${f(e.f)} &nbsp;&nbsp; ${m(`${F('S')} = ${bset(e.h)}`)}</p>`;
 				return `<div class="col">${st.ver ? `<div class="vrow">${big}${vbox}</div>` : big + vbox}${q}</div>` + out;   // dopo la verifica affiancati: con le frazioni non ci starebbe
 			},
@@ -1177,7 +1177,7 @@ const C = (() => {
 				<section class="mb"><h3>I princìpi di equivalenza</h3>
 					<p>Sono il principio generale con ${m('+')} e ${m('−')} (primo) e con ${m('·')} e ${m(':')} (secondo).</p>
 					<p><b>Primo</b>: ${f('A(x) = B(x) ⟺ A(x) + c = B(x) + c')}<br>${f('A(x) = B(x) ⟺ A(x) − c = B(x) − c')}<br>${f('c')} numero oppure espressione polinomiale in ${f('x')}.</p>
-					<p><b>Secondo</b>: ${f('A(x) = B(x) ⟺ c · A(x) = c · B(x)')}<br>${m(`${F('A(x) = B(x) ⟺ ')}${fr('A(x)', 'c')} = ${fr('B(x)', 'c')}`)}<br>${f('c ∈ ℝ')}, ${f('c ≠ 0')}: ${m('· 0')} non è reversibile.</p>
+					<p><b>Secondo</b>: ${f('A(x) = B(x) ⟺ c · A(x) = c · B(x)')}<br>${m(`${F('A(x) = B(x) ⟺ ')}${fr('A(x)', 'c')} = ${fr('B(x)', 'c')}`)}<br>${f('c ∈ ℝ')}, ${f('c ≠ 0')}, perché ${m('· 0')} non è reversibile.</p>
 					<p>A ogni passaggio prima il principio, poi i calcoli.<br>Per togliere un termine o un fattore si applica l’operazione inversa; si divide per il numero davanti alla ${f('x')}, segno compreso.</p>
 					<p class="mcen">${f('3x − 2 = 7')}${xa(`${m('+ 2')} (primo)`)}${f('3x = 9')}${xa(`${m(': 3')} (secondo)`)}${f('x = 3')}</p>
 				</section>${MAP_ARROW}

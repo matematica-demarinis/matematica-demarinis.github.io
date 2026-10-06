@@ -913,7 +913,7 @@ const C = (() => {
 				let out = msg('');
 				if (x != null) {
 					const r = C.sq9(x);
-					out = msg(ok(x) ? `${m(r.t)}: ${m(C.n(x))} è una soluzione.${all ? '<br><b>Quindi abbiamo trovato due soluzioni</b>.' : '<br>Ce ne sono altre?'}` : `${m(`${r.t} ≠ 9`)}: ${m(C.n(x))} non è una soluzione.`, ok(x) ? 'in' : 'out');
+					out = msg(ok(x) ? `${m(r.t)}, quindi ${m(C.n(x))} è una soluzione.${all ? '<br><b>Quindi abbiamo trovato due soluzioni</b>.' : '<br>Ce ne sono altre?'}` : `${m(`${r.t} ≠ 9`)}, quindi ${m(C.n(x))} non è una soluzione.`, ok(x) ? 'in' : 'out');
 				}
 				return `<div class="col"><p class="bigf">${f('x^2 = 9')}</p>` +
 					pick('x', V, x, 'x', v => st.seen[v] ? (ok(v) ? 'in' : 'out') : '') +
@@ -937,7 +937,7 @@ const C = (() => {
 					<tr><th class="rh">primo membro ${f('4 + 3x')}</th>${X8.map(x => cell(x, C.pt2L(x).v)).join('')}</tr>
 					<tr><th class="rh">secondo membro ${m('19')}</th>${X8.map(x => `<td class="${st.seen[x] ? (ok(x) ? 'in' : 'out') : ''}">19</td>`).join('')}</tr></table></div>` + out +
 					`<div class="legend">${bad != null ? `<p class="late">Con ${f(`x = ${bad}`)} è falsa: basta questo per dire che non è un’identità.</p>` : ''}` +
-					(st.seen[5] ? `<p class="late">Con ${f('x = 5')}: ${m(C.pt2L(5).t.split(' = ')[0] + ' = 19')}.<br><b>Quindi ${f('x = 5')} è una soluzione</b>.</p>` : '') + '</div></div>';
+					(st.seen[5] ? `<p class="late">Con ${f('x = 5')} si ha ${m(C.pt2L(5).t.split(' = ')[0] + ' = 19')}.<br><b>Quindi ${f('x = 5')} è una soluzione</b>.</p>` : '') + '</div></div>';
 			},
 			act(st, a, v) { st.seen[+v] = 1; st.last = +v; }
 		},
@@ -1007,7 +1007,7 @@ const C = (() => {
 					<section class="mb"><h3>Le equazioni</h3>
 						<p>Un’<b>equazione</b> è un’uguaglianza tra due espressioni letterali, per la quale ci chiediamo <b>per quali valori</b> delle lettere è vera.</p>
 						<p class="mcen">${f('7 + x = 3x − 1')}: &nbsp;incognita ${f('x')}, soluzione (o&nbsp;radice) ${f(`x = ${C.linL(4).v === C.linR(4).v ? 4 : '?'}`)}</p>
-						<p><b>Verifica per sostituzione</b>: si mette il numero al posto dell’incognita e si calcolano i due membri separatamente.<br>In ${f('5x + 4 = x − 4')} con ${f('x = −2')}: ${m(V.t)} e ${m(W.t)}: sono uguali, ${f('x = −2')} è una soluzione.</p>
+						<p><b>Verifica per sostituzione</b>: si mette il numero al posto dell’incognita e si calcolano i due membri separatamente.<br>In ${f('5x + 4 = x − 4')} con ${f('x = −2')} i due membri valgono ${m(C.n(V.v))} e ${m(C.n(W.v))}: sono uguali, ${f('x = −2')} è una soluzione.</p>
 					</section>${MAP_ARROW}
 					<section class="mb"><h3>L’insieme delle soluzioni ${f('S')}</h3>
 						<table class="mt"><tr><th>${f('S')} può essere</th><th>ad esempio</th><th></th></tr>
