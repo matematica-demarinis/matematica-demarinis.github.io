@@ -424,7 +424,7 @@ a.btn { text-decoration: none; }
 		--two: #B35C00; --in: #13804A; --in-bg: #DFF3E7; --out: #BE3131; --out-bg: #FBE3E3; --hl: #FFEFA8; --hover: #EAF0F8;
 		--chip: #F3F6F9; --focus: #2A4DB5; --ctl: #8C9AAB; --shadow: rgba(0, 0, 0, 0.25);
 	}
-	html { font-size: 8.6pt; height: auto; }
+	html { font-size: 8.4pt; height: auto; }
 	body { height: auto; background: #FFFFFF; background-image: none; }
 	.app { display: none !important; }
 	.print-summary { display: block; padding: 8mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1155,18 +1155,18 @@ const C = (() => {
 				<section class="mb"><h3>L’insieme universo ${f('U')}</h3>
 					<p>È l’insieme in cui cerchiamo le soluzioni.</p>
 					<p class="mcen">${f('S = {x ∈ U | A(x) = B(x)} ⊆ U')}</p>
-					<p>La stessa equazione può avere insiemi delle soluzioni diversi se cambia l’universo.<br>${f('x^2 = 2')}: con ${f('U = ℚ')}, ${f('S = ∅')}; con ${f('U = ℝ')}, ${f(`S = ${C.UTAB[1].S.R}`)}.</p>
+					<p>La stessa equazione può avere insiemi delle soluzioni diversi se cambia l’universo.<br>Ad esempio ${f('x^2 = 2')}: con ${f('U = ℚ')}, ${f('S = ∅')}; con ${f('U = ℝ')}, ${f(`S = ${C.UTAB[1].S.R}`)}.</p>
 					<p>Se non diciamo diversamente, ${f('U = ℝ')}.</p>
 				</section>${MAP_ARROW}
 				<section class="mb"><h3>Equazioni equivalenti</h3>
 					<p>Due equazioni, nello stesso universo, sono <b>equivalenti</b> se hanno lo stesso insieme delle soluzioni.</p>
 					<p class="mbig">${f('E_1 ∼ E_2 ⟺ S_1 = S_2')}</p>
-					<p>${f('3x − 2 = 7')} e ${f('3x = 9')} sono equivalenti: ${m(`${F('S')} = ${setS(G.S)}`)}.<br>${f('x^2 = 9')} e ${f('x = 3')} no.</p>
-					<p>Dipende dall’universo: ${f('5x − 2 = 18')} e ${f('x^2 = 16')} sono equivalenti in ${NN}, non in ${ZZ}.</p>
+					<p>Ad esempio ${f('3x − 2 = 7')} e ${f('3x = 9')} sono equivalenti: ${m(`${F('S')} = ${setS(G.S)}`)}.<br>${f('x^2 = 9')} e ${f('x = 3')} no.</p>
+					<p>L’equivalenza dipende dall’universo: ad esempio ${f('5x − 2 = 18')} e ${f('x^2 = 16')} sono equivalenti in ${NN}, non in ${ZZ}.</p>
 				</section>${MAP_ARROW}
 				<section class="mb"><h3>Operazioni reversibili</h3>
 					<p>Dal risultato possiamo risalire senza ambiguità al numero di partenza: risultati uguali vengono solo da numeri uguali.</p>
-					<p>${m('+ 2')} e ${m('· 3')} sono reversibili; elevare al quadrato no, ${m('1<sup>2</sup> = (−1)<sup>2</sup>')}; ${m('· 0')} no.</p>
+					<p>Ad esempio ${m('+ 2')} e ${m('· 3')} sono reversibili; elevare al quadrato no, perché ${m('1<sup>2</sup> = (−1)<sup>2</sup>')}; ${m('· 0')} no.</p>
 					<p><b>Principio generale di equivalenza</b>: applicando ai due membri la stessa operazione reversibile, definita per tutti i valori dei membri, si ottiene un’equazione equivalente.</p>
 					<p>Andata: non perdiamo soluzioni.<br>Ritorno: non aggiungiamo soluzioni.</p>
 				</section></div>`
@@ -1178,12 +1178,12 @@ const C = (() => {
 					<p>Sono il principio generale con ${m('+')} e ${m('−')} (primo) e con ${m('·')} e ${m(':')} (secondo).</p>
 					<p><b>Primo</b>: ${f('A(x) = B(x) ⟺ A(x) + c = B(x) + c')}<br>${f('A(x) = B(x) ⟺ A(x) − c = B(x) − c')}<br>${f('c')} numero oppure espressione polinomiale in ${f('x')}.</p>
 					<p><b>Secondo</b>: ${f('A(x) = B(x) ⟺ c · A(x) = c · B(x)')}<br>${m(`${F('A(x) = B(x) ⟺ ')}${fr('A(x)', 'c')} = ${fr('B(x)', 'c')}`)}<br>${f('c ∈ ℝ')}, ${f('c ≠ 0')}, perché ${m('· 0')} non è reversibile.</p>
-					<p>A ogni passaggio prima il principio, poi i calcoli.<br>Per togliere un termine o un fattore si applica l’operazione inversa; si divide per il numero davanti alla ${f('x')}, segno compreso.</p>
+					<p>A ogni passaggio prima il principio, poi i calcoli; si divide per il numero davanti alla ${f('x')}, segno compreso.<br>Ad esempio:</p>
 					<p class="mcen">${f('3x − 2 = 7')}${xa(`${m('+ 2')} (primo)`)}${f('3x = 9')}${xa(`${m(': 3')} (secondo)`)}${f('x = 3')}</p>
 				</section>${MAP_ARROW}
 				<section class="mb"><h3>Che cosa può succedere a ${f('S')}</h3>
-					<table class="mt"><tr><td>${f('S')} finito, non vuoto</td><td><b>determinata</b></td><td>${f('x − 4 = 6')}</td></tr><tr><td>${f('S = ∅')}</td><td><b>impossibile</b></td><td>${f('x + 5 = x')}</td></tr><tr><td>${f('S')} infinito</td><td><b>indeterminata</b></td><td>${f('2(x + 3) = 2x + 6')}</td></tr></table>
-					<p>${f('x + 5 = x')} diventa ${m('5 = 0')}, falsa per ogni ${f('x')}.<br>${f('2(x + 3) = 2x + 6')} diventa ${m('0 = 0')}, vera per ogni ${f('x')}.</p>
+					<table class="mt"><tr><th>${f('S')}</th><th>l’equazione è</th><th>ad esempio</th></tr><tr><td>${f('S')} finito, non vuoto</td><td><b>determinata</b></td><td>${f('x − 4 = 6')}</td></tr><tr><td>${f('S = ∅')}</td><td><b>impossibile</b></td><td>${f('x + 5 = x')}</td></tr><tr><td>${f('S')} infinito</td><td><b>indeterminata</b></td><td>${f('2(x + 3) = 2x + 6')}</td></tr></table>
+					<p>Se alla fine resta un’uguaglianza falsa per ogni ${f('x')}, è impossibile; se è vera per ogni ${f('x')}, è indeterminata.<br>Ad esempio ${f('x + 5 = x')} → ${m('5 = 0')} e ${f('2(x + 3) = 2x + 6')} → ${m('0 = 0')}.</p>
 					<p>Un’identità è un’equazione indeterminata.</p>
 				</section></div>
 				<p class="mres"><span>Risolvere vuol dire trovare ${f('S')}: si sostituisce l’equazione con equazioni equivalenti sempre più semplici, che hanno lo stesso ${f('S')}.</span></p>`

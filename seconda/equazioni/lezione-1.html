@@ -988,13 +988,13 @@ const C = (() => {
 					<section class="mb"><h3>Gli insiemi numerici</h3>
 						<p class="mbig">${m('ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ')}</p>
 						<table class="mt"><tr><th></th><th>numeri</th><th>ad esempio</th></tr>${EX.map(([s, e]) => `<tr><td class="s">${m(SYM[s])}</td><td>${NAME[s].replace('numeri ', '')}${s === 'Z' ? ' (relativi)' : ''}</td><td>${m(e)}</td></tr>`).join('')}</table>
-						<p>Ogni insieme contiene il precedente e ha numeri in più: <span class="in">${m('−3 ∈ ℤ')}</span> ma <span class="out">${m('−3 ∉ ℕ')}</span>.</p>
+						<p>Ogni insieme contiene il precedente e ha numeri in più: ad esempio <span class="in">${m('−3 ∈ ℤ')}</span> ma <span class="out">${m('−3 ∉ ℕ')}</span>.</p>
 					</section>${MAP_ARROW}
 					<section class="mb"><h3>Le identità</h3>
 						<p>Un’<b>identità</b> è un’uguaglianza tra due espressioni letterali che è vera <b>qualunque</b> numero si metta al posto delle lettere.</p>
-						<p>Per dire che <b>non</b> lo è basta un <b>controesempio</b>: ${f('(a + b)^2 = a^2 + b^2')} è sbagliata, con ${f('a = b = 1')} si ottiene ${m(`${C.sqSum(1, 1).v} ≠ ${C.sumSq(1, 1).v}`)}.</p>
-						<p>Qualche esempio che funziona non basta: ${f('x^3 + 2x = 3x^2')} è vera per ${f('x = 0, 1, 2')} ma non per ${f('x = 3')} (${m(`${C.cubeL(3).v} ≠ ${C.cubeR(3).v}`)}).</p>
-						<p>Per dire che <b>è</b> un’identità si semplifica <b>ogni membro per conto suo</b>: se alla fine i due membri diventano la stessa espressione, è un’identità.<br>Facendo il prodotto ${f('(a + b)(a + b)')} si trova il prodotto notevole giusto:</p>
+						<p>Per dire che <b>non</b> lo è basta un <b>controesempio</b>.<br>Ad esempio ${f('(a + b)^2 = a^2 + b^2')} è sbagliata: con ${f('a = b = 1')} si ottiene ${m(`${C.sqSum(1, 1).v} ≠ ${C.sumSq(1, 1).v}`)}.</p>
+						<p>Qualche esempio che funziona non basta: ad esempio ${f('x^3 + 2x = 3x^2')} è vera per ${f('x = 0, 1, 2')} ma non per ${f('x = 3')} (${m(`${C.cubeL(3).v} ≠ ${C.cubeR(3).v}`)}).</p>
+						<p>Per dire che <b>è</b> un’identità si semplifica <b>ogni membro per conto suo</b>: se alla fine i due membri diventano la stessa espressione, è un’identità.<br>Ad esempio, facendo il prodotto ${f('(a + b)(a + b)')} si trova il prodotto notevole giusto:</p>
 						<p class="mcen">${f('(a + b)^2 = a^2 + 2ab + b^2')} &nbsp;${m(`∀ ${F('a')}, ${F('b')} ∈ ℝ`)}</p>
 					</section></div>`;
 			}
@@ -1006,8 +1006,8 @@ const C = (() => {
 				return `<div class="map">
 					<section class="mb"><h3>Le equazioni</h3>
 						<p>Un’<b>equazione</b> è un’uguaglianza tra due espressioni letterali, per la quale ci chiediamo <b>per quali valori</b> delle lettere è vera.</p>
-						<p class="mcen">${f('7 + x = 3x − 1')}: &nbsp;incognita ${f('x')}, soluzione (o&nbsp;radice) ${f(`x = ${C.linL(4).v === C.linR(4).v ? 4 : '?'}`)}</p>
-						<p><b>Verifica per sostituzione</b>: si mette il numero al posto dell’incognita e si calcolano i due membri separatamente.<br>In ${f('5x + 4 = x − 4')} con ${f('x = −2')} i due membri valgono ${m(C.n(V.v))} e ${m(C.n(W.v))}: sono uguali, ${f('x = −2')} è una soluzione.</p>
+						<p>Ad esempio in ${f('7 + x = 3x − 1')} l’incognita è ${f('x')} e la soluzione (o&nbsp;radice) è ${f(`x = ${C.linL(4).v === C.linR(4).v ? 4 : '?'}`)}.</p>
+						<p><b>Verifica per sostituzione</b>: si mette il numero al posto dell’incognita e si calcolano i due membri separatamente.<br>Ad esempio in ${f('5x + 4 = x − 4')} con ${f('x = −2')} i due membri valgono ${m(C.n(V.v))} e ${m(C.n(W.v))}: sono uguali, ${f('x = −2')} è una soluzione.</p>
 					</section>${MAP_ARROW}
 					<section class="mb"><h3>L’insieme delle soluzioni ${f('S')}</h3>
 						<table class="mt"><tr><th>${f('S')} può essere</th><th>ad esempio</th><th></th></tr>
