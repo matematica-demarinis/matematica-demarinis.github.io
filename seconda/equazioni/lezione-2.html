@@ -706,10 +706,13 @@ const C = (() => {
 		<div class="mbox in">${R.lab ? `<div class="ml">${R.lab}</div>` : ''}<div class="mh">${R.h}</div>${calc(R.t)}</div></div>`;
 	// passaggi scoperti uno alla volta
 	const drow = (e, why, show, cls = '') => `<div class="drow ${show ? cls : 'hide'}"${show ? '' : ' aria-hidden="true"'}><span class="e">${e}</span><span class="why">${why}</span></div>`;
-	const rows = (k, list, lab = '', okLast = '') => `<div class="dblk">${lab ? `<div class="ml">${lab}</div>` : ''}${list.map(([e, w], j) => drow(F(e), w, j <= k, okLast && j === list.length - 1 ? okLast : '')).join('')}</div>`;
+	const rows = (k, list, lab = '', okLast = '') => `<div class="dblk">${lab ? `<div class="ml">${lab}</div>` : ''}${list.map(([e, w], j) => drow(typeof e === 'string' ? F(e) : e.h, w, j <= k, okLast && j === list.length - 1 ? okLast : '')).join('')}</div>`;
 	const nextCtl = (k, max, lab = 'Ricomincia') => `<div class="ctl"><button type="button" class="btn pri" data-act="next" data-k="next"${k >= max ? ' disabled' : ''}>passaggio successivo</button><button type="button" class="btn" data-act="reset" data-k="reset" aria-label="${lab}">↺</button></div>`;
 	const stepAct = max => (st, a) => { st.k = a === 'next' ? Math.min(max, st.k + 1) : 0; };
 	const tn = s => `<span class="tn">${s}</span>`;
+	// divisioni scritte come frazioni (in seconda niente «:» nei calcoli)
+	const fr = (a, b) => C.frac(F(a), F(b));
+	const frEq = (a, b, c, d) => ({ h: `${fr(a, b)} = ${fr(c, d)}` });
 	const bx = s => `<span class="bx">${s}</span>`;
 	// freccia con l'operazione sopra; con due etichette: andata sopra, ritorno sotto
 	const xa = t => `<span class="xa"><span class="xt">${t}</span><span class="xr"></span><span class="xt">&nbsp;</span></span>`;
@@ -916,7 +919,7 @@ const C = (() => {
 			text: P(`Per trovare ${f('S')} non possiamo provare tutti i numeri.`) + P('Dobbiamo sostituire l’equazione con una più semplice.') + P('Ma come sappiamo che così non cambiamo le soluzioni?'),
 			init: () => ({ k: 0 }),
 			view(st) {
-				const k = st.k, R = [[AGGF, ''], [`7${bset(`${F('x')} + ${C.frac(F('x'), 7)}`, '(', ')')} = 7 · 19`, '· 7 da tutti e due i lati'], [F('7x + x = 133'), 'proprietà distributiva e calcoli'], [F('8x = 133'), 'termini simili'], [F('8x : 8 = 133 : 8'), ': 8 da tutti e due i lati'], [`${F('x')} = ${SOLH}`, 'calcoli']];
+				const k = st.k, R = [[AGGF, ''], [`7${bset(`${F('x')} + ${C.frac(F('x'), 7)}`, '(', ')')} = 7 · 19`, '· 7 da tutti e due i lati'], [F('7x + x = 133'), 'proprietà distributiva e calcoli'], [F('8x = 133'), 'termini simili'], [`${fr('8x', '8')} = ${fr('133', '8')}`, 'divido i due membri per 8'], [`${F('x')} = ${SOLH}`, 'calcoli']];
 				return `<div class="col"><div class="dblk">${R.map(([e, w], j) => drow(e, w, j <= k, j === 5 ? 'ok' : '')).join('')}</div>${nextCtl(k, 5)}</div>` +
 					msg(k >= 5 ? `Dall’ultima si legge subito ${m(`${F('S')} = ${bset(SOLH)}`)}.<br>Ma è anche l’insieme delle soluzioni della prima?` : '');
 			},
@@ -1047,7 +1050,7 @@ const C = (() => {
 				card(st, 0, `<span class="kt">addizione e sottrazione</span><span class="kf">${f('+ c')}&ensp;e&ensp;${f('− c')}</span>`,
 					`<span class="kf">${f('A(x) + c = B(x) + c')}</span><span class="kf">${f('A(x) − c = B(x) − c')}</span><span class="kv">primo principio</span>`) +
 				card(st, 1, `<span class="kt">moltiplicazione e divisione</span><span class="kf">${f('· c')}&ensp;e&ensp;${f(': c')}</span>`,
-					`<span class="kf">${f('c · A(x) = c · B(x)')}</span><span class="kf">${f('A(x) : c = B(x) : c')}</span><span class="kw">${f('c ≠ 0')}</span><span class="kv">secondo principio</span>`) +
+					`<span class="kf">${f('c · A(x) = c · B(x)')}</span><span class="kf">${m(`${fr('A(x)', 'c')} = ${fr('B(x)', 'c')}`)}</span><span class="kw">${f('c ≠ 0')}</span><span class="kv">secondo principio</span>`) +
 				'</div></div></div>',
 			act: openAct
 		},
@@ -1069,12 +1072,12 @@ const C = (() => {
 		// 14
 		{ ch: 3, title: 'Secondo principio di equivalenza',
 			text: DL('Proprietà (Secondo principio di equivalenza)', P('Moltiplicando o dividendo i due membri di un’equazione per uno stesso numero diverso da zero si ottiene un’equazione equivalente.') +
-					FM(`${f('c ∈ ℝ')}, ${f('c ≠ 0')}:<br>${f('A(x) = B(x) ⟺ c · A(x) = c · B(x)')}<br>${f('A(x) = B(x) ⟺ A(x) : c = B(x) : c')}`)) +
+					FM(`${f('c ∈ ℝ')}, ${f('c ≠ 0')}:<br>${f('A(x) = B(x) ⟺ c · A(x) = c · B(x)')}<br>${m(`${F('A(x) = B(x) ⟺ ')}${fr('A(x)', 'c')} = ${fr('B(x)', 'c')}`)}`)) +
 				P(`Ad esempio, per togliere il ${m('· 3')} da ${f('3x = 9')} applico l’operazione inversa, ${m(': 3')}, da tutti e due i lati.`),
 			init: () => ({ k: 0 }),
 			view(st) {
 				const k = st.k;
-				return `<div class="col">${rows(k, [['3x = 9', ''], ['3x : 3 = 9 : 3', ': 3 da tutti e due i lati (secondo principio)'], [`x = ${C.P2.d}`, 'calcoli']], '', 'ok')}${nextCtl(k, 2)}
+				return `<div class="col">${rows(k, [['3x = 9', ''], [frEq('3x', '3', '9', '3'), 'divido i due membri per 3 (secondo principio)'], [`x = ${C.P2.d}`, 'calcoli']], '', 'ok')}${nextCtl(k, 2)}
 					<div class="chain">${eqb(f('A(x) = B(x)'))}${xab(F('· c'), F(': c'))}${eqb(f('c · A(x) = c · B(x)'))}</div>
 					<p class="cap">Moltiplicare per ${f('c')} è reversibile: si torna indietro dividendo per ${f('c')}.</p></div>` +
 					msg(k >= 2 ? `Si torna indietro con ${m('· 3')}: da ${f('x = 3')} si risale a ${f('3x = 9')}.<br><b>Quindi ${m(`${F('S')} = ${setS(C.P2.S)}`)}</b>.` : '', 'in');
@@ -1088,8 +1091,8 @@ const C = (() => {
 			init: () => ({ k: 0 }),
 			view(st) {
 				const k = st.k;
-				return `<div class="col">${rows(k, [['−2x = 10', ''], ['−2x : (−2) = 10 : (−2)', ': (−2) da tutti e due i lati (secondo principio)'], [`x = ${C.n(C.SIGN.a)}`, 'calcoli']], '', 'ok')}` +
-					`${rows(k - 3, [['−x = 16', ''], ['−x : (−1) = 16 : (−1)', ': (−1) da tutti e due i lati (secondo principio)'], [`x = ${C.n(C.SIGN.b)}`, 'calcoli']], '', 'ok')}${nextCtl(k, 5)}</div>` +
+				return `<div class="col">${rows(k, [['−2x = 10', ''], [frEq('−2x', '−2', '10', '−2'), 'divido i due membri per −2 (secondo principio)'], [`x = ${C.n(C.SIGN.a)}`, 'calcoli']], '', 'ok')}` +
+					`${rows(k - 3, [['−x = 16', ''], [frEq('−x', '−1', '16', '−1'), 'divido i due membri per −1 (secondo principio)'], [`x = ${C.n(C.SIGN.b)}`, 'calcoli']], '', 'ok')}${nextCtl(k, 5)}</div>` +
 					msg(k >= 5 ? `<b>Quindi per ${f('−2x = 10')}, ${m(`${F('S')} = ${setS([C.SIGN.a])}`)}; per ${f('−x = 16')}, ${m(`${F('S')} = ${setS([C.SIGN.b])}`)}</b>.` : '', 'in');
 			},
 			act: stepAct(5)
@@ -1112,7 +1115,7 @@ const C = (() => {
 			init: () => ({ k: 0 }),
 			view(st) {
 				const k = st.k;
-				return `<div class="col">${rows(k, [['3x − 2 = 7', ''], ['3x − 2 + 2 = 7 + 2', '+ 2 da tutti e due i lati (primo principio)'], ['3x = 9', 'calcoli'], ['3x : 3 = 9 : 3', ': 3 da tutti e due i lati (secondo principio)'], ['x = 3', 'calcoli']], '', 'ok')}${nextCtl(k, 4)}</div>` +
+				return `<div class="col">${rows(k, [['3x − 2 = 7', ''], ['3x − 2 + 2 = 7 + 2', '+ 2 da tutti e due i lati (primo principio)'], ['3x = 9', 'calcoli'], [frEq('3x', '3', '9', '3'), 'divido i due membri per 3 (secondo principio)'], ['x = 3', 'calcoli']], '', 'ok')}${nextCtl(k, 4)}</div>` +
 					msg(k >= 4 ? `<b>Quindi ${m(`${F('S')} = ${setS(G.S)}`)}</b>.` : '', 'in');
 			},
 			act: stepAct(4)
@@ -1174,7 +1177,7 @@ const C = (() => {
 				<section class="mb"><h3>I princìpi di equivalenza</h3>
 					<p>Sono il principio generale con ${m('+')} e ${m('−')} (primo) e con ${m('·')} e ${m(':')} (secondo).</p>
 					<p><b>Primo</b>: ${f('A(x) = B(x) ⟺ A(x) + c = B(x) + c')}<br>${f('A(x) = B(x) ⟺ A(x) − c = B(x) − c')}<br>${f('c')} numero oppure espressione polinomiale in ${f('x')}.</p>
-					<p><b>Secondo</b>: ${f('A(x) = B(x) ⟺ c · A(x) = c · B(x)')}<br>${f('A(x) = B(x) ⟺ A(x) : c = B(x) : c')}<br>${f('c ∈ ℝ')}, ${f('c ≠ 0')}: ${m('· 0')} non è reversibile.</p>
+					<p><b>Secondo</b>: ${f('A(x) = B(x) ⟺ c · A(x) = c · B(x)')}<br>${m(`${F('A(x) = B(x) ⟺ ')}${fr('A(x)', 'c')} = ${fr('B(x)', 'c')}`)}<br>${f('c ∈ ℝ')}, ${f('c ≠ 0')}: ${m('· 0')} non è reversibile.</p>
 					<p>A ogni passaggio prima il principio, poi i calcoli.<br>Per togliere un termine o un fattore si applica l’operazione inversa; si divide per il numero davanti alla ${f('x')}, segno compreso.</p>
 					<p class="mcen">${f('3x − 2 = 7')}${xa(`${m('+ 2')} (primo)`)}${f('3x = 9')}${xa(`${m(': 3')} (secondo)`)}${f('x = 3')}</p>
 				</section>${MAP_ARROW}
