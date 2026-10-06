@@ -781,8 +781,7 @@ const C = (() => {
 		// 6
 		{ ch: 2, title: 'Come si verifica un’identità',
 			text: DL('Metodo (Verificare un’identità)', P('Per dire che <b>non</b> è un’identità basta un <b>controesempio</b>.') +
-				P('Per dire che <b>è</b> un’identità si semplifica <b>ogni membro per conto suo</b>: se alla fine i due membri diventano la stessa espressione, è un’identità.')) +
-				P(`Ad esempio ${f(C.P5.L[0] + ' = ' + C.P5.R[0])}.`),
+				P('Per dire che <b>è</b> un’identità si semplifica <b>ogni membro per conto suo</b>: se alla fine i due membri diventano la stessa espressione, è un’identità.')),
 			init: () => ({ k: 0 }),
 			view(st) {
 				const k = st.k, done = k >= 3, Q = C.P5;
@@ -887,8 +886,7 @@ const C = (() => {
 		{ ch: 3, title: 'L’insieme delle soluzioni',
 			text: DL('Definizione (Insieme delle soluzioni)', P(`Le soluzioni di un’equazione formano l’<b>insieme delle soluzioni</b> ${f('S')}.`) +
 				P(`<b>Risolvere</b> un’equazione vuol dire trovare <b>tutte</b> le sue soluzioni, cioè determinare ${f('S')}.`)) +
-				P(`${f('S')} può essere <b>vuoto</b> (${m(`${F('S')} = ∅`)}), <b>finito</b> e non vuoto oppure <b>infinito</b>.`) +
-				P('Ad esempio:'),
+				P(`${f('S')} può essere <b>vuoto</b> (${m(`${F('S')} = ∅`)}), <b>finito</b> e non vuoto oppure <b>infinito</b>.`),
 			init: () => ({ open: {} }),
 			view(st) {
 				const INFO = [
@@ -946,8 +944,7 @@ const C = (() => {
 		// 18
 		{ ch: 3, title: 'La verifica per sostituzione',
 			text: DL('Definizione (Verifica per sostituzione)', P('Si mette il numero al posto dell’incognita e si calcolano i due membri <b>separatamente</b>.') +
-				P('Se vengono uguali, il numero è una soluzione.')) +
-				P(`Ad esempio ${f('5x + 4 = x − 4')}, con ${f('x = −2')} e con ${f('x = 1')}.`),
+				P('Se vengono uguali, il numero è una soluzione.')),
 			init: () => ({ x: -2 }),
 			view(st) {
 				const L = C.verL(st.x), R = C.verR(st.x), same = L.v === R.v;

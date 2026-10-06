@@ -1260,7 +1260,7 @@ a.btn { text-decoration: none; }
 				return `<p class="bigf">${m(`{0, 1, 2, 3, 4, …} = ${NN}`)}</p>` +
 					fig(1000, 260, g + tok(R.X(p), R.y, -R.k, st.fresh && st.anim), 'la semiretta dei numeri naturali') +
 					`<div class="ctl"><button type="button" class="btn pri big" data-act="inc" data-k="inc"${p >= 8 ? ' disabled' : ''}>+1</button><button type="button" class="btn" data-act="five" data-k="five" aria-label="Torna a 5">↺ 5</button></div>` +
-					msg(p === 5 ? `Ad esempio ${m('5 + 3')}: tre passi al successivo, partendo da 5.` : `${chain}: &nbsp;${m(`5 + ${p - 5} = ${p} ∈ ${NN}`)}`, p === 5 ? '' : 'in');
+					msg(p === 5 ? `${m('5 + 3')}: tre passi al successivo, partendo da 5.` : `${chain}: &nbsp;${m(`5 + ${p - 5} = ${p} ∈ ${NN}`)}`, p === 5 ? '' : 'in');
 			},
 			act(st, a) { st.anim = 0; if (a === 'inc' && st.p < 8) { st.p++; st.anim = 1; } if (a === 'five') st.p = 5; }
 		},
@@ -1280,7 +1280,7 @@ a.btn { text-decoration: none; }
 				let g = bandSVG(R, R.end - 30) + `<text class="dots" x="${R.X(12) + 0.72 * R.k}" y="${R.y + 51}" text-anchor="middle">…</text>`;
 				g = g.replace('<!--ray-->', R.s);
 				for (let i = 0; i < p; i++) g += arc(R.X, 4 * i, 4 * i + 4, R.y, '+4', a && i === p - 1 ? 'fresh' : '') + `<circle class="ringin${a && i === p - 1 ? ' late' : ''}" cx="${R.X(4 * i + 4)}" cy="${R.y}" r="11"/>`;
-				const M = [`Ad esempio ${m('4 · 3 = 4 + 4 + 4')}: tre salti da 4, partendo da 0.`, m(`0 + 4 = 4 ∈ ${NN}`), m(`4 + 4 = 8 ∈ ${NN}`), m(`4 · 3 = 4 + 4 + 4 = 12 ∈ ${NN}`)];
+				const M = ['Tre salti da 4, partendo da 0.', m(`0 + 4 = 4 ∈ ${NN}`), m(`4 + 4 = 8 ∈ ${NN}`), m(`4 · 3 = 4 + 4 + 4 = 12 ∈ ${NN}`)];
 				return `<p class="bigf">${m('4 · 3 = 4 + 4 + 4')}</p>` +
 					fig(1000, 260, g + tok(R.X(4 * p), R.y, -4 * R.k, a), 'la semiretta dei numeri naturali: salti da 4') +
 					`<div class="ctl"><button type="button" class="btn pri big" data-act="inc" data-k="inc"${p >= 3 ? ' disabled' : ''}>+4</button><button type="button" class="btn" data-act="zero" data-k="zero" aria-label="Torna a 0">↺ 0</button></div>` +

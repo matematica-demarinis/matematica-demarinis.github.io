@@ -1215,7 +1215,6 @@ a.btn { text-decoration: none; }
 		// 15
 		{ ch: 3, title: 'La divisione esatta',
 			text: st => D(`<p class="formula">${m('<i>r</i> = 0 &nbsp;⟺&nbsp;')} la divisione è esatta</p><p class="small">${m('⟺')} si legge «se e solo se».</p>`, 'Proprietà (Divisione esatta)') +
-				P(`Ad esempio prendiamo ${m('20 : 5')}.`) +
 				(st.d[0] ? P(`${m('20 = 5 · 4 + 0')}: il resto è 0.`) + P(`<b>Quindi la divisione è esatta: ${m('20 : 5 = 4')}.</b>`) : ''),
 			init: () => ({ i: 0, p: 0, d: {} }),
 			view: st => restView(st, R15, 'resto'),
