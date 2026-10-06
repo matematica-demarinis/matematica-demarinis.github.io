@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try { const r = document.documentElement, t = localStorage.getItem('matematica-tema'), z = localStorage.getItem('matematica-zoom'); if (t === 'dark') r.dataset.theme = 'dark'; if (['115', '130', '150'].includes(z)) r.dataset.zoom = z; } catch (e) {}</script>
+<title>I numeri naturali</title>
+<link rel="stylesheet" href="../../assets/fonts/lezioni.css">
+<style>
+:root {
+	--bg: #F3F6F9;
+	--grid: #E2E8EF;
+	--panel: #FFFFFF;
+	--ink: #17212E;
+	--ink2: #4A5566;
+	--line: #D3DBE4;
+	--acc: #2A4DB5;
+	--on-acc: #FFFFFF;
+	--acc-fill: rgba(42, 77, 181, 0.08);
+	--acc-soft: rgba(42, 77, 181, 0.30);
+	--in: #13804A;
+	--in-bg: #DFF3E7;
+	--out: #BE3131;
+	--out-bg: #FBE3E3;
+	--hl: #FFEFA8;
+	--hover: #EAF0F8;
+	--chip: #F3F6F9;
+	--focus: #2A4DB5;
+	--ctl: #8C9AAB;
+	--shadow: rgba(0, 0, 0, 0.25);
+	--ui: "Lexend", system-ui, "Segoe UI", Roboto, sans-serif;
+	--math: "STIX Two Text", "STIX Two Math", "Cambria Math", Cambria, "Times New Roman", serif;
+}
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--bg: #0F141A;
+	--grid: #19212B;
+	--panel: #161D26;
+	--ink: #E6EBF1;
+	--ink2: #A8B3C0;
+	--line: #2A3440;
+	--acc: #86A5F7;
+	--on-acc: #0F141A;
+	--acc-fill: rgba(134, 165, 247, 0.10);
+	--acc-soft: rgba(134, 165, 247, 0.34);
+	--in: #4FC98C;
+	--in-bg: #173327;
+	--out: #FF7C7C;
+	--out-bg: #3A1D20;
+	--hl: #3D3517;
+	--hover: #1E2835;
+	--chip: #1B232E;
+	--focus: #86A5F7;
+	--ctl: #56657A;
+	--shadow: rgba(0, 0, 0, 0.5);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { height: 100%; font-size: clamp(14px, min(1.05vw, 1.9vh), 21px); }
+body {
+	margin: 0; height: 100%;
+	background-color: var(--bg);
+	background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+	background-size: 24px 24px;
+	color: var(--ink); font-family: var(--ui); line-height: 1.4;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.app { height: 100%; max-width: 1800px; margin: 0 auto; padding: 0.8rem 16px 0.9rem; display: flex; flex-direction: column; gap: 0.7rem; }
+
+/* ---------- barra in alto ---------- */
+header.top { display: flex; align-items: center; gap: 0.6rem 2rem; }
+h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; min-width: 10.5ch; white-space: nowrap; }
+.prog { flex: 1; display: flex; gap: 0.7rem; min-width: 0; }
+.pch { flex: var(--n) 1 0; min-width: max-content; display: flex; flex-direction: column; gap: 0.1rem; }
+.segs { display: flex; gap: 3px; }
+.seg { flex: 1; min-width: 0; height: 1.5rem; padding: 0; border: 0; background: none; cursor: pointer; position: relative; border-radius: 4px; }
+.seg::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 0.5rem; transform: translateY(-50%); border-radius: 3px; background: var(--line); }
+.seg.done::before { background: var(--acc-soft); }
+.seg.cur::before { background: var(--acc); height: 0.75rem; }
+.pname { font-size: 0.95rem; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pch.cur .pname { color: var(--ink); font-weight: 700; }
+#theme { flex: none; width: 2.75rem; height: 2.75rem; min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; font-size: 1.3rem; line-height: 1; padding: 0; }
+#theme:hover { border-color: var(--acc); }
+.tools { flex: none; display: flex; align-items: center; gap: 0.5rem; position: relative; }   /* il pannello dello zoom si allinea al bordo destro dei due bottoni */
+.zmenu { position: static; }
+#homeBtn { width: 2.75rem; height: 2.75rem; min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid var(--ctl); background: var(--panel); color: var(--ink); display: grid; place-items: center; }
+#homeBtn:hover { border-color: var(--acc); }
+#homeBtn svg { width: 1.4rem; height: 1.4rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#zoomBtn { width: 2.75rem; height: 2.75rem; min-width: 44px; min-height: 44px; border-radius: 50%; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; padding: 0; display: grid; place-items: center; }
+#zoomBtn:hover, #zoomBtn[aria-expanded="true"] { border-color: var(--acc); }
+#zoomBtn svg { width: 1.45rem; height: 1.45rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.zpanel { position: absolute; top: calc(100% + 0.6rem); right: 0; z-index: 30; width: min(21rem, calc(100vw - 2rem)); padding: 0.8rem 0.9rem 0.9rem; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px var(--shadow); }
+.zhead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.55rem; font-weight: 700; }
+.zhead button { width: 2.4rem; height: 2.4rem; min-width: 40px; min-height: 40px; border-radius: 50%; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; padding: 0; display: grid; place-items: center; }
+.zhead button svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.zopts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
+.zopts label { position: relative; display: grid; place-items: center; min-height: 44px; border: 2px solid var(--ctl); border-radius: 10px; cursor: pointer; font-weight: 700; font-variant-numeric: tabular-nums; }
+.zopts input { position: absolute; opacity: 0; pointer-events: none; }
+.zopts label:has(input:checked) { border-color: var(--acc); background: var(--acc-fill); color: var(--acc); }
+.zopts label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+:root[data-zoom="115"] main.step { zoom: 1.15; }
+:root[data-zoom="130"] main.step { zoom: 1.3; }
+:root[data-zoom="150"] main.step { zoom: 1.5; }
+
+
+/* ---------- il passo ---------- */
+main.step { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 1.4rem; }
+.left { display: flex; flex-direction: column; gap: 0.75rem; min-height: 0; overflow: auto; padding: 0.2rem 0.3rem 0.2rem 0; }
+.left h2 { margin: 0; font-size: 1.9rem; line-height: 1.2; text-wrap: balance; letter-spacing: -0.01em; }
+.txt { font-size: 1.35rem; line-height: 1.45; }
+.txt p { margin: 0 0 0.45em; }
+.txt p:last-child { margin-bottom: 0; }
+.def { background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--acc); border-radius: 0 12px 12px 0; padding: 0.6rem 1rem 0.7rem; margin-bottom: 0.5em; }
+.def .dl { font-size: 0.95rem; letter-spacing: 0.01em; font-weight: 700; color: var(--acc); margin-bottom: 0.15rem; }
+.def p { margin: 0 0 0.3em; }
+.def .formula { text-align: center; font-size: 1.25em; margin: 0.25em 0 0.1em; }
+.small { font-size: 0.85em; color: var(--ink2); }
+.sym { display: grid; grid-template-columns: 2.2rem auto; gap: 0.2rem 0.6rem; align-items: baseline; margin-top: 0.3rem; }
+.sym .m { font-size: 1.5em; text-align: center; }
+
+/* 1.08em: le cifre di STIX hanno la stessa altezza di quelle di Lexend, così i numeri nel testo e nelle formule sono uguali */
+.m { font-family: var(--math); font-size: 1.08em; line-height: 1; white-space: nowrap; }
+.m .m { font-size: 1em; }
+.m i, i.m { font-style: italic; }
+b { font-weight: 700; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.8rem; min-height: 0; overflow: auto; }
+.fig { flex: 1 1 auto; min-height: 7rem; position: relative; }
+.fig > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.col { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.1rem; min-height: 0; }
+.ctl { display: flex; gap: 0.8rem; justify-content: center; align-items: center; flex-wrap: wrap; }
+
+/* domanda */
+.q { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 0.75rem 1rem; }
+.qq { margin: 0 0 0.6rem; font-size: 1.35rem; font-weight: 500; }
+.opts { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+.fb { margin: 0.7rem 0 0; padding: 0.5rem 0.8rem; border-radius: 8px; font-size: 1.25rem; border-left: 5px solid; }
+.fb.ok { background: var(--in-bg); border-color: var(--in); }
+.fb.no { background: var(--out-bg); border-color: var(--out); }
+
+/* bottoni */
+.btn { font-size: 1.25rem; font-weight: 500; min-height: 3rem; min-width: 3rem; padding: 0 1.2rem; border-radius: 12px; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; box-shadow: 0 2px 0 var(--ctl); }
+.btn:hover:not(:disabled) { border-color: var(--acc); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn.pri { background: var(--acc); color: var(--on-acc); border-color: var(--acc); box-shadow: 0 2px 0 var(--shadow); }
+.btn.big { font-size: 1.6rem; min-width: 5.5rem; }
+.btn[aria-pressed="true"] { background: var(--acc); color: var(--on-acc); border-color: var(--acc); }
+.opt.ok { background: var(--in-bg); border-color: var(--in); color: var(--in); }
+.opt.no { background: var(--out-bg); border-color: var(--out); color: var(--out); }
+.opt.right:not(.ok) { border-color: var(--in); }
+
+.chip { display: inline-flex; align-items: center; justify-content: center; gap: 0.3em; font-size: 1.5rem; font-weight: 500; font-variant-numeric: tabular-nums; min-height: 2.8rem; min-width: 2.8rem; padding: 0.3em 0.85em; border-radius: 999px; border: 2px solid var(--ctl); background: var(--panel); color: var(--ink); box-shadow: 0 2px 0 var(--ctl); line-height: 1; }
+button.chip { cursor: pointer; }
+button.chip:hover { border-color: var(--acc); }
+.chip.in { background: var(--in-bg); border-color: var(--in); color: var(--in); box-shadow: none; }
+.chip.out { background: var(--out-bg); border-color: var(--out); color: var(--out); box-shadow: none; }
+.chip.sel { background: var(--hl); border-color: var(--ink2); }
+.chip .m { font-size: 1.05em; }
+.ghost { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; margin: 0; }
+
+.msg { margin: 0; min-height: 2.6rem; padding: 0.45rem 1rem; border-radius: 10px; font-size: 1.35rem; text-align: center; background: var(--chip); border-left: 5px solid var(--line); }
+.msg.in { background: var(--in-bg); border-left-color: var(--in); }
+.msg.out { background: var(--out-bg); border-left-color: var(--out); }
+.msg.hl { background: var(--hl); border-left-color: var(--ink2); }
+.msg.empty { visibility: hidden; }
+
+/* insiemi disegnati */
+.setw { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+.set-cap { font-size: 1.25rem; font-weight: 500; color: var(--acc); }
+.set { position: relative; border: 3px solid var(--acc); background: var(--acc-fill); border-radius: 50%; display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 10; width: 22rem; padding: 9% 13%; }
+.set.wide { width: min(100%, 30rem); }
+.set.small { width: 15rem; }
+.set.dashed { border-style: dashed; }
+.set-in { display: flex; flex-wrap: wrap; gap: 0.55rem 0.8rem; justify-content: center; align-items: center; }
+.set-name { position: absolute; left: -3%; top: -7%; color: var(--acc); font-size: 2rem; }
+.qm { position: absolute; right: -4%; top: -6%; font-size: 2.2rem; font-weight: 700; color: var(--acc); }
+.el { display: inline-flex; align-items: center; justify-content: center; min-width: 2.7rem; min-height: 2.7rem; border-radius: 50%; font-size: 1.65rem; border: 2px solid transparent; background: none; padding: 0 0.2em; }
+button.el { cursor: pointer; border-color: var(--ctl); background: var(--panel); }
+button.el:hover { border-color: var(--acc); }
+.el.hl { background: var(--hl) !important; border-color: var(--ink2) !important; }
+.el.in { background: var(--in-bg); color: var(--in); border-color: var(--in); }
+.braces { font-size: 2rem; display: flex; align-items: center; gap: 0.1rem; flex-wrap: wrap; justify-content: center; }
+.braces .el { font-size: 1em; min-width: 2.4rem; min-height: 2.4rem; }
+.braces.line { display: block; text-align: center; }
+.braces.line .el { vertical-align: middle; min-width: 2.2rem; min-height: 2.2rem; margin: -0.3rem 0; }
+.braces .cm { margin: 0 0.1rem 0 -0.1rem; }
+.tray { display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; min-height: 3rem; }
+.row2 { display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+/* passi 4, 6, 11: come si scrive un insieme, pari e dispari */
+.ways { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; width: 100%; max-width: 48rem; }
+.way { border: 2px solid var(--line); border-radius: 12px; padding: 0.6rem 0.8rem 0.8rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+.way .wl { font-size: 1.1rem; color: var(--ink2); }
+.way > .m { font-size: 1.75rem; }
+.fline { margin: 0; font-size: 1.6rem; text-align: center; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.2rem 0.5rem; }
+.fline .m { font-size: 1.15em; }
+.fcap { margin: 0 0 -0.5rem; font-size: 1.1rem; color: var(--ink2); }
+.sw { flex: none; width: 1.7rem; height: 1.3rem; border-radius: 6px; border: 3px solid var(--acc); background: var(--panel); }
+.sw.ev { background: var(--acc); }
+.pd { display: grid; gap: 1rem; }
+.outside { min-width: 6rem; display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+
+.cases { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; width: 100%; max-width: 44rem; }
+.case { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; align-items: center; gap: 0.1rem 0.8rem; text-align: left; padding: 0.7rem 0.9rem; border-radius: 14px; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; box-shadow: 0 2px 0 var(--ctl); min-height: 44px; }
+.case:hover { border-color: var(--acc); }
+.case svg { grid-row: 1 / 3; width: 3.4rem; height: 3.4rem; }
+.case .ct { font-size: 1.1rem; }
+.case .cv { font-size: 1.35rem; font-weight: 700; color: var(--acc); min-height: 1.4em; }
+.case[aria-pressed="true"] { border-color: var(--acc); background: var(--acc-fill); box-shadow: none; }
+.ic-a { fill: var(--acc); }
+.ic-b { fill: var(--ink2); }
+
+/* numeri grandi (passo 15) */
+.cmp { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: end; gap: 0.6rem 1rem; width: 100%; max-width: 50rem; }
+.nbox { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.nbox label, .nbox .nlab { font-size: 1.05rem; color: var(--ink2); }
+.nin, .nout { font-family: var(--ui); font-weight: 500; font-variant-numeric: tabular-nums; font-size: var(--fs, 2.3rem); line-height: 1.2; padding: 0.35em 0.5em; border-radius: 12px; min-height: 2.2em; width: 100%; overflow-wrap: anywhere; }
+.nin { border: 2px solid var(--acc); background: var(--panel); color: var(--ink); box-shadow: inset 0 2px 0 var(--acc-fill); }
+.nout { display: block; border: 2px solid var(--line); background: var(--chip); }
+.cmp .lt { font-size: 3rem; padding-bottom: 0.35em; color: var(--acc); }
+
+/* passo 12 */
+.zrow { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.zctl { flex: 1 1 16rem; display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 0.3rem 0.8rem; }
+.zctl label { font-size: 1.2rem; color: var(--ink2); }
+.zctl input[type="range"] { width: 100%; min-width: 6rem; accent-color: var(--acc); height: 2.75rem; }
+.zval { font-variant-numeric: tabular-nums; font-size: 1.15rem; min-width: 5.5ch; text-align: right; }
+.stairs { width: 18rem; height: auto; flex: none; }
+
+/* tabelle */
+.symt { border-collapse: collapse; font-size: 1.1rem; width: 100%; }
+.symt th { text-align: left; font-weight: 500; color: var(--ink2); font-size: 1rem; padding: 0.15rem 0.6rem; border-bottom: 2px solid var(--line); }
+.symt td { padding: 0.18rem 0.6rem; border-bottom: 1px solid var(--line); }
+.symt td:first-child { text-align: center; }
+.symt td:first-child .m { font-size: 1.45em; }
+
+.cases3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; width: 100%; }
+.c3 { border: 2px solid var(--line); border-radius: 12px; padding: 0.5rem; text-align: center; color: var(--ink2); min-height: 5.2rem; }
+.c3 .m { font-size: 1.9rem; display: block; margin: 0.15rem 0 0.35rem; }
+.c3 .ex { font-size: 1.3rem; font-weight: 500; min-height: 1.4em; display: block; }
+.c3.on { border-color: var(--acc); background: var(--acc-fill); color: var(--ink); opacity: 1; }
+
+.vf { display: grid; grid-template-columns: auto auto auto minmax(0, 24rem); align-items: center; gap: 0.9rem 0.8rem; max-width: 100%; }
+.vf .why { min-height: 3rem; display: flex; align-items: center; }
+.vf .f { font-size: 2.3rem; min-width: 5.5ch; text-align: center; }
+.vf .btn { min-width: 3.3rem; padding: 0 0.8rem; }
+.vf .why { font-size: 1.3rem; padding: 0.4rem 0.7rem; border-radius: 8px; border-left: 4px solid; }
+.vf .why.ok { background: var(--in-bg); border-color: var(--in); }
+.vf .why.no { background: var(--out-bg); border-color: var(--out); }
+.vf .why.none { border-color: transparent; }
+
+.bigf { font-size: 2.6rem; text-align: center; margin: 0; }
+
+.ops { display: grid; grid-template-columns: auto repeat(5, auto); align-items: start; justify-content: center; gap: 0.3rem 0.9rem; }
+.ops .hd { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink2); text-align: center; align-self: end; }
+.ops .on { font-size: 1.05rem; color: var(--ink2); align-self: center; padding-right: 0.4rem; text-align: right; }
+.ops .sy { font-family: var(--math); font-size: 2.2rem; align-self: center; line-height: 1; padding-bottom: 1.3rem; }
+.nm { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; min-width: 6.8rem; padding: 0.3rem 0.4rem; border-radius: 12px; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; box-shadow: 0 2px 0 var(--ctl); }
+.nm:hover { border-color: var(--acc); }
+.nm .n { font-size: 2rem; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.nm .w { font-size: 1rem; font-weight: 700; color: var(--acc); min-height: 1.3em; }
+.nm.res .w { color: var(--ink); }
+.nm.op[aria-pressed="true"] { background: var(--acc-fill); border-color: var(--acc); box-shadow: none; }
+.nm.res[aria-pressed="true"] { background: var(--hl); border-color: var(--ink2); box-shadow: none; }
+.nm[aria-pressed="false"] .w { visibility: hidden; }
+
+.clo { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 1.2rem 2.2rem; flex-wrap: wrap; }
+.setrow { display: flex; align-items: center; gap: 1rem; }
+.optab { border-collapse: separate; border-spacing: 0.4rem; }
+.optab th { font-family: var(--math); font-size: 2.1rem; font-weight: 400; color: var(--acc); padding: 0 0.3rem; }
+.optab th.corner { color: var(--ink); font-size: 2.4rem; font-weight: 700; }
+.optab th.corner.dot, .ops .sy.dot { font-size: 3.4rem; }
+.cell { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 7.2rem; min-height: 4.2rem; padding: 0.25rem 0.5rem; border-radius: 12px; border: 2px solid var(--ctl); background: var(--panel); box-shadow: 0 2px 0 var(--ctl); line-height: 1.15; }
+button.cell { cursor: pointer; }
+span.cell { border-color: var(--line); box-shadow: none; }
+button.cell:hover { border-color: var(--acc); }
+.cell .ex { font-family: var(--math); font-size: 1.5rem; }
+.cell .rs { font-family: var(--math); font-size: 1.8rem; font-weight: 700; color: var(--ink2); }
+.cell.in { background: var(--in-bg); border-color: var(--in); box-shadow: none; }
+.cell.in .rs { color: var(--in); }
+.cell.out { background: var(--out-bg); border-color: var(--out); box-shadow: none; }
+.cell.out .rs { color: var(--out); }
+.cell.mark { outline: 4px solid var(--out); outline-offset: 3px; }
+.legend { display: grid; gap: 0.4rem; width: 100%; max-width: 40rem; }
+.legend p { margin: 0; padding: 0.4rem 0.8rem; border-radius: 8px; border-left: 5px solid var(--line); font-size: 1.2rem; color: var(--ink2); }
+.legend p.on.in { background: var(--in-bg); border-color: var(--in); color: var(--ink); }
+.legend p.on.out { background: var(--out-bg); border-color: var(--out); color: var(--ink); }
+
+/* passi 29-30: riepilogo, uno schema a tutta larghezza */
+main.step.full { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 0.7rem; }
+.step.full .left { overflow: visible; padding: 0; }
+.step.full .panel { background: none; border: 0; border-radius: 0; padding: 0.2rem 0.2rem 0.4rem; }
+.map { flex: 1 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 2.6rem minmax(0, 1fr) 2.6rem minmax(0, 1.15fr); }
+.map.two { grid-template-columns: minmax(0, 1fr) 2.6rem minmax(0, 1.2fr); }
+.mc { display: grid; place-items: center; }
+.mc svg { width: 100%; height: auto; overflow: visible; }
+.mc path { fill: none; stroke: var(--acc); stroke-width: 3; }
+.mb { min-width: 0; container-type: inline-size; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 0.8rem 1rem 0.9rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: 1.3rem; }
+.mbody { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 1.6rem; padding-top: 0.4rem; }
+.mg { display: flex; flex-direction: column; gap: 0.6rem; }
+.mb h3 { margin: 0; font-size: 1.4rem; line-height: 1.2; color: var(--acc); }
+.mb p { margin: 0; text-wrap: balance; }
+.mf { display: flex; flex-direction: column; gap: 0.15rem; }
+.mf .wl { font-size: 0.9em; color: var(--ink2); }
+/* con lo zoom al 130-150 % la formula lunga va a capo invece di uscire dal riquadro */
+.mf > .m { white-space: normal; }
+.mb .mbig { font-size: min(1.7rem, 10cqi); text-align: center; }
+.mb .fline { font-size: 1.15rem; justify-content: flex-start; gap: 0.2rem 0.8rem; }
+.mb .in { color: var(--in); }
+.mb .out { color: var(--out); }
+.mray { width: 100%; max-width: 26rem; height: auto; display: block; margin: 0 auto; }
+.mray .arcl { font-size: 26px; }
+.pcs { flex: 1; display: grid; grid-auto-rows: 1fr; gap: 0.4rem; }
+.pc { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: center; align-items: baseline; gap: 0.1rem 0.8rem; font-size: 1.2rem; line-height: 1.3; text-align: left; padding: 0.3rem 0.8rem; border: 2px solid var(--ctl); border-left: 6px solid var(--acc); border-radius: 0 12px 12px 0; background: var(--panel); box-shadow: 0 2px 0 var(--ctl); cursor: pointer; min-height: 44px; }
+.pc:hover { border-color: var(--acc); }
+.pc > span:nth-child(2) { grid-column: 1 / -1; }
+.pc .pgo { grid-column: 2; grid-row: 1; font-size: 0.9em; color: var(--ink2); white-space: nowrap; }
+.mt { border-collapse: collapse; width: 100%; font-size: 1.2rem; line-height: 1.25; }
+.mt th { text-align: left; font-weight: 500; color: var(--ink2); font-size: 1.05rem; padding: 0.1rem 0.4rem; border-bottom: 2px solid var(--line); }
+.mt td { padding: 0.25rem 0.4rem; border-bottom: 1px solid var(--line); }
+.mt td.s { text-align: center; width: 2.2rem; }
+.mt td.s .m { font-size: 1.45em; }
+.mt td.e { white-space: nowrap; }
+/* riquadro stretto (telefono, zoom 130-150 %): l'esempio va a capo sotto la riga */
+@container (max-width: 36rem) {
+	.mt.opn, .mt.opn tbody { display: block; }
+	.mt.opn tr { display: grid; grid-template-columns: 8.4em minmax(0, 1fr) minmax(0, 1fr); column-gap: 0.4rem; border-bottom: 1px solid var(--line); }
+	.mt.opn tr:first-child { border-bottom-width: 2px; }
+	.mt.opn th, .mt.opn td { border-bottom: 0; padding-left: 0.2rem; padding-right: 0; }
+	.mt.opn th:nth-child(4) { display: none; }
+	.mt.opn td.e { grid-column: 1 / -1; padding-top: 0; }
+}
+/* ancora più stretto (telefono con zoom 130-150 %): il nome dell'operazione va su una riga sua */
+@container (max-width: 20rem) {
+	.mt.opn tr { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+	.mt.opn th:first-child { display: none; }
+	.mt.opn td:first-child { grid-column: 1 / -1; font-weight: 500; }
+}
+
+/* ---------- navigazione ---------- */
+footer.nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.nb { font-size: 1.25rem; font-weight: 500; min-height: 3.1rem; min-width: 44px; padding: 0 1.7rem; border-radius: 999px; border: 2px solid var(--ctl); background: var(--panel); cursor: pointer; box-shadow: 0 2px 0 var(--ctl); }
+.nb:hover:not(:disabled) { border-color: var(--acc); }
+.nb.pri { background: var(--acc); color: var(--on-acc); border-color: var(--acc); }
+.nb:disabled { opacity: 0.35; cursor: default; }
+.count { color: var(--ink2); font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+
+/* ---------- SVG ---------- */
+svg text { font-family: var(--ui); }
+.ax { stroke: var(--ink); stroke-width: 3; }
+.tk { stroke: var(--ink); stroke-width: 3; }
+.tl { font-size: 30px; fill: var(--ink); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.O, .uu, .lv { font-family: var(--math); font-style: italic; font-size: 36px; fill: var(--ink); }
+.lv { fill: var(--acc); text-anchor: middle; }
+.brace { fill: none; stroke: var(--ink2); stroke-width: 2.2; }
+.arc path { fill: none; stroke: var(--acc); stroke-width: 3; }
+.arc.back path { stroke-dasharray: none; }
+.arcl { font-size: 22px; fill: var(--acc); text-anchor: middle; font-weight: 500; }
+.arcw { font-size: 24px; fill: var(--ink2); text-anchor: middle; }
+.mk-ink { fill: var(--ink); }
+.mk-acc { fill: var(--acc); }
+.mk-out { fill: var(--out); }
+.band { fill: var(--acc-fill); stroke: var(--acc); stroke-width: 3; }
+.inb .tl { fill: var(--acc); font-weight: 700; }
+.arc.outarc path { stroke: var(--out); stroke-dasharray: 7 6; }
+.arc.outarc text { fill: var(--out); font-weight: 500; }
+.dots { font-size: 34px; fill: var(--acc); font-weight: 700; }
+.tok circle { fill: var(--acc); stroke: var(--panel); stroke-width: 5; }
+.dot { fill: var(--acc); }
+.odot { fill: var(--panel); stroke: var(--acc); stroke-width: 4; }
+.ring { fill: var(--panel); stroke: var(--out); stroke-width: 3.5; }
+.ringin { fill: var(--in); }
+.rl { font-size: 28px; fill: var(--out); text-anchor: middle; font-weight: 500; }
+.gl { font-size: 28px; fill: var(--in); text-anchor: middle; font-weight: 500; }
+.nl { font-size: 24px; fill: var(--ink2); text-anchor: middle; }
+.bb { font-family: var(--math); }
+.ghostline { stroke: var(--out); stroke-width: 3; stroke-dasharray: 8 8; }
+.lead { stroke: var(--out); stroke-width: 1.5; stroke-dasharray: 3 4; }
+.ztl { font-size: 24px; fill: var(--ink2); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.zn { font-size: 34px; fill: var(--acc); text-anchor: middle; font-weight: 700; }
+.zt { stroke: var(--ink2); stroke-width: 2; }
+.ztn { stroke: var(--ink); stroke-width: 3.5; }
+.hit { cursor: pointer; }
+.hit:focus { outline: none; }
+.ha { fill: transparent; }
+.lb { fill: var(--chip); stroke: var(--ctl); stroke-width: 2; }
+.hit:hover .lb { stroke: var(--acc); fill: var(--hover); }
+.hit:focus-visible .lb { stroke: var(--focus); stroke-width: 4; }
+.sel .lb, g.sel .lb { fill: var(--hl); stroke: var(--ink2); }
+.sel .tl { font-weight: 700; }
+.okc .lb { fill: var(--in-bg); stroke: var(--in); }
+.okc .tl { fill: var(--in); font-weight: 700; }
+.noc .lb { fill: var(--out-bg); stroke: var(--out); }
+.noc .tl { fill: var(--out); font-weight: 700; }
+.miss .lb { stroke: var(--in); stroke-dasharray: 6 5; }
+.ev .lb, .hit.ev:hover .lb { fill: var(--acc); stroke: var(--acc); }
+.ev .tl { fill: var(--on-acc); font-weight: 700; }
+.od .lb, .hit.od:hover .lb { fill: var(--panel); stroke: var(--acc); stroke-width: 3; }
+.od .tl { fill: var(--acc); font-weight: 700; }
+.pk .lb, .hit.pk:hover .lb { stroke: var(--ink); stroke-width: 5; }
+.st-line { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.st-l { font-size: 20px; fill: var(--out); text-anchor: start; font-weight: 500; }
+.st-n { font-size: 22px; fill: var(--ink2); text-anchor: middle; }
+.st-x { stroke: var(--out); stroke-width: 3; }
+.st-r { fill: var(--panel); stroke: var(--out); stroke-width: 3; stroke-dasharray: 4 3; }
+
+/* ---------- animazioni ---------- */
+.hop { animation: hop 0.38s ease-out; }
+@keyframes hop { 0% { transform: translate(var(--dx), 0); } 50% { transform: translate(calc(var(--dx) / 2), -34px); } 100% { transform: translate(0, 0); } }
+.arc.fresh path { stroke-dasharray: 1; animation: draw 0.38s ease-out; }
+.arc.fresh text { animation: appear 0.3s 0.2s both; }
+@keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+.late { animation: appear 0.2s 0.45s both; }
+.shake { animation: shake 0.35s; }
+@keyframes shake { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+.pulse { animation: pulse 0.4s; }
+.grow { transform-box: fill-box; transform-origin: left center; animation: grow 0.35s ease-out; }
+@keyframes grow { from { transform: scaleX(var(--s0)); } }
+@keyframes pulse { 50% { transform: scale(1.18); } }
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- schermi stretti ---------- */
+@media (max-width: 820px) {
+	html, body { height: auto; }
+	.app { height: auto; min-height: 100%; }
+	header.top { flex-wrap: wrap; }
+	h1 { font-size: 1.4rem; min-width: 0; flex: 1; }
+	.prog { order: 3; flex-basis: 100%; }
+	.pname { display: none; }
+	.pch { min-width: 0; }
+	main.step { grid-template-columns: minmax(0, 1fr); }
+	.left, .panel { overflow: visible; }
+	.left h2 { font-size: 1.5rem; }
+	.txt, .qq { font-size: 1.15rem; }
+	.fig { flex: none; min-height: 0; }
+	.fig { overflow-x: auto; }
+	.fig > svg { position: static; height: auto; }
+	.fig > svg:not(#z8):not(#cnt) { width: 600px; max-width: none; }
+	.stairs { width: min(100%, 18rem); }
+	.set, .set.wide { width: min(100%, 22rem); }
+	.cases, .ways { grid-template-columns: 1fr; }
+	.fline { font-size: 1.25rem; }
+	.cmp { grid-template-columns: minmax(0, 1fr); }
+	.cmp .lt { padding: 0; text-align: center; transform: rotate(90deg); }
+	.vf { grid-template-columns: auto auto auto; }
+	.vf .why { grid-column: 1 / -1; margin-top: -0.5rem; }
+	.vf .why.none { display: none; }
+	.ops { gap: 0.3rem 0.4rem; }
+	.nm { min-width: 0; padding: 0.3rem 0.3rem; }
+	.nm .n { font-size: 1.5rem; }
+	.nm .w { font-size: 0.72rem; }
+	.ops .on { display: none; }
+	.ops .sy.dot { font-size: 2.4rem; }
+	.ops { grid-template-columns: repeat(5, auto); }
+	.ops .sy { font-size: 1.6rem; }
+	.cell { min-width: 4.6rem; }
+	.cell .ex { font-size: 1.05rem; }
+	.bigf { font-size: 1.8rem; }
+	.map, .map.two { grid-template-columns: minmax(0, 1fr); }
+	.mc { height: 2.6rem; }
+	.mc svg { width: 2.6rem; transform: rotate(90deg); }
+	footer.nav { position: sticky; bottom: 0; background: var(--bg); padding: 0.5rem 0; }
+	.nb { padding: 0 1.1rem; }
+}
+
+/* titolo dei passi di riepilogo con il pulsante di stampa */
+.thead { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; flex-wrap: wrap; }
+.thead .btn { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; min-height: 2.75rem; }
+.thead .tacts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+a.btn { text-decoration: none; }
+.thead .btn svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+
+/* stampa: solo il riepilogo, un foglio; in verticale 2+2+1 riquadri, in orizzontale 3+2 con le frecce */
+.print-summary, .ps-land { display: none; }
+@media print {
+	@page { margin: 0; }   /* orientamento libero; margine 0 = niente intestazioni del browser, il margine è nella sezione */
+	:root, :root[data-theme="dark"] {
+		color-scheme: light;
+	--bg: #F3F6F9;
+	--grid: #E2E8EF;
+	--panel: #FFFFFF;
+	--ink: #17212E;
+	--ink2: #4A5566;
+	--line: #D3DBE4;
+	--acc: #2A4DB5;
+	--on-acc: #FFFFFF;
+	--acc-fill: rgba(42, 77, 181, 0.08);
+	--acc-soft: rgba(42, 77, 181, 0.30);
+	--in: #13804A;
+	--in-bg: #DFF3E7;
+	--out: #BE3131;
+	--out-bg: #FBE3E3;
+	--hl: #FFEFA8;
+	--hover: #EAF0F8;
+	--chip: #F3F6F9;
+	--focus: #2A4DB5;
+	--ctl: #8C9AAB;
+	--shadow: rgba(0, 0, 0, 0.25);
+	}
+	html { font-size: 7.8pt; height: auto; }
+	body { height: auto; background: #FFFFFF; background-image: none; }
+	.app { display: none !important; }
+	.print-summary { display: block; padding: 9mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+	.ps-t { margin: 0 0 2.5mm; font-size: 1.7rem; }
+	.ps-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3mm; margin-bottom: 3mm; break-inside: avoid; }
+	.ps-row.one { grid-template-columns: minmax(0, 1fr); }
+	.print-summary .mb { container-type: normal; break-inside: avoid; }
+	.print-summary .mb .mbig { font-size: 1.7rem; }
+	.print-summary .pgo { display: none; }
+	.print-summary .pc { box-shadow: none; cursor: default; }
+	.print-summary *, .print-summary *::before, .print-summary *::after { animation: none !important; transition: none !important; }
+}
+@media print and (orientation: landscape) {
+	html { font-size: 8.2pt; }
+	.ps-port { display: none; }
+	.ps-land { display: block; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+	<defs>
+		<marker id="ah-ink" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="mk-ink" d="M0,0 L10,5 L0,10 z"/></marker>
+		<marker id="ah-out" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto"><path class="mk-out" d="M0,0 L10,5 L0,10 z"/></marker>
+		<marker id="ah-acc" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto"><path class="mk-acc" d="M0,0 L10,5 L0,10 z"/></marker>
+	</defs>
+</svg>
+
+<div class="app">
+	<header class="top">
+		<h1 id="h1">Insiemi</h1>
+		<nav class="prog" id="prog" aria-label="Avanzamento"></nav>
+		<div class="tools">
+		<a id="homeBtn" href="../../index.html" aria-label="Tutte le lezioni" title="Tutte le lezioni" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7M6 9v11h4.5v-6h3v6H18V9"/></svg></a>
+		<div class="zmenu" id="zmenu">
+			<button type="button" id="zoomBtn" aria-label="Dimensione dei contenuti" title="Dimensione dei contenuti" aria-haspopup="dialog" aria-expanded="false" aria-controls="zpanel">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3 20.5 20.5M8 10.5h5M10.5 8v5"/></svg>
+			</button>
+			<section class="zpanel" id="zpanel" role="dialog" aria-labelledby="ztitle" hidden>
+				<div class="zhead"><span id="ztitle">Dimensione dei contenuti</span><button type="button" id="zclose" aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7 17 17M17 7 7 17"/></svg></button></div>
+				<div class="zopts">
+					<label><input type="radio" name="zoomLevel" value="100" checked>100%</label>
+					<label><input type="radio" name="zoomLevel" value="115">115%</label>
+					<label><input type="radio" name="zoomLevel" value="130">130%</label>
+					<label><input type="radio" name="zoomLevel" value="150">150%</label>
+				</div>
+			</section>
+		</div>
+		<button type="button" id="theme" aria-label="Attiva il tema scuro" title="Tema scuro"><span id="themeGlyph" aria-hidden="true">☾</span></button>
+		</div>
+	</header>
+	<main class="step" id="main">
+		<section class="left" id="left" aria-live="off"></section>
+		<section class="panel" id="stage"></section>
+		<p class="sr" id="live" aria-live="polite"></p>
+	</main>
+	<footer class="nav">
+		<button type="button" class="nb" id="prev">← Indietro</button>
+		<span class="count" id="count"></span>
+		<button type="button" class="nb pri" id="next">Avanti →</button>
+	</footer>
+</div>
+
+<script>
+(() => {
+	'use strict';
+	const $ = id => document.getElementById(id);
+	const root = document.documentElement;
+	const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	// ---------- tema: chiaro di default, la scelta resta salvata ----------
+	function applyTheme(dark, save) {
+		root.dataset.theme = dark ? 'dark' : 'light';
+		$('themeGlyph').textContent = dark ? '☀' : '☾';
+		$('theme').setAttribute('aria-label', dark ? 'Attiva il tema chiaro' : 'Attiva il tema scuro');
+		$('theme').title = dark ? 'Tema chiaro' : 'Tema scuro';
+		if (save) { try { localStorage.setItem('matematica-tema', dark ? 'dark' : 'light'); } catch (e) {} }
+	}
+	let saved = null;
+	try { saved = localStorage.getItem('matematica-tema'); } catch (e) {}
+	applyTheme(saved === 'dark', false);
+	$('theme').addEventListener('click', () => applyTheme(root.dataset.theme !== 'dark', true));
+
+	// ---------- dimensione dei contenuti (zoom del passo), scelta salvata ----------
+	const zInputs = [...document.querySelectorAll('[name="zoomLevel"]')];
+	function applyZoom(v, save) {
+		const z = ['100', '115', '130', '150'].includes(v) ? v : '100';
+		root.dataset.zoom = z;
+		zInputs.forEach(i => { i.checked = i.value === z; });
+		if (save) { try { localStorage.setItem('matematica-zoom', z); } catch (e) {} }
+	}
+	let zSaved = null;
+	try { zSaved = localStorage.getItem('matematica-zoom'); } catch (e) {}
+	applyZoom(zSaved, false);
+	zInputs.forEach(i => i.addEventListener('change', () => { if (i.checked) applyZoom(i.value, true); }));
+	function setZoomMenu(open, back) {
+		$('zpanel').hidden = !open;
+		$('zoomBtn').setAttribute('aria-expanded', String(open));
+		if (open) (zInputs.find(i => i.checked) || zInputs[0]).focus();
+		else if (back) $('zoomBtn').focus();
+	}
+	$('zoomBtn').addEventListener('click', () => setZoomMenu($('zpanel').hidden));
+	$('zclose').addEventListener('click', () => setZoomMenu(false, true));
+	document.addEventListener('pointerdown', e => { if (!$('zpanel').hidden && !$('zmenu').contains(e.target)) setZoomMenu(false, false); });
+	document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('zpanel').hidden) { e.preventDefault(); setZoomMenu(false, true); } }, true);
+
+	// ---------- piccoli aiuti per il testo ----------
+	const m = s => `<span class="m">${s}</span>`;
+	const P = s => `<p>${s}</p>`;
+	const D = (s, lab = 'Definizione') => `<div class="def"><div class="dl">${lab}</div>${s}</div>`;
+	const DL = (lab, s) => D(s, lab);
+	const NN = '<span class="bb">ℕ</span>';
+	const a_ = m('<i>a</i>'), b_ = m('<i>b</i>'), n_ = m('<i>n</i>');
+	const msg = (h, c = '') => `<p class="msg ${h ? c : 'empty'}">${h || '&nbsp;'}</p>`;
+	const fig = (W, H, inner, label, id = '') => `<div class="fig"><svg ${id ? `id="${id}" ` : ''}viewBox="0 0 ${W} ${H}" role="group" aria-label="${label}">${inner}</svg></div>`;
+	const it = n => String(n).replace('.', ',').replace('-', '−');
+	const fmtB = n => n == null ? '' : n.toLocaleString('it-IT');
+
+	// ---------- semiretta orientata ----------
+	function ray(o) {
+		const n0 = o.n0 ?? 0, n1 = o.n1 ?? 10, x0 = o.x0 ?? 80, x1 = o.x1 ?? 880, y = o.y ?? 150;
+		const k = (x1 - x0) / (n1 - n0), X = n => x0 + (n - n0) * k;
+		const end = o.end ?? X(n1) + 0.8 * k;
+		let s = `<line class="ax" x1="${x0}" y1="${y}" x2="${end}" y2="${y}" marker-end="url(#ah-ink)"/>`;
+		if (o.O !== false) s += o.Oabove
+			? `<text class="O" x="${x0 - 12}" y="${y - 18}" text-anchor="end">O</text>`
+			: `<text class="O" x="${x0 - (o.Odx ?? 20)}" y="${y + 12}" text-anchor="end">O</text>`;
+		const w = Math.min(k - 10, 58);
+		for (let n = n0; n <= (o.upto ?? n1); n++) {
+			const x = X(n), c = o.cls ? o.cls(n) : '', h = o.hit && (!o.hitIf || o.hitIf(n));
+			const inner = `<line class="tk" x1="${x}" y1="${y - 11}" x2="${x}" y2="${y + 11}"/>` +
+				(h ? `<rect class="lb" x="${x - w / 2}" y="${y + 18}" width="${w}" height="44" rx="11"/>` : '') +
+				`<text class="tl" x="${x}" y="${y + 51}">${n}</text>`;
+			s += h
+				? `<g class="hit ${c}" role="button" tabindex="0" aria-label="${n}"${o.pressed ? ` aria-pressed="${o.pressed(n)}"` : ''} data-act="${o.hit}" data-v="${n}" data-k="h${n}"><rect class="ha" x="${x - k / 2}" y="${y - 50}" width="${k}" height="118"/>${inner}</g>`
+				: `<g class="${c}">${inner}</g>`;
+		}
+		if (o.u) {
+			const a = X(n0), b = X(n0 + 1), mx = (a + b) / 2, yb = y + 74;
+			s += `<path class="brace" d="M${a},${yb} q0,10 10,10 L${mx - 10},${yb + 10} q10,0 10,10 q0,-10 10,-10 L${b - 10},${yb + 10} q10,0 10,-10"/>` +
+				`<text class="uu" x="${mx}" y="${yb + 50}" text-anchor="middle">u</text>`;
+		}
+		return { s, X, k, y, end };
+	}
+	function arc(X, a, b, y, lab, cls = '') {
+		const x1 = X(a), x2 = X(b), d = Math.sign(b - a), h = Math.min(44, Math.abs(x2 - x1) * 0.5);
+		const mx = (x1 + x2) / 2, y0 = y - 16;
+		return `<g class="arc ${cls}"><path pathLength="1" d="M${x1 + d * 6},${y0} Q${mx},${y0 - 2 * h} ${x2 - d * 8},${y0}" marker-end="url(#ah-${cls.includes('outarc') ? 'out' : 'acc'})"/>` +
+			(lab ? `<text class="${lab.length > 3 ? 'arcw' : 'arcl'}" x="${mx}" y="${y0 - h - 10}">${lab}</text>` : '') + '</g>';
+	}
+	// banda dell'insieme sulla semiretta (disegnata sotto la semiretta, al posto di <!--ray-->); from = vecchia fine, per farla allungare
+	function bandSVG(R, x2, from) {
+		const x1 = R.X(0) - 24, w = x2 - x1, grow = from != null && !reduced() && from < x2;
+		return `<rect class="band${grow ? ' grow' : ''}" style="--s0:${grow ? (from - x1) / w : 1}" x="${x1}" y="${R.y - 24}" width="${w}" height="48" rx="24"/><!--ray-->`;
+	}
+	const tok = (x, y, dx, fresh) => `<g transform="translate(${x},${y})"><g class="tok${fresh ? ' hop' : ''}" style="--dx:${dx}px"><circle r="16"/></g></g>`;
+
+	// ---------- tabelle delle operazioni e insiemi (capitolo Chiusura) ----------
+	const OPF = { '+': (x, y) => x + y, '·': (x, y) => x * y };
+	function results(st, S, op, all) {
+		const hits = new Set(), outs = [];
+		const keys = all ? S.flatMap((_, i) => S.map((_, j) => i + ',' + j)) : st.order;
+		for (const k of keys) {
+			const [i, j] = k.split(',').map(Number), v = OPF[op](S[i], S[j]);
+			if (S.includes(v)) hits.add(v); else if (!outs.includes(v)) outs.push(v);
+		}
+		return { hits, outs };
+	}
+	function clo(st, S, op, nm, o = {}) {
+		const f = OPF[op], done = (i, j) => o.all || st.f[i + ',' + j];
+		const lastV = st.last && f(S[st.last[0]], S[st.last[1]]);
+		let t = `<table class="optab" aria-label="tabella: ${op === '+' ? 'addizione' : 'moltiplicazione'}"><tr><th class="corner${op === '·' ? ' dot' : ''}">${op}</th>${S.map(c => `<th>${c}</th>`).join('')}</tr>`;
+		S.forEach((r, i) => {
+			t += `<tr><th>${r}</th>`;
+			S.forEach((c, j) => {
+				const v = f(r, c), d = done(i, j), cls = d ? (S.includes(v) ? 'in' : 'out') : '';
+				const inner = `<span class="ex">${r} ${op} ${c}</span><span class="rs">= ${d ? v : '?'}</span>`;
+				t += `<td>${o.ro ? `<span class="cell ${cls}">${inner}</span>`
+					: `<button type="button" class="cell ${cls}${o.mark === i + ',' + j ? ' mark' : ''}" data-act="cell" data-v="${i},${j}" data-k="cell-${i}-${j}">${inner}</button>`}</td>`;
+			});
+			t += '</tr>';
+		});
+		t += '</table>';
+		const { hits, outs } = results(st, S, op, o.all);
+		const late = v => st.fresh && lastV === v && !reduced() ? ' late' : '';
+		const set = `<div class="set small"><span class="set-name m"><i>${nm}</i></span><div class="set-in">${S.map(x => `<span class="el m ${hits.has(x) ? 'in' : ''}" data-el="${x}">${x}</span>`).join('')}</div></div>`;
+		const out = `<div class="outside">${outs.map(v => `<span class="chip out${late(v)}" data-out="${v}">${v} ${m(`∉ <i>${nm}</i>`)}</span>`).join('')}</div>`;
+		return `<div class="clo">${t}<div class="setrow">${set}${out}</div></div>`;
+	}
+	function cellMsg(st, S, op, nm) {
+		if (!st.last) return msg('');
+		const [i, j] = st.last, v = OPF[op](S[i], S[j]), ok = S.includes(v);
+		return msg(m(`${S[i]} ${op} ${S[j]} = ${v} ${ok ? '∈' : '∉'} <i>${nm}</i>`), ok ? 'in' : 'out');
+	}
+	function cellAct(st, v) {
+		if (!st.f[v]) { st.f[v] = 1; st.order.push(v); }
+		st.last = v.split(',').map(Number);
+	}
+	// Il risultato vola dalla casella all'insieme (o si ferma fuori).
+	function fly(stage, st, S, op) {
+		if (!st.fresh || !st.last || reduced()) return;
+		const [i, j] = st.last, v = OPF[op](S[i], S[j]), ok = S.includes(v);
+		const from = stage.querySelector(`[data-k="cell-${i}-${j}"]`);
+		const to = stage.querySelector(ok ? `[data-el="${v}"]` : `[data-out="${v}"]`);
+		if (!from || !to) return;
+		const g = document.createElement('span');
+		g.className = 'chip ghost ' + (ok ? 'in' : 'out');
+		g.textContent = v;
+		document.body.append(g);
+		const a = from.getBoundingClientRect(), b = to.getBoundingClientRect(), r = g.getBoundingClientRect();
+		const sx = a.left + a.width / 2 - r.width / 2, sy = a.top + a.height / 2 - r.height / 2;
+		const ex = (ok ? b.left + b.width / 2 : b.left + r.width / 2) - r.width / 2, ey = b.top + b.height / 2 - r.height / 2;
+		const anim = g.animate([
+			{ transform: `translate(${sx}px,${sy}px) scale(0.7)`, opacity: 0 },
+			{ transform: `translate(${sx}px,${sy}px) scale(1)`, opacity: 1, offset: 0.15 },
+			{ transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1 }
+		], { duration: 480, easing: 'ease-in-out' });
+		anim.onfinish = () => { g.remove(); if (ok) { to.classList.remove('pulse'); void to.offsetWidth; to.classList.add('pulse'); } };
+	}
+	const A2 = [0, 1];
+	const MAP_ARROW = '<span class="mc" aria-hidden="true"><svg viewBox="0 0 48 24"><path d="M4,12 H38" marker-end="url(#ah-acc)"/></svg></span>';
+
+	// ---------- icone del passo 2 ----------
+	const ICON_CANDY = `<svg viewBox="0 0 64 64" aria-hidden="true"><path class="ic-a" d="M17 32 L4 20 L7 32 L4 44 Z M47 32 L60 20 L57 32 L60 44 Z"/><ellipse class="ic-a" cx="32" cy="32" rx="16" ry="12"/><path d="M24 24 L40 40" stroke="var(--panel)" stroke-width="3"/></svg>`;
+	const ICON_CITY = `<svg viewBox="0 0 64 64" aria-hidden="true"><rect class="ic-b" x="4" y="30" width="12" height="28"/><rect class="ic-a" x="18" y="14" width="13" height="44"/><rect class="ic-b" x="33" y="24" width="11" height="34"/><rect class="ic-a" x="46" y="8" width="14" height="50"/></svg>`;
+
+	// ---------- passo 12: tratto tra n e n + 1 (si sceglie n sulla semiretta sopra) ----------
+	const Z0 = { a: 2.72, w: 1.6 }, WMIN = 2e-6, WMAX = 5, ZH = 300, ZY = 190;
+	const SPTS = [3.5, 3.1, 3.01, 3.001, 3.0001, 3.00001, 3.000001];
+	const zx = (st, v) => 40 + (v - st.a) / st.w * 920;
+	function niceStep(w, n) { const raw = w / n, p = 10 ** Math.floor(Math.log10(raw)), r = raw / p; return (r < 1.5 ? 1 : r < 3.5 ? 2 : r < 7.5 ? 5 : 10) * p; }
+	const decs = step => Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
+	const dfmt = (v, d) => v.toFixed(d).replace('.', ',');
+	function zoomSVG(st, PTS = SPTS) {
+		const y = ZY;
+		let s = `<line class="ax" x1="0" y1="${y}" x2="985" y2="${y}" marker-end="url(#ah-ink)"/>`;
+		let step, d;
+		for (let target = 8; ; target--) {
+			step = niceStep(st.w, target); d = decs(step);
+			const need = dfmt(st.a + st.w, d).length * 15 + 26;
+			if (920 * step / st.w >= need || target <= 2) break;
+		}
+		for (let k = Math.ceil(st.a / step - 1e-9); k * step <= st.a + st.w + 1e-12; k++) {
+			const v = k * step, x = zx(st, v);
+			if (v < -1e-9) continue;   // niente numeri negativi sulla semiretta
+			if (Math.abs(v - Math.round(v)) < step / 1000) continue;   // i naturali si disegnano a parte
+			if (PTS.some(p => Math.abs(p - v) < step / 1000)) continue;   // c'è già il cerchietto con la sua scritta
+			s += `<line class="zt" x1="${x}" y1="${y - 9}" x2="${x}" y2="${y + 9}"/><text class="ztl" x="${x}" y="${y + 40}">${dfmt(v, d)}</text>`;
+		}
+		// etichette sopra la retta: due file, senza sovrapposizioni
+		const rows = [[], []], rowY = [y - 42, y - 92];
+		const place = (x, wd) => {
+			for (let r = 0; r < 2; r++) if (rows[r].every(([a, b]) => x + wd / 2 < a || x - wd / 2 > b)) { rows[r].push([x - wd / 2 - 12, x + wd / 2 + 12]); return r; }
+			return -1;
+		};
+		let labels = '';
+		const taken = [];   // un cerchietto troppo vicino a un altro punto non si disegna
+		for (let n = Math.max(0, Math.ceil(st.a)); n <= st.a + st.w; n++) {
+			const x = zx(st, n);
+			taken.push(x);
+			s += `<line class="ztn" x1="${x}" y1="${y - 14}" x2="${x}" y2="${y + 14}"/><circle class="dot" cx="${x}" cy="${y}" r="13"/><text class="zn" x="${x}" y="${y + 54}">${n}</text>`;
+			const r = place(x, 110);
+			if (r >= 0) labels += `<text class="gl" x="${x}" y="${rowY[r]}">${n} ∈ <tspan class="bb">ℕ</tspan></text>`;
+		}
+		for (const p of PTS) {
+			if (p < st.a || p > st.a + st.w) continue;
+			const x = zx(st, p), t = it(p), wd = t.length * 15 + 58;
+			if (taken.some(u => Math.abs(u - x) < 26)) continue;
+			taken.push(x);
+			s += `<circle class="ring" cx="${x}" cy="${y}" r="10"/>`;
+			const r = place(x, wd);
+			if (r < 0) continue;
+			if (r === 1) s += `<line class="lead" x1="${x}" y1="${y - 14}" x2="${x}" y2="${rowY[1] + 8}"/>`;
+			labels += `<text class="rl" x="${x}" y="${rowY[r]}">${t} ∉ <tspan class="bb">ℕ</tspan></text>`;
+		}
+		return s + labels;
+	}
+	const toS = w => Math.round(1000 * Math.log(Z0.w / Math.min(w, Z0.w)) / Math.log(Z0.w / WMIN));
+	const fromS = s => Z0.w * (WMIN / Z0.w) ** (s / 1000);
+	const zoomTimes = w => { const z = Z0.w / w; return '×' + (z < 10 ? z.toFixed(1).replace('.', ',') : Math.round(z).toLocaleString('it-IT')); };
+	function clampZ(st) {
+		st.w = Math.min(WMAX, Math.max(WMIN, st.w));
+		const lo = st.w >= 1.2 ? 4.1 - st.w : 3 - 0.95 * st.w, hi = st.w >= 1.2 ? 2.9 : 3 - 0.05 * st.w;
+		st.a = Math.min(hi, Math.max(lo, st.a));
+	}
+
+	// ---------- i passi ----------
+	const CH = ['Insiemi', 'Numeri naturali', 'Ordine', 'Operazioni', 'Chiusura', 'Riepilogo'];
+	const H1 = ['Insiemi', 'I numeri naturali', 'L’ordine', 'Le operazioni', 'La chiusura', 'Riepilogo'];
+
+	const STEPS = [
+		// 1
+		{ ch: 0, title: 'I numeri maggiori di 100',
+			text: P('Prendiamo i numeri maggiori di 100.') + P('Di ogni numero si può dire con certezza se sta nell’insieme dei numeri maggiori di 100 oppure no.'),
+			init: () => ({ s: { 1000: 'in', 37: 'out' }, ins: [1000], last: 37 }),
+			view(st) {
+				const L = [1000, 37, 250, 100, 101, 99];
+				const chip = n => `<button type="button" class="chip ${st.s[n] || ''}${st.fresh && st.last === n && st.s[n] === 'out' ? ' shake' : ''}" data-act="pick" data-v="${n}" data-k="c${n}" data-flip="c${n}">${n}</button>`;
+				const n = st.last, ok = n > 100;
+				return `<div class="col"><div class="setw"><div class="set-cap">numeri maggiori di 100</div><div class="set wide"><div class="set-in">${st.ins.map(chip).join('')}</div></div></div>
+					<div class="tray">${L.filter(x => st.s[x] !== 'in').map(chip).join('')}</div></div>` +
+					msg(ok ? `${n} è maggiore di 100: dentro.` : `${n} non è maggiore di 100: fuori.`, ok ? 'in' : 'out');
+			},
+			act(st, a, v) { const n = +v; st.last = n; if (n > 100) { st.s[n] = 'in'; if (!st.ins.includes(n)) st.ins.push(n); } else st.s[n] = 'out'; }
+		},
+		// 2
+		{ ch: 0, title: 'E i numeri grandi?',
+			text: P('1000 è un numero grande?') + P('Dipende da che cosa conti.'),
+			q: { p: '«I numeri grandi» è un insieme?', o: [{ t: 'Sì' }, { t: 'No', ok: 1 }], fb: 'No: non si può dire con certezza quali numeri sono nell’insieme.' },
+			init: () => ({ c: 0 }),
+			view(st) {
+				const chip = `<span class="chip" data-flip="k1000">1000</span>`;
+				const cs = [['1000 caramelle in un sacchetto', 'tante', ICON_CANDY], ['1000 abitanti a Milano', 'pochi', ICON_CITY]];
+				return `<div class="col"><div class="row2"><div class="setw"><div class="set-cap">numeri grandi</div><div class="set dashed"><span class="qm" aria-hidden="true">?</span><div class="set-in">${st.c === 0 ? chip : ''}</div></div></div><div class="outside">${st.c === 1 ? chip : ''}</div></div>
+					<div class="cases">${cs.map(([t, w, ic], i) => `<button type="button" class="case" data-act="case" data-v="${i}" data-k="case${i}" aria-pressed="${st.c === i}">${ic}<span class="ct">${t}</span><span class="cv">${st.c === i ? w : ''}</span></button>`).join('')}</div></div>`;
+			},
+			act(st, a, v) { st.c = +v; }
+		},
+		// 3
+		{ ch: 0, title: 'Che cos’è un insieme?',
+			text: DL('Definizione (Insieme)', P('Un <b>insieme</b> è una collezione di oggetti ben determinati, detti <b>elementi</b>.') + P('«Ben determinati» vuol dire che di qualunque oggetto che stiamo considerando si può dire con certezza se è un elemento dell’insieme oppure no.')) +
+				P(`Ad esempio ${m('<i>V</i>')} è l’insieme delle vocali.`) + P('Gli insiemi si indicano con lettere maiuscole.') + P('Gli elementi si indicano invece con lettere minuscole.') + P('Un insieme senza elementi si dice <b>vuoto</b>.'),
+			init: () => ({ h: 'a' }),
+			view(st) {
+				const V = ['a', 'e', 'i', 'o', 'u'];
+				const el = (x, w) => `<button type="button" class="el m ${st.h === x ? 'hl' : ''}" data-act="h" data-v="${x}" data-k="${w}${x}" aria-pressed="${st.h === x}"><i>${x}</i></button>`;
+				return `<div class="col"><div class="set wide"><span class="set-name m"><i>V</i></span><div class="set-in">${V.map(x => el(x, 's')).join('')}</div></div>
+					<div class="braces m"><i>V</i>&nbsp;=&nbsp;{${V.map(x => el(x, 'b')).join('<span class="cm">,</span>')}}</div></div>`;
+			},
+			act(st, a, v) { st.h = v; }
+		},
+		// 4
+		{ ch: 0, title: 'Come si scrive un insieme?',
+			text: P('Un insieme si può scrivere in due modi.') + P('<b>Per elencazione</b>: si scrivono gli elementi tra parentesi graffe.') +
+				P('<b>Per proprietà caratteristica</b>: si dice che cosa hanno in comune gli elementi.'),
+			view() {
+				const way = (l, f) => `<div class="way"><span class="wl">${l}</span>${m(f)}</div>`;
+				const fl = f => `<p class="fline">${m(f)}</p>`;
+				return `<div class="col"><div class="ways">${way('per elencazione', '<i>V</i> = {<i>a</i>, <i>e</i>, <i>i</i>, <i>o</i>, <i>u</i>}')}${way('per proprietà caratteristica', '<i>V</i> = {<i>x</i> tale che <i>x</i> è una vocale}')}</div>
+					<p class="fcap">tanti elementi, anche infiniti:</p>${fl('<i>P</i> = {<i>x</i> tale che <i>x</i> è un numero pari}')}${fl('<i>D</i> = {<i>x</i> tale che <i>x</i> è un numero dispari}')}</div>`;
+			}
+		},
+		// 5
+		{ ch: 0, title: `${m('∈')} e ${m('∉')}`,
+			text: P('Per dire se un oggetto è un elemento di un insieme oppure no ci sono due simboli.') +
+				`<div class="sym">${m('∈')}<span>appartiene</span>${m('∉')}<span>non appartiene</span></div>`,
+			init: () => ({ t: { 2: 1 }, last: 2 }),
+			view(st) {
+				const A = [1, 2, 3], n = st.last, ok = A.includes(n);
+				return `<div class="col"><div class="row2"><div class="set small"><span class="set-name m"><i>A</i></span><div class="set-in">${A.map(x => `<span class="el m ${ok && x === n ? 'in' : ''}">${x}</span>`).join('')}</div></div>
+					<div class="braces m"><i>A</i>&nbsp;=&nbsp;{1, 2, 3}</div></div>
+					<div class="tray">${[0, 1, 2, 3, 4, 5, 6].map(x => `<button type="button" class="chip ${st.t[x] ? (A.includes(x) ? 'in' : 'out') : ''}" data-act="pick" data-v="${x}" data-k="c${x}">${x}</button>`).join('')}</div></div>` +
+					msg(`${m(`${n} ${ok ? '∈' : '∉'} <i>A</i>`)} &nbsp;—&nbsp; ${n} ${ok ? '' : 'non '}appartiene ad ${m('<i>A</i>')}`, ok ? 'in' : 'out');
+			},
+			act(st, a, v) { st.t[+v] = 1; st.last = +v; }
+		},
+		// 6: l'aggancio ai naturali
+		{ ch: 0, title: `L’insieme dei pari ${m('<i>P</i>')} è ben determinato?`,
+			text: P(`Finché non diciamo di quali numeri parliamo, gli elementi di ${m('<i>P</i>')} non sono ben determinati.`) +
+				P('Per questo cominciamo da una domanda: che cosa sono i numeri naturali?'),
+			init: () => ({ s: { 4: 'in' }, ins: [4], last: 4 }),
+			view(st) {
+				const chip = n => `<button type="button" class="chip ${st.s[n] || ''}${st.fresh && st.last === n && n === 7 ? ' shake' : ''}" data-act="pick" data-v="${n}" data-k="c${n}" data-flip="c${n}">${it(n)}</button>`;
+				const amb = !!st.s[-4], n = st.last;
+				const M = { 4: [`${m('4 ∈ <i>P</i>')}: è pari.`, 'in'], 7: [`${m('7 ∉ <i>P</i>')}: è dispari, ${m('7 ∈ <i>D</i>')}.`, 'out'],
+					'-4': [`Se tra i numeri mettiamo anche i negativi, −4 è pari e sta in ${m('<i>P</i>')}; altrimenti no.`, 'hl'] };
+				return `<div class="col"><p class="fline">${m('<i>P</i> = {<i>x</i> tale che <i>x</i> è un numero pari}')}</p>
+					<div class="set wide${amb ? ' dashed' : ''}"><span class="set-name m"><i>P</i></span>${amb ? '<span class="qm" aria-hidden="true">?</span>' : ''}<div class="set-in">${st.ins.map(chip).join('')}</div></div>
+					<div class="tray">${[4, 7, -4].filter(x => st.s[x] !== 'in').map(chip).join('')}</div></div>` + msg(...M[n]);
+			},
+			act(st, a, v) { const n = +v; st.last = n; st.s[n] = n === 4 ? 'in' : n === 7 ? 'out' : 'sel'; if (n === 4 && !st.ins.includes(4)) st.ins.push(4); }
+		},
+		// 7: la definizione informale
+		{ ch: 1, title: 'Che cosa sono i numeri naturali?',
+			text: DL('Definizione informale (Numeri naturali)', P('I <b>numeri naturali</b> sono i numeri che si incontrano quando si inizia a contare.') +
+				`<p class="formula">${m(`${NN} = {0, 1, 2, 3, …}`)}</p>`) +
+				P('È una definizione informale: tra poco la rendiamo precisa.'),
+			view() {
+				const box = (n, cx) => `<rect class="lb" x="${cx - 95}" y="30" width="190" height="120" rx="18"/>` +
+					Array.from({ length: n }, (_, i) => `<circle class="dot" cx="${cx + (i - (n - 1) / 2) * 52}" cy="90" r="19"/>`).join('') +
+					`<text class="zn" x="${cx}" y="222" style="font-size:46px">${n}</text>`;
+				return fig(1000, 250, [0, 1, 2, 3].map(n => box(n, 125 + 230 * n)).join('') +
+					`<text class="dots" x="965" y="100" text-anchor="middle" style="font-size:46px">…</text><text class="dots" x="965" y="222" text-anchor="middle" style="font-size:46px">…</text>`,
+					'si contano gli oggetti: nessuno 0, uno 1, due 2, tre 3', 'cnt');
+			}
+		},
+		// 8
+		{ ch: 1, title: 'Come si rappresentano?',
+			text: P('Si parte da 0 e si va avanti di uno alla volta.') + P(`Il numero subito dopo ${n_} è ${m('<i>n</i> + 1')}, il suo <b>successivo</b>.`) +
+				P(`Sulla <b>semiretta orientata</b> all’<b>origine</b> ${m('<i>O</i>')} corrisponde 0.`) + P(`Ogni passo lungo ${m('<i>u</i>')}, l’<b>unità di misura</b>, porta al successivo.`),
+			init: () => ({ p: 0 }),
+			view(st) {
+				// la tacca e il numero successivo compaiono solo quando si fa il passo
+				const p = st.p, a = st.fresh && st.anim;
+				const R = ray({ n0: 0, n1: 10, x0: 80, x1: 880, y: 150, upto: p, u: p > 0, cls: n => (n === p ? 'sel' : '') + (a && n === p ? ' late' : '') });
+				let arcs = '';
+				for (let i = 0; i < p; i++) arcs += arc(R.X, i, i + 1, R.y, '+1', a && i === p - 1 ? 'fresh' : '');
+				return fig(1000, 290, R.s + arcs + tok(R.X(p), R.y, -R.k, a), 'semiretta orientata con origine in 0') +
+					`<div class="ctl"><button type="button" class="btn pri big" data-act="inc" data-k="inc"${p >= 10 ? ' disabled' : ''}>+1</button><button type="button" class="btn" data-act="zero" data-k="zero" aria-label="Torna a 0">↺ 0</button></div>` +
+					msg(p === 0 ? 'Siamo a 0. Il successivo di 0 è 1.' : `${p === 1 ? '1 passo' : p + ' passi'} da 0: siamo a ${p}. Il successivo di ${p} è ${p + 1}.`);
+			},
+			act(st, a) { st.anim = 0; if (a === 'inc' && st.p < 10) { st.p++; st.anim = 1; } if (a === 'zero') st.p = 0; }
+		},
+		// 9
+		{ ch: 1, title: 'La definizione precisa',
+			text: DL('Definizione (Numeri naturali)', P('I <b>numeri naturali</b> sono 0 e tutti i numeri che si ottengono partendo da 0 e passando al successivo un numero finito di volte.') +
+				`<p class="formula">${m(`${NN} = {0, 1, 2, 3, 4, …}`)}</p>` + P('I puntini vogliono dire «e così via, senza fine».')) +
+				D(P(`${NN} è un insieme <b>infinito</b>.`), `Proprietà (${NN} è infinito)`) +
+				P('Ogni naturale ha un successivo: possiamo ripetere lo stesso procedimento infinite volte.') + P(`<b>Quindi ${NN} è infinito.</b>`),
+			init: () => ({ sel: '3,5' }),
+			view(st) {
+				const s = st.sel;
+				const R = ray({ n0: 0, n1: 12, x0: 250, x1: 910, y: 160, Oabove: true, cls: n => s === '12' && n === 12 ? 'okc' : '' });
+				let g = '';
+				if (s === '3,5') {
+					g += arc(R.X, 3, 4, R.y, '+1') + `<circle class="ring" cx="${R.X(3.5)}" cy="${R.y}" r="10"/><text class="rl" x="${R.X(3.5)}" y="${R.y - 82}">3,5</text>`;
+				} else if (s === '−4') {
+					g += `<line class="ghostline" x1="${R.X(-4)}" y1="${R.y}" x2="${R.X(0) - 4}" y2="${R.y}"/><circle class="ring" cx="${R.X(-4)}" cy="${R.y}" r="10"/><text class="rl" x="${R.X(-4)}" y="${R.y + 51}">−4</text>`;
+				} else if (s === '12') {
+					for (let i = 0; i < 12; i++) g += arc(R.X, i, i + 1, R.y, '');
+					g += `<circle class="ringin" cx="${R.X(12)}" cy="${R.y}" r="11"/>`;
+				}
+				const M = { '3,5': ['3,5 ∉ ℕ', 'da 3 si passa direttamente a 4.', 'out'], '−4': ['−4 ∉ ℕ', 'da 0 si va solo avanti.', 'out'], '12': ['12 ∈ ℕ', 'da 0 ci si arriva in 12 passi.', 'in'] };
+				return fig(1000, 250, R.s + g, 'semiretta dei numeri naturali') +
+					`<div class="tray">${['3,5', '−4', '12'].map(k => `<button type="button" class="chip ${s === k ? M[k][2] : ''}" data-act="pick" data-v="${k}" data-k="c${k}">${k}</button>`).join('')}</div>` +
+					msg(s ? `${m(M[s][0].replace('ℕ', NN))}: ${M[s][1]}` : '', s ? M[s][2] : '');
+			},
+			act(st, a, v) { st.sel = v; }
+		},
+		// 10
+		{ ch: 1, title: 'Precedente, successivo, consecutivi',
+			text: P('Il successivo di un numero sta subito alla sua destra.') + P('Subito alla sua sinistra c’è il <b>precedente</b>.') +
+				P('Due naturali che vengono uno subito dopo l’altro si dicono <b>consecutivi</b>.') + P('Ad esempio 8 e 9 sono consecutivi.'),
+			q: { p: '8 e 10 sono consecutivi?', o: [{ t: 'Sì' }, { t: 'No', ok: 1 }], fb: 'No: in mezzo c’è 9.', then: st => { st.sel = 9; } },
+			init: () => ({ sel: 5 }),
+			view(st) {
+				const n = st.sel;
+				const R = ray({ n0: 0, n1: 10, x0: 80, x1: 830, end: 960, y: 170, hit: 'sel', cls: x => x === n ? 'sel' : '' });
+				let g = '';
+				if (n === 10) g += `<line class="tk" x1="${R.X(11)}" y1="${R.y - 11}" x2="${R.X(11)}" y2="${R.y + 11}"/><text class="tl" x="${R.X(11)}" y="${R.y + 51}">11</text>`;
+				g += arc(R.X, n, n + 1, R.y, '') + `<text class="arcw" x="${R.X(n + 1)}" y="${R.y - 70}">successivo</text>`;
+				if (n > 0) g += arc(R.X, n, n - 1, R.y, '') + `<text class="arcw" x="${R.X(n - 1)}" y="${R.y - 70}">precedente</text>`;
+				g += `<circle class="dot" cx="${R.X(n)}" cy="${R.y}" r="12"/>`;
+				return fig(1000, 260, R.s + g, 'semiretta da 0 a 10') +
+					msg(n === 0 ? '0 non ha precedente. Il successivo di 0 è 1.' : `Il precedente di ${n} è ${n - 1}, il successivo è ${n + 1}.`);
+			},
+			act(st, a, v) { st.sel = +v; }
+		},
+		// 11
+		{ ch: 1, title: 'Pari e dispari',
+			text: DL('Definizione (Numeri pari e dispari)', P(`Un numero naturale ${n_} è <b>pari</b> se è il doppio di un numero naturale: ${m('<i>n</i> = 2 · <i>k</i>')}, con ${m(`<i>k</i> ∈ ${NN}`)}.`) +
+				P(`È <b>dispari</b> se è il successivo di un numero pari: ${m('<i>n</i> = 2 · <i>k</i> + 1')}, con ${m(`<i>k</i> ∈ ${NN}`)}.`)) +
+				P(`Ad esempio 6 è pari: ${m('6 = 2 · 3')}.`) + P(`Anche 0 è pari: ${m('0 = 2 · 0')}.`) +
+				P(`<b>Quindi ora gli elementi di ${m('<i>P</i>')} e ${m('<i>D</i>')} sono ben determinati.</b>`),
+			init: () => ({ sel: 6 }),
+			view(st) {
+				const n = st.sel, k = Math.floor(n / 2), odd = n % 2 === 1;
+				const R = ray({ n0: 0, n1: 12, x0: 80, x1: 900, end: 960, y: 100, hit: 'sel', cls: x => (x % 2 ? 'od' : 'ev') + (x === n ? ' pk' : ''), pressed: x => x === n });
+				let g = '';
+				for (let i = 0; i < k; i++) g += arc(R.X, 2 * i, 2 * i + 2, R.y, '+2');
+				if (odd) g += arc(R.X, n - 1, n, R.y, '+1');
+				g += `<circle class="dot" cx="${R.X(n)}" cy="${R.y}" r="12"/>`;
+				const fl = (c, a, b) => `<p class="fline"><span class="sw ${c}"></span>${m(a)} ${m(b)}</p>`;
+				return fig(1000, 175, R.s + g, 'semiretta da 0 a 12: pari e dispari') +
+					`<div class="pd">${fl('ev', `<i>P</i> = {<i>n</i> ∈ ${NN} tale che <i>n</i> è pari}`, '= {0, 2, 4, 6, …}')}${fl('od', `<i>D</i> = {<i>n</i> ∈ ${NN} tale che <i>n</i> è dispari}`, '= {1, 3, 5, 7, …}')}</div>` +
+					msg(odd ? `${m(`${n} = 2 · ${k} + 1`)}: dispari, ${m(`${n} ∈ <i>D</i>`)}` : `${m(`${n} = 2 · ${k}`)}: pari, ${m(`${n} ∈ <i>P</i>`)}`);
+			},
+			act(st, a, v) { st.sel = +v; }
+		},
+		// 12
+		{ ch: 1, title: 'Tra un numero e il successivo?',
+			text: D(P(`Per ogni ${m(`<i>n</i> ∈ ${NN}`)}, tra ${n_} e ${m('<i>n</i> + 1')} non c’è nessun altro numero naturale.`) + P(`Si dice che ${NN} è <b>discreto</b>.`), `Proprietà (${NN} è discreto)`) +
+				P('Ad esempio tra 3 e 4 sulla semiretta ci sono infiniti punti.') + P('Nessuno di questi è un numero naturale.') + P('<b>Quindi da 3 si passa direttamente a 4.</b>'),
+			init: () => ({ n: 3 }),
+			view(st) {
+				const n = st.n, q = n + 1, f = v => String(v).replace('.', ',');
+				const R = ray({ n0: 0, n1: 10, x0: 80, x1: 880, end: 960, y: 34, hit: 'sel',
+					cls: x => x === n || x === q ? 'sel' : '', pressed: x => x === n });
+				const top = fig(1000, 104, R.s, 'semiretta da 0 a 10: si sceglie un numero e il suo successivo');
+				const Z = { a: Math.max(n - 0.28, -0.06), w: 1.6 };
+				const zoom = fig(1000, ZH, zoomSVG(Z, [n + 0.5, n + 0.1]), `tratto di semiretta tra ${n} e ${q}`, 'z8');
+				const b = Math.max(0, n - 2), i = n - b + 1;   // gradini numerati b … b+3; n sta sul gradino i
+				const cx = k => 24 + 60 * k, cy = k => 179 - 36 * k, xr = 4 + 60 * (i + 1) - 14, yr = 190 - 36 * i - 28;
+				const stairs = `<svg class="stairs" viewBox="0 0 310 200" role="img" aria-label="una scala: si sta sul gradino ${n} o sul gradino ${q}, non a metà">
+					<path class="st-line" d="M4,190 H64 V154 H124 V118 H184 V82 H244 V46 H304"/>
+					${[1, 2, 3, 4].map(k => `<text class="st-n" x="${34 + 60 * k}" y="${216 - 36 * k}">${b + k - 1}</text>`).join('')}
+					<circle class="dot" cx="${cx(i)}" cy="${cy(i)}" r="10"/><circle class="dot" cx="${cx(i + 1)}" cy="${cy(i + 1)}" r="10"/>
+					<circle class="st-r" cx="${xr}" cy="${yr}" r="11"/><path class="st-x" d="M${xr - 8},${yr - 8} l16,16 M${xr + 8},${yr - 8} l-16,16"/>
+					<text class="st-l" x="${xr - 16}" y="${yr - 12}" style="text-anchor:end">${f(n + 0.5)}</text>
+				</svg>`;
+				return top + zoom + `<div class="zrow" style="justify-content:center">${stairs}</div>` +
+					msg(`Tra ${m(String(n))} e ${m(String(q))}: ${m(f(n + 0.1))} e ${m(f(n + 0.5))} ∉ ${NN}. Da ${m(String(n))} si passa direttamente a ${m(String(q))}.`);
+			},
+			act(st, a, v) { st.n = Math.min(9, +v); }
+		},
+		// 13
+		{ ch: 2, title: 'Quando un numero è minore di un altro?',
+			text: DL('Definizione (Minore)', P(`Dati due naturali ${a_} e ${b_}, ${a_} è <b>minore</b> di ${b_}, e si scrive ${m('<i>a</i> &lt; <i>b</i>')}, se partendo da ${a_} e passando al successivo <b>una o più volte</b> si arriva a ${b_}.`) + P(`Si dice anche che ${b_} è <b>maggiore</b> di ${a_} e si scrive ${m('<i>b</i> &gt; <i>a</i>')}.`)) +
+				P(`Sulla semiretta ${b_} sta a destra di ${a_}.`),
+			init: () => ({ pr: [2, 5] }),
+			view(st) {
+				const [a, b] = st.pr;
+				const R = ray({ n0: 0, n1: 12, x0: 80, x1: 900, end: 955, y: 175, hit: 'pick', cls: n => n === a || n === b ? 'sel' : '' });
+				const lo = Math.min(a, b), hi = Math.max(a, b);
+				let g = '';
+				for (let i = lo; i < hi; i++) g += arc(R.X, i, i + 1, R.y, '+1');
+				g += `<circle class="dot" cx="${R.X(a)}" cy="${R.y}" r="11"/><circle class="dot" cx="${R.X(b)}" cy="${R.y}" r="11"/>`;
+				g += a === b ? `<text class="lv" x="${R.X(a)}" y="${R.y - 88}">a = b</text>`
+					: `<text class="lv" x="${R.X(a)}" y="${R.y - 88}">a</text><text class="lv" x="${R.X(b)}" y="${R.y - 88}">b</text>`;
+				const steps = hi - lo, ps = steps === 1 ? '1 passo' : steps + ' passi';
+				const t = a < b ? `${m(`${a} &lt; ${b}`)}: da ${a} a ${b} in ${ps}.` : a > b ? `${m(`${a} &gt; ${b}`)}: da ${b} a ${a} in ${ps}.` : `${m(`${a} = ${b}`)}`;
+				return fig(1000, 270, R.s + g, 'semiretta da 0 a 12') + msg(t);
+			},
+			act(st, a, v) { st.pr = [st.pr[1], +v]; }
+		},
+		// 14
+		{ ch: 2, title: `${NN} è ordinato`,
+			text: D(P(`Dati due numeri naturali ${a_} e ${b_}, vale sempre uno, e uno solo, dei tre casi:`) + `<p class="formula">${m('<i>a</i> &lt; <i>b</i>, &ensp; <i>a</i> = <i>b</i>, &ensp; <i>a</i> &gt; <i>b</i>')}</p>` + P(`Si dice che ${NN} è <b>ordinato</b>.`), `Proprietà (${NN} è ordinato)`) +
+				`<table class="symt"><tr><th>simbolo</th><th>si legge</th><th>esempio</th></tr>
+				<tr><td>${m('&lt;')}</td><td>minore</td><td>${m('3 &lt; 10')}</td></tr>
+					<tr><td>${m('=')}</td><td>uguale</td><td>${m('4 + 3 = 7')}</td></tr>
+					<tr><td>${m('&gt;')}</td><td>maggiore</td><td>${m('10 &gt; 3')}</td></tr></table>`,
+			init: () => ({ pr: [6, 11] }),
+			view(st) {
+				const [a, b] = st.pr, lo = Math.min(a, b);
+				const R = ray({ n0: 0, n1: 12, x0: 80, x1: 900, end: 955, y: 175, hit: 'pick', cls: n => n === a || n === b ? 'sel' : '' });
+				let g = `<line x1="${R.X(0)}" y1="${R.y}" x2="${R.X(lo)}" y2="${R.y}" stroke="var(--acc)" stroke-width="9" stroke-linecap="round" opacity="0.35"/>`;
+				g += `<circle class="dot" cx="${R.X(a)}" cy="${R.y}" r="11"/><circle class="dot" cx="${R.X(b)}" cy="${R.y}" r="11"/>`;
+				g += a === b ? `<text class="lv" x="${R.X(a)}" y="${R.y - 40}">a = b</text>`
+					: `<text class="lv" x="${R.X(a)}" y="${R.y - 40}">a</text><text class="lv" x="${R.X(b)}" y="${R.y - 40}">b</text>`;
+				const cs = [['a &lt; b', a < b, `${a} &lt; ${b}`], ['a = b', a === b, `${a} = ${b}`], ['a &gt; b', a > b, `${a} &gt; ${b}`]];
+				return fig(1000, 250, R.s + g, 'semiretta da 0 a 12') +
+					`<div class="cases3">${cs.map(([f, on, ex]) => `<div class="c3 ${on ? 'on' : ''}">${m(f.replace(/([ab])/g, '<i>$1</i>'))}<span class="ex">${on ? m(ex) : ''}</span></div>`).join('')}</div>` +
+					msg(a === b ? `${a} e ${b} sono lo stesso numero.` : `Partendo da 0 si incontra prima ${lo}: ${m(`${lo} &lt; ${Math.max(a, b)}`)}.`);
+			},
+			act(st, a, v) { st.pr = [st.pr[1], +v]; }
+		},
+		// 15
+		{ ch: 2, title: 'C’è un numero più grande di tutti?',
+			text: P('Il <b>massimo</b> di un insieme è il suo elemento più grande di tutti.') +
+				P(`Qualunque ${n_} scegli, ${m('<i>n</i> &lt; <i>n</i> + 1')}.`) + P(`<b>Quindi ${NN} non ha un massimo.</b>`),
+			init: () => ({ n: 1000000000n }),
+			view(st) {
+				return `<div class="col"><div class="cmp">
+					<div class="nbox"><label for="n8">un numero naturale</label><input id="n8" class="nin" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="${fmtB(st.n)}"></div>
+					<span class="lt m" aria-hidden="true">&lt;</span>
+					<div class="nbox"><span class="nlab" id="o8l">il suo successivo</span><output id="o8" class="nout" for="n8" aria-labelledby="o8l">${st.n == null ? '—' : fmtB(st.n + 1n)}</output></div>
+				</div><div class="ctl"><button type="button" class="btn pri big" data-act="inc" data-k="inc">+1</button></div></div>`;
+			},
+			after(stage, st) {
+				const inp = stage.querySelector('#n8'), out = stage.querySelector('#o8');
+				const size = () => {
+					const L = Math.max(inp.value.length, out.textContent.length);
+					const fs = L <= 13 ? 2.3 : Math.max(1.1, 2.3 * 13 / L);
+					inp.style.setProperty('--fs', fs + 'rem'); out.style.setProperty('--fs', fs + 'rem');
+				};
+				inp.addEventListener('input', () => {
+					const d = inp.value.replace(/\D/g, '').slice(0, 40);
+					st.n = d ? BigInt(d) : null;
+					inp.value = fmtB(st.n);
+					out.textContent = st.n == null ? '—' : fmtB(st.n + 1n);
+					size();
+				});
+				inp.addEventListener('change', () => { inp.value = fmtB(st.n); size(); });
+				size();
+			},
+			act(st) { st.n = (st.n ?? -1n) + 1n; }
+		},
+		// 16
+		{ ch: 2, title: 'E il più piccolo?',
+			text: P('Il <b>minimo</b> di un insieme è il suo elemento più piccolo di tutti.') +
+				P('Tutti i naturali si ottengono andando avanti da 0.') + P(`<b>Quindi 0 viene prima di tutti: è il minimo di ${NN}.</b>`),
+			init: () => ({ p: 5 }),
+			view(st) {
+				const p = st.p;
+				const R = ray({ n0: 0, n1: 10, x0: 80, x1: 880, y: 160, cls: n => n === p ? 'sel' : '' });
+				let arcs = '';
+				for (let i = 5; i > p; i--) arcs += arc(R.X, i, i - 1, R.y, '', st.fresh && st.anim && i === p + 1 ? 'fresh' : '');
+				return fig(1000, 240, R.s + arcs + tok(R.X(p), R.y, R.k, st.fresh && st.anim), 'semiretta da 0 a 10') +
+					`<div class="ctl"><button type="button" class="btn pri big" data-act="dec" data-k="dec"${p === 0 ? ' disabled' : ''}>precedente</button><button type="button" class="btn" data-act="five" data-k="five" aria-label="Torna a 5">↺ 5</button></div>` +
+					msg(p === 0 ? '0 non ha precedente: a sinistra di 0 la semiretta non c’è.' : `Il precedente di ${p} è ${p - 1}.`);
+			},
+			act(st, a) { st.anim = 0; if (a === 'dec' && st.p > 0) { st.p--; st.anim = 1; } if (a === 'five') st.p = 5; }
+		},
+		// 17
+		{ ch: 2, title: `${m('≤')} vuol dire «minore oppure uguale»`,
+				text: P('Basta che sia vera una delle due cose.') + P('Lo stesso vale per «maggiore o uguale».') +
+					`<table class="symt"><tr><th>simbolo</th><th>si legge</th><th>esempio</th></tr>
+					<tr><td>${m('≤')}</td><td>minore o uguale</td><td>${m('3 ≤ 10')} &nbsp; ${m('10 ≤ 10')}</td></tr>
+					<tr><td>${m('≥')}</td><td>maggiore o uguale</td><td>${m('10 ≥ 3')} &nbsp; ${m('3 ≥ 3')}</td></tr>
+					<tr><td>${m('≠')}</td><td>diverso</td><td>${m('7 ≠ 8')}</td></tr></table>`,
+			init: () => ({ ans: [null, null, null, null] }),
+			view(st) {
+				const L = [['3 ≤ 10', true, 'Vero: 3 è minore di 10.'], ['0 ≤ 0', true, 'Vero: 0 è uguale a 0.'],
+					['8 &lt; 8', false, `Falso: 8 non è minore di sé stesso. Invece ${m('8 ≤ 8')} è vero.`], ['12 ≤ 9', false, 'Falso: 12 non è né minore né uguale a 9.']];
+				return `<div class="col"><div class="vf">${L.map(([f, v, why], i) => {
+					const a = st.ans[i], ok = a === v;
+					const b = (val, t) => `<button type="button" class="btn opt ${a === val ? (ok ? 'ok' : 'no') : ''}" data-act="vf" data-v="${i},${val ? 1 : 0}" data-k="vf${i}${t}" aria-pressed="${a === val}" aria-label="${t === 'V' ? 'vero' : 'falso'}">${t}</button>`;
+					return `<span class="f m">${f}</span>${b(true, 'V')}${b(false, 'F')}<span class="why ${a == null ? 'none' : ok ? 'ok' : 'no'}"><span>${a == null ? '' : why}</span></span>`;
+				}).join('')}</div></div>`;
+			},
+			act(st, a, v) { const [i, x] = v.split(','); st.ans[+i] = x === '1'; }
+		},
+		// 18
+		{ ch: 2, title: 'Due confronti in fila',
+			text: P(`${m('3 &lt; <i>n</i> ≤ 6')} vuol dire: ${n_} è maggiore di 3 <b>e</b> minore o uguale a 6.`) +
+				`<p class="qq">Quali naturali ${n_} vanno bene?</p>`,
+			init: () => ({ s: {}, ck: false }),
+			view(st) {
+				const good = n => n > 3 && n <= 6;
+				const cls = n => !st.ck ? (st.s[n] ? 'sel' : '') : st.s[n] ? (good(n) ? 'okc' : 'noc') : good(n) ? 'miss' : '';
+				const R = ray({ n0: 0, n1: 10, x0: 80, x1: 880, y: 150, hit: 'tg', cls, pressed: n => !!st.s[n] });
+				let g = '';
+				if (!st.ck) { for (const n in st.s) if (st.s[n]) g += `<circle class="dot" cx="${R.X(+n)}" cy="${R.y}" r="10"/>`; }
+				else {
+					g += `<circle class="odot" cx="${R.X(3)}" cy="${R.y}" r="12"/>` + [4, 5, 6].map(n => `<circle class="dot" cx="${R.X(n)}" cy="${R.y}" r="12"/>`).join('');
+					g += `<text class="nl" x="${R.X(3)}" y="${R.y - 34}">escluso</text><text class="nl" x="${R.X(6)}" y="${R.y - 34}">incluso</text>`;
+				}
+				const sel = Object.keys(st.s).filter(n => st.s[n]).map(Number);
+				const right = sel.length === 3 && sel.every(good);
+				return `<p class="bigf">${m('3 &lt; <i>n</i> ≤ 6')}</p>` + fig(1000, 230, R.s + g, 'semiretta da 0 a 10') +
+					`<div class="ctl"><button type="button" class="btn pri" data-act="ck" data-k="ck">Controlla</button></div>` +
+					msg(st.ck ? (right ? `Giusto: ${n_} può essere 4, 5 oppure 6.` : `${n_} può essere 4, 5 oppure 6: il 3 è escluso, il 6 è incluso.`) : '', st.ck && right ? 'in' : '');
+			},
+			act(st, a, v) { if (a === 'ck') st.ck = true; else { st.s[v] = !st.s[v]; st.ck = false; } }
+		},
+		// 19
+		{ ch: 3, title: 'Come si chiamano?',
+			text: P('In ogni operazione si parte da due numeri, gli <b>operandi</b>, e si ottiene un <b>risultato</b>.') +
+				P(`Addizione e moltiplicazione hanno la <b>proprietà commutativa</b>: ${m('<i>a</i> + <i>b</i> = <i>b</i> + <i>a</i>')}, ${m('<i>a</i> · <i>b</i> = <i>b</i> · <i>a</i>')}.`) + P('Per questo addendi e fattori hanno lo stesso nome.') +
+				P(`Sottrazione e divisione no: ${m('20 − 8 = 12')}, ma ${m('8 − 20')} non fa 12.`),
+			init: () => ({ r: { '0,0': 1, '0,1': 1, '0,2': 1 } }),
+			view(st) {
+				const O = [['addizione', 6, '+', 9, 15, 'addendo', 'addendo', 'somma'], ['sottrazione', 20, '−', 8, 12, 'minuendo', 'sottraendo', 'differenza'],
+					['moltiplicazione', 7, '·', 4, 28, 'fattore', 'fattore', 'prodotto'], ['divisione', 35, ':', 5, 7, 'dividendo', 'divisore', 'quoziente']];
+				const nb = (i, j, n, w) => { const on = !!st.r[i + ',' + j]; return `<button type="button" class="nm ${j === 2 ? 'res' : 'op'}" data-act="nm" data-v="${i},${j}" data-k="nm${i}${j}" aria-pressed="${on}"><span class="n">${n}</span><span class="w">${w}</span></button>`; };
+				let h = `<div class="ops"><span class="on"></span><span class="hd">operando</span><span></span><span class="hd">operando</span><span></span><span class="hd">risultato</span>`;
+				O.forEach(([nm, x, op, y, r, w1, w2, w3], i) => { h += `<span class="on">${nm}</span>${nb(i, 0, x, w1)}<span class="sy${op === '·' ? ' dot' : ''}">${op}</span>${nb(i, 1, y, w2)}<span class="sy">=</span>${nb(i, 2, r, w3)}`; });
+				return `<div class="col">${h}</div></div>`;
+			},
+			act(st, a, v) { st.r[v] = !st.r[v]; }
+		},
+		// 20
+		{ ch: 4, h1: 'Le operazioni', title: 'Il risultato resta nell’insieme?', key: 'addA',
+			text: P(`Prendiamo ${m('<i>A</i> = {0, 1}')} e l’addizione.`) + P(`Sommando due elementi di ${m('<i>A</i>')}, il risultato sta ancora in ${m('<i>A</i>')}?`) +
+				P('Proviamo tutte le coppie.') + P('Vale anche lo stesso elemento due volte.') + P(`${m('0 + 1')} e ${m('1 + 0')} sono due coppie diverse.`),
+			init: () => ({ f: {}, order: [], last: null }),
+			view: st => clo(st, A2, '+', 'A') + cellMsg(st, A2, '+', 'A'),
+			after: (stage, st) => fly(stage, st, A2, '+'),
+			act: (st, a, v) => cellAct(st, v)
+		},
+		// 21
+		{ ch: 4, title: `Sommando si può uscire da ${m('<i>A</i>')}`, key: 'addA2',
+			text: P(`${m('1 + 1 = 2')} e ${m('2 ∉ <i>A</i>')}.`) + P(`<b>Quindi sommando si può uscire da ${m('<i>A</i>')}.</b>`) + P(`Si dice che ${m('<i>A</i>')} <b>non è chiuso</b> rispetto all’addizione.`) +
+				P(`${m('1 + 1')} si fa benissimo: il punto è che 2 sta fuori da ${m('<i>A</i>')}.`),
+			init: () => ({ f: {}, order: [], last: null }),
+			enter(st) { for (const k of ['0,0', '0,1', '1,0', '1,1']) cellAct(st, k); st.last = [1, 1]; },
+			view: st => clo(st, A2, '+', 'A', { mark: '1,1' }) + cellMsg(st, A2, '+', 'A'),
+			after: (stage, st) => fly(stage, st, A2, '+'),
+			act: (st, a, v) => cellAct(st, v)
+		},
+		// 22
+		{ ch: 4, title: 'E con la moltiplicazione?',
+			text: P(`Stesso insieme ${m('<i>A</i> = {0, 1}')}, stesse quattro coppie: ora moltiplichiamo.`),
+			init: () => ({ f: {}, order: [], last: null }),
+			view(st) {
+				const all = st.order.length === 4;
+				return clo(st, A2, '·', 'A') + (all ? msg(`Tutti i risultati stanno in ${m('<i>A</i>')}: ${m('<i>A</i>')} è <b>chiuso</b> rispetto alla moltiplicazione.`, 'in') : cellMsg(st, A2, '·', 'A'));
+			},
+			after: (stage, st) => fly(stage, st, A2, '·'),
+			act: (st, a, v) => cellAct(st, v)
+		},
+		// 23
+		{ ch: 4, title: 'Insieme chiuso rispetto a un’operazione',
+			text: DL('Definizione (Insieme chiuso rispetto a un’operazione)', P(`Sia ${m('<i>A</i>')} un insieme non vuoto.`) + P(`${m('<i>A</i>')} è <b>chiuso rispetto a un’operazione</b> se, <b>per ogni</b> coppia di elementi di ${m('<i>A</i>')}, il risultato è ancora un elemento di ${m('<i>A</i>')}.`) + P(`Si dice anche che l’operazione è <b>interna</b> in ${m('<i>A</i>')}.`) +
+				`<p class="formula">${m('<i>a</i>, <i>b</i> ∈ <i>A</i> &nbsp;⟹&nbsp; <i>a</i> ⋆ <i>b</i> ∈ <i>A</i>')}</p>` +
+				`<p class="small">${m('⋆')} è l’operazione che stiamo considerando; ${m('⟹')} si legge «allora».</p>`),
+			init: () => ({ op: '+', f: {}, order: [] }),
+			view(st) {
+				const add = st.op === '+';
+				return `<div class="ctl"><button type="button" class="btn" data-act="op" data-v="+" data-k="op+" aria-pressed="${add}">addizione</button><button type="button" class="btn" data-act="op" data-v="·" data-k="op·" aria-pressed="${!add}">moltiplicazione</button></div>` +
+					clo(st, A2, st.op, 'A', { all: true, ro: true }) +
+					`<div class="legend"><p class="${!add ? 'on in' : ''}"><b>${m('<i>A</i>')} è chiuso</b>: per tutte le coppie il risultato resta dentro.</p><p class="${add ? 'on out' : ''}"><b>${m('<i>A</i>')} non è chiuso</b>: basta <b>una</b> coppia il cui risultato esce, come ${m('1 + 1 = 2')}.</p></div>`;
+			},
+			act(st, a, v) { st.op = v; }
+		},
+		// 24
+		{ ch: 4, title: `Esercizio: ${m('<i>B</i> = {0, 2, 4}')}`,
+			text: P('Operazione: addizione.'),
+			q: { p: `${m('<i>B</i>')} è chiuso rispetto all’addizione?`, o: [{ t: 'Sì' }, { t: 'No', ok: 1 }],
+				fb: `No: ad esempio ${m('2 + 4 = 6 ∉ <i>B</i>')}.<br>Ne basta una.`, then: st => cellAct(st, '1,2') },
+			init: () => ({ f: {}, order: [], last: null }),
+			view: st => clo(st, [0, 2, 4], '+', 'B') + cellMsg(st, [0, 2, 4], '+', 'B'),
+			after: (stage, st) => fly(stage, st, [0, 2, 4], '+'),
+			act: (st, a, v) => cellAct(st, v)
+		},
+		// 25
+		{ ch: 4, title: `Esercizio: ${m('<i>C</i> = {1}')}`,
+			text: P('Operazione: moltiplicazione.'),
+			q: { p: `${m('<i>C</i>')} è chiuso rispetto alla moltiplicazione?`, o: [{ t: 'Sì', ok: 1 }, { t: 'No' }],
+				fb: `Sì: l’unica coppia è ${m('1 · 1 = 1 ∈ <i>C</i>')}.`, then: st => cellAct(st, '0,0') },
+			init: () => ({ f: {}, order: [], last: null }),
+			view: st => clo(st, [1], '·', 'C') + cellMsg(st, [1], '·', 'C'),
+			after: (stage, st) => fly(stage, st, [1], '·'),
+			act: (st, a, v) => cellAct(st, v)
+		},
+		// 26: da {0, 1} a ℕ, aggiungendo ogni volta la somma che esce
+		{ ch: 4, title: `Si può rendere chiuso ${m('{0, 1}')}?`,
+			text: st => st.all ? P('Ogni numero ne fa uscire un altro, il suo successivo.') + P('<b>Quindi per avere un insieme chiuso bisogna aggiungerli tutti, infiniti numeri.</b>')
+				: st.k === 1 ? P(`${m('<i>A</i> = {0, 1}')} non è chiuso rispetto all’addizione per colpa di ${m('1 + 1 = 2')}.`) + P('Proviamo ad aggiungere 2.')
+				: st.k === 2 ? P(`Adesso 2 c’è, ma ${m('2 + 1 = 3')} esce.`) + P('Aggiungiamo anche 3.')
+				: P('Ogni numero che aggiungiamo, sommato a 1, ne fa uscire un altro: il suo successivo.'),
+			init: () => ({ k: 1, all: false }),
+			view(st) {
+				const { k, all } = st, more = !all && k < 9;
+				const R = ray({ n0: 0, n1: 10, x0: 90, x1: 860, end: 960, y: 170, Odx: 34, hit: 'add', hitIf: n => more && n === k + 1,
+					cls: n => all || n <= k ? 'inb' : n === k + 1 ? 'noc' : '' });
+				const g = bandSVG(R, all ? R.end - 30 : R.X(k) + 24, st.fresh && st.anim ? R.X(st.from) + 24 : null) +
+					Array.from({ length: all ? 10 : k }, (_, i) => arc(R.X, i, i + 1, R.y, '+1')).join('') +
+					(all ? `<text class="dots" x="${R.X(10) + 0.75 * R.k}" y="${R.y + 51}" text-anchor="middle">…</text>`
+						: arc(R.X, k, k + 1, R.y, `${k} + 1 = ${k + 1}`, 'outarc'));
+				const els = (all ? [0, 1, 2, 3, 4, '…'] : Array.from({ length: k + 1 }, (_, i) => i))
+					.map(i => !all && i === k && k > 1 ? `<span class="el in${st.fresh && st.anim ? ' pulse' : ''}">${i}</span>` : i).join(', ');
+				return fig(1000, 250, g.replace('<!--ray-->', R.s), 'l’insieme sulla semiretta') +
+					`<div class="braces line m">${all ? `${NN} = ` : ''}{${els}}</div>` +
+					`<div class="ctl"><button type="button" class="btn pri" data-act="add" data-k="add"${more ? '' : ' hidden'}>aggiungi ${k + 1}</button>` +
+					`<button type="button" class="btn" data-act="etc" data-k="etc"${!all && k >= 3 ? '' : ' hidden'}>e così via…</button>` +
+					`<button type="button" class="btn" data-act="reset" data-k="reset" aria-label="Ricomincia da {0, 1}">↺</button></div>` +
+					msg(all ? 'Ora il successivo di ogni numero è già dentro: sommando 1 non si esce più.' : m(`${k} + 1 = ${k + 1} ∉ {${Array.from({ length: k + 1 }, (_, i) => i).join(', ')}}`) + ': esce.', all ? 'in' : 'out');
+			},
+			act(st, a) {
+				st.anim = 0; st.from = st.k;
+				if (a === 'add' && !st.all && st.k < 9) { st.k++; st.anim = 1; }
+				if (a === 'etc' && !st.all) { st.all = true; st.anim = 1; }
+				if (a === 'reset') { st.k = 1; st.all = false; }
+			}
+		},
+		// 27
+		{ ch: 4, title: `Si ottiene ${NN}`,
+			text: D(P('La somma di due numeri naturali è sempre un numero naturale.') + P(`Si dice anche che l’addizione è un’<b>operazione interna</b> in ${NN}.`), `Proprietà (${NN} è chiuso rispetto all’addizione)`) +
+				P(`Sommare 1 vuol dire passare al successivo: è così che abbiamo costruito ${NN}.`) +
+				P(`In ${NN} il successivo di ogni numero c’è già: <b>sommando 1 non si esce più</b>.`) +
+				P(`Sommare un numero qualsiasi ${b_} vuol dire passare al successivo ${b_} volte.`) +
+				P(`<b>Quindi a ogni passo si resta in ${NN}: ${m(`<i>a</i> + <i>b</i> ∈ ${NN}`)}.</b>`),
+			init: () => ({ p: 5 }),
+			view(st) {
+				const p = st.p, R = ray({ n0: 0, n1: 10, x0: 90, x1: 860, end: 960, y: 170, Odx: 34, cls: () => 'inb' });
+				let g = bandSVG(R, R.end - 30) + `<text class="dots" x="${R.X(10) + 0.75 * R.k}" y="${R.y + 51}" text-anchor="middle">…</text>`;
+				g = g.replace('<!--ray-->', R.s) + `<g opacity="0.35">${Array.from({ length: 10 }, (_, i) => i < 5 || i >= p ? arc(R.X, i, i + 1, R.y, '+1') : '').join('')}</g>`;
+				for (let i = 5; i < p; i++) g += arc(R.X, i, i + 1, R.y, '+1', st.fresh && st.anim && i === p - 1 ? 'fresh' : '');
+				if (p > 5) g += `<circle class="dot" cx="${R.X(5)}" cy="${R.y}" r="11"/>`;
+				const chain = m(Array.from({ length: p - 4 }, (_, i) => 5 + i).join(' → '));
+				return `<p class="bigf">${m(`{0, 1, 2, 3, 4, …} = ${NN}`)}</p>` +
+					fig(1000, 260, g + tok(R.X(p), R.y, -R.k, st.fresh && st.anim), 'la semiretta dei numeri naturali') +
+					`<div class="ctl"><button type="button" class="btn pri big" data-act="inc" data-k="inc"${p >= 8 ? ' disabled' : ''}>+1</button><button type="button" class="btn" data-act="five" data-k="five" aria-label="Torna a 5">↺ 5</button></div>` +
+					msg(p === 5 ? `Ad esempio ${m('5 + 3')}: tre passi al successivo, partendo da 5.` : `${chain}: &nbsp;${m(`5 + ${p - 5} = ${p} ∈ ${NN}`)}`, p === 5 ? '' : 'in');
+			},
+			act(st, a) { st.anim = 0; if (a === 'inc' && st.p < 8) { st.p++; st.anim = 1; } if (a === 'five') st.p = 5; }
+		},
+		// 28: la moltiplicazione come somma ripetuta
+		{ ch: 4, title: `${NN} è chiuso rispetto alla moltiplicazione`,
+			text: D(P('Il prodotto di due numeri naturali è sempre un numero naturale.') + P(`Si dice anche che la moltiplicazione è un’<b>operazione interna</b> in ${NN}.`), `Proprietà (${NN} è chiuso rispetto alla moltiplicazione)`) +
+				P('Moltiplicare vuol dire sommare più volte lo stesso numero.') +
+				P(`Se ${m('<i>b</i> &gt; 0')}, ${m('<i>a</i> · <i>b</i>')} è ${a_} sommato ${b_} volte.`) +
+				P(`A ogni somma si resta in ${NN}, perché ${NN} è chiuso rispetto all’addizione.`) +
+				P(`Se ${m('<i>b</i> = 0')}, ${m(`<i>a</i> · 0 = 0 ∈ ${NN}`)}.`) +
+				P(`<b>Quindi ${m(`<i>a</i> · <i>b</i> ∈ ${NN}`)}.</b>`) +
+				'<p class="small">Le proprietà di 0 e 1 nella moltiplicazione le studieremo nella prossima lezione.</p>',
+			init: () => ({ p: 0 }),
+			view(st) {
+				const p = st.p, a = st.fresh && st.anim, hit = n => n > 0 && n % 4 === 0 && n <= 4 * p;
+				const R = ray({ n0: 0, n1: 12, x0: 90, x1: 870, end: 960, y: 170, Odx: 34, cls: n => hit(n) ? 'okc' : 'inb' });
+				let g = bandSVG(R, R.end - 30) + `<text class="dots" x="${R.X(12) + 0.72 * R.k}" y="${R.y + 51}" text-anchor="middle">…</text>`;
+				g = g.replace('<!--ray-->', R.s);
+				for (let i = 0; i < p; i++) g += arc(R.X, 4 * i, 4 * i + 4, R.y, '+4', a && i === p - 1 ? 'fresh' : '') + `<circle class="ringin${a && i === p - 1 ? ' late' : ''}" cx="${R.X(4 * i + 4)}" cy="${R.y}" r="11"/>`;
+				const M = [`Ad esempio ${m('4 · 3 = 4 + 4 + 4')}: tre salti da 4, partendo da 0.`, m(`0 + 4 = 4 ∈ ${NN}`), m(`4 + 4 = 8 ∈ ${NN}`), m(`4 · 3 = 4 + 4 + 4 = 12 ∈ ${NN}`)];
+				return `<p class="bigf">${m('4 · 3 = 4 + 4 + 4')}</p>` +
+					fig(1000, 260, g + tok(R.X(4 * p), R.y, -4 * R.k, a), 'la semiretta dei numeri naturali: salti da 4') +
+					`<div class="ctl"><button type="button" class="btn pri big" data-act="inc" data-k="inc"${p >= 3 ? ' disabled' : ''}>+4</button><button type="button" class="btn" data-act="zero" data-k="zero" aria-label="Torna a 0">↺ 0</button></div>` +
+					msg(M[p], p ? 'in' : '');
+			},
+			act(st, a) { st.anim = 0; if (a === 'inc' && st.p < 3) { st.p++; st.anim = 1; } if (a === 'zero') st.p = 0; }
+		},
+		// 29: riepilogo a schema
+		{ ch: 5, full: true, title: 'Che cosa abbiamo visto: insiemi, numeri, ordine',
+			view() {
+				const R = ray({ n0: 0, n1: 3, x0: 30, x1: 330, y: 120, O: false });
+				const mini = `<svg class="mray" viewBox="0 25 470 160" role="img" aria-label="semiretta: 0, 1, 2, 3 e così via, ogni passo più 1">${R.s}` +
+					[0, 1, 2].map(i => arc(R.X, i, i + 1, R.y, '+1')).join('') +
+					`<text class="dots" x="${R.end + 30}" y="${R.y + 51}" text-anchor="middle">…</text></svg>`;
+				const SY = [['&lt;', 'minore', '&gt;', 'maggiore'], ['≤', 'minore o uguale', '≥', 'maggiore o uguale'], ['=', 'uguale', '≠', 'diverso']];
+				return `<div class="map">
+					<section class="mb"><h3>Insiemi</h3><div class="mbody"><div class="mg">
+						<p>Un <b>insieme</b> è una collezione di oggetti ben determinati, gli <b>elementi</b>.</p>
+						<p>Insiemi con le lettere maiuscole, elementi con le minuscole.</p></div><div class="mg">
+						<div class="mf"><span class="wl">per elencazione</span>${m('<i>A</i> = {1, 2, 3}')}</div>
+						<div class="mf"><span class="wl">per proprietà caratteristica</span>${m(`<i>P</i> = {<i>n</i> ∈ ${NN} tale che <i>n</i> è pari}`)}</div></div>
+						<p class="fline"><span class="in">${m('2 ∈ <i>A</i>')}</span><span class="out">${m('5 ∉ <i>A</i>')}</span></p>
+					</div></section>${MAP_ARROW}
+					<section class="mb"><h3>I numeri naturali</h3><div class="mbody"><div class="mg">
+						<p class="mbig">${m(`${NN} = {0, 1, 2, 3, …}`)}</p>
+						<p>Si parte da 0 e si passa al successivo ${m('<i>n</i> + 1')}.</p></div>
+						${mini}<div class="mg">
+						<p class="fline"><span class="sw ev"></span>pari ${m('<i>n</i> = 2 · <i>k</i>')}</p>
+						<p class="fline"><span class="sw od"></span>dispari ${m('<i>n</i> = 2 · <i>k</i> + 1')}</p>
+					</div></div></section>${MAP_ARROW}
+					<section class="mb"><h3>L’ordine</h3><div class="mbody">
+						<p>${m('<i>a</i> &lt; <i>b</i>')} se partendo da ${a_} e passando al successivo <b>una o più volte</b> si arriva a ${b_}: sulla semiretta ${b_} sta a destra di ${a_}.</p>
+						<table class="mt" aria-label="simboli e come si leggono">${SY.map(([s1, l1, s2, l2]) => `<tr><td class="s">${m(s1)}</td><td>${l1}</td><td class="s">${m(s2)}</td><td>${l2}</td></tr>`).join('')}</table>
+						<div class="mg"><p>${m('≤')} vuol dire minore <b>oppure</b> uguale: ${m('0 ≤ 0')} è vero, ${m('8 &lt; 8')} è falso.</p>
+						<p>0 è il <b>minimo</b> di ${NN};<br>${NN} non ha un <b>massimo</b>.</p></div>
+					</div></section></div>`;
+			}
+		},
+		// 30: riepilogo a schema; ogni scheda delle proprietà riapre il passo dove è stata vista
+		{ ch: 5, full: true, title: `Che cosa abbiamo visto: operazioni e proprietà di ${NN}`,
+			view() {
+				const OP = [['addizione', 'addendi', 'somma', '6 + 9 = 15'], ['sottrazione', 'minuendo, sottraendo', 'differenza', '20 − 8 = 12'],
+					['moltiplicazione', 'fattori', 'prodotto', '7 · 4 = 28'], ['divisione', 'dividendo, divisore', 'quoziente', '35 : 5 = 7']];
+				const PR = [
+					[8, `${NN} è infinito`, `ogni naturale ${n_} ha un successivo, ${m('<i>n</i> + 1')}`],
+					[11, `${NN} è discreto`, `tra ${n_} e ${m('<i>n</i> + 1')} nessun altro naturale`],
+					[13, `${NN} è ordinato`, `vale uno e uno solo tra ${m('<i>a</i> &lt; <i>b</i>')}, ${m('<i>a</i> = <i>b</i>')}, ${m('<i>a</i> &gt; <i>b</i>')}`],
+					[26, `${NN} è chiuso rispetto all’addizione`, m(`<i>a</i>, <i>b</i> ∈ ${NN} &nbsp;⟹&nbsp; <i>a</i> + <i>b</i> ∈ ${NN}`)],
+					[27, `${NN} è chiuso rispetto alla moltiplicazione`, m(`<i>a</i>, <i>b</i> ∈ ${NN} &nbsp;⟹&nbsp; <i>a</i> · <i>b</i> ∈ ${NN}`)]
+				];
+				return `<div class="map two">
+					<section class="mb"><h3>Le operazioni</h3><div class="mbody">
+						<table class="mt opn"><tr><th>operazione</th><th>operandi</th><th>risultato</th><th>esempio</th></tr>
+						${OP.map(([o, a, r, e]) => `<tr><td>${o}</td><td>${a}</td><td>${r}</td><td class="e">${m(e)}</td></tr>`).join('')}</table>
+						<div class="mg"><p><b>Proprietà commutativa</b>: ${m('<i>a</i> + <i>b</i> = <i>b</i> + <i>a</i>')}, ${m('<i>a</i> · <i>b</i> = <i>b</i> · <i>a</i>')} (per questo addendi e fattori hanno lo stesso nome).</p>
+						<p>Sottrazione e divisione no: ${m('20 − 8 = 12')}, ma ${m('8 − 20')} non fa 12.</p></div>
+						<p>${m('<i>A</i>')} è <b>chiuso</b> rispetto a un’operazione se <b>per ogni</b> coppia di elementi di ${m('<i>A</i>')} il risultato sta ancora in ${m('<i>A</i>')};<br>per dire che non lo è basta fornire un <b>controesempio</b>. Ad esempio in ${m('{0, 1}')}, basta vedere che ${m('1 + 1 = 2 ∉ {0, 1}')}.</p>
+					</div></section>${MAP_ARROW}
+					<section class="mb"><h3>Le proprietà di ${NN}</h3>
+						<div class="pcs">${PR.map(([s, t, w]) => `<button type="button" class="pc" data-act="go" data-v="${s}" data-k="go${s}"><b>${t}</b><span>${w}</span><span class="pgo">passo ${s + 1} →</span></button>`).join('')}</div>
+					</section></div>`;
+			}
+		}
+	];
+
+	// ---------- riepilogo da stampare: i passi 29 e 30 ricomposti su un foglio A4 orizzontale ----------
+	(() => {
+		const ps = document.createElement('section');
+		ps.className = 'print-summary';
+		ps.setAttribute('aria-hidden', 'true');
+		const tmp = document.createElement('div');
+		tmp.innerHTML = STEPS.filter(x => x.full).map(x => x.view({})).join('');
+		const B = [...tmp.querySelectorAll('section.mb')].map(b => b.outerHTML);   // Insiemi, Naturali, Ordine, Operazioni, Proprietà
+		const T = '<h1 class="ps-t">I numeri naturali – Lezione 1: riepilogo</h1>';
+		ps.innerHTML = `<div class="ps-in ps-port">${T}` +
+			`<div class="ps-row">${B[0]}${B[1]}</div><div class="ps-row">${B[2]}${B[3]}</div><div class="ps-row one">${B[4]}</div></div>` +
+			`<div class="ps-land">${T}${tmp.innerHTML}</div>`;
+		document.body.appendChild(ps);
+		document.addEventListener('click', e => { if (e.target.closest?.('[data-print]')) window.print(); });
+	})();
+
+	// ---------- motore ----------
+	const S = {};
+	let cur = 0;
+	let nextLesson = null;   // indirizzo della lezione successiva, se sul sito c'è
+	const main = $('main'), left = $('left'), stage = $('stage');
+	const stOf = i => { const P = STEPS[i], k = P.key ?? i; return S[k] ??= (P.init ? P.init() : {}); };
+
+	// barra di avanzamento
+	(() => {
+		let h = '', i = 0;
+		CH.forEach((name, c) => {
+			const n = STEPS.filter(s => s.ch === c).length;
+			h += `<div class="pch" style="--n:${n}" data-ch="${c}"><div class="segs">`;
+			for (let j = 0; j < n; j++, i++) h += `<button type="button" class="seg" data-go="${i}" aria-label="${name}, passo ${i + 1}"></button>`;
+			h += `</div><span class="pname">${name}</span></div>`;
+		});
+		$('prog').innerHTML = h;
+		$('prog').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(+b.dataset.go); });
+	})();
+
+	function renderLeft() {
+		const P = STEPS[cur], st = stOf(cur);
+		let h = P.full ? `<div class="thead"><h2>${P.title}</h2><span class="tacts"><button type="button" class="btn" data-print><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z"/></svg>Stampa il riepilogo</button>${cur === STEPS.length - 1 && nextLesson ? `<a class="btn pri" href="${nextLesson}">Prossima lezione →</a>` : ''}</span></div>` : `<h2>${P.title}</h2>`;
+		const T = typeof P.text === 'function' ? P.text(st) : P.text;
+		if (T) h += `<div class="txt">${T}</div>`;
+		if (P.q) {
+			const a = st.ans;
+			h += `<div class="q"><p class="qq">${P.q.p}</p><div class="opts">${P.q.o.map((o, i) =>
+				`<button type="button" class="btn opt ${a === i ? (o.ok ? 'ok' : 'no') : ''} ${a != null && o.ok ? 'right' : ''}" data-act="ans" data-v="${i}" data-k="ans${i}" aria-pressed="${a === i}">${o.t}</button>`).join('')}</div>` +
+				(a != null ? `<p class="fb ${P.q.o[a].ok ? 'ok' : 'no'}">${P.q.fb}</p>` : '') + '</div>';
+		}
+		left.innerHTML = h;
+	}
+	function renderStage() {
+		const P = STEPS[cur], st = stOf(cur);
+		stage.innerHTML = P.view(st);
+		P.after?.(stage, st);
+		st.fresh = false;
+	}
+	function renderChrome() {
+		const P = STEPS[cur];
+		$('h1').textContent = P.h1 ?? H1[P.ch];
+		document.querySelectorAll('.seg').forEach((b, i) => {
+			b.classList.toggle('cur', i === cur); b.classList.toggle('done', i < cur);
+			if (i === cur) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+		});
+		document.querySelectorAll('.pch').forEach(p => p.classList.toggle('cur', +p.dataset.ch === P.ch));
+		$('prev').disabled = cur === 0;
+		$('next').disabled = cur === STEPS.length - 1;
+		$('count').textContent = `${cur + 1} / ${STEPS.length}`;
+	}
+	function go(i) {
+		i = Math.max(0, Math.min(STEPS.length - 1, i));
+		cur = i;
+		const P = STEPS[cur], st = stOf(cur);
+		P.enter?.(st);
+		st.fresh = false;
+		main.classList.toggle('full', !!P.full);
+		renderChrome(); renderLeft(); renderStage();
+		left.scrollTop = 0; stage.scrollTop = 0;
+		const h = '#passo-' + (cur + 1);
+		if (location.hash !== h) { try { history.replaceState(null, '', h); } catch (e) {} }
+	}
+	// dopo un'azione: ridisegna, fa scorrere ciò che si è spostato (FLIP) e rimette il fuoco
+	function refresh() {
+		const snap = {};
+		stage.querySelectorAll('[data-flip]').forEach(e => { snap[e.dataset.flip] = e.getBoundingClientRect(); });
+		const fk = document.activeElement?.dataset?.k;
+		renderLeft(); renderStage();
+		if (!reduced()) stage.querySelectorAll('[data-flip]').forEach(e => {
+			const p = snap[e.dataset.flip]; if (!p) return;
+			const r = e.getBoundingClientRect(), dx = p.left - r.left, dy = p.top - r.top;
+			if (Math.abs(dx) + Math.abs(dy) > 1) e.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.3,.7,.3,1)' });
+		});
+		if (fk) main.querySelector(`[data-k="${CSS.escape(fk)}"]`)?.focus({ preventScroll: true });
+		const said = [...main.querySelectorAll('.fb, .msg:not(.empty)')].map(e => e.textContent).join(' ');
+		$('live').textContent = said;
+	}
+	main.addEventListener('click', e => {
+		const t = e.target.closest('[data-act]');
+		if (!t || !main.contains(t) || t.disabled) return;
+		const P = STEPS[cur], st = stOf(cur), a = t.dataset.act, v = t.dataset.v;
+		if (a === 'go') { go(+v); return; }
+		if (a === 'ans') { st.ans = +v; P.q.then?.(st); }
+		else P.act(st, a, v);
+		st.fresh = true;
+		refresh();
+	});
+	main.addEventListener('keydown', e => {
+		if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('g[role="button"]')) {
+			e.preventDefault();
+			e.target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+		}
+	});
+	document.addEventListener('keydown', e => {
+		if (e.altKey || e.ctrlKey || e.metaKey || e.defaultPrevented) return;
+		if (e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+		if (e.key === 'ArrowRight' && cur < STEPS.length - 1) { e.preventDefault(); go(cur + 1); }
+		if (e.key === 'ArrowLeft' && cur > 0) { e.preventDefault(); go(cur - 1); }
+	});
+	$('prev').addEventListener('click', () => go(cur - 1));
+	$('next').addEventListener('click', () => go(cur + 1));
+	const fromHash = () => { const r = /^#passo-(\d{1,2})$/.exec(location.hash); return r ? +r[1] - 1 : null; };
+	window.addEventListener('hashchange', () => { const i = fromHash(); if (i != null && i !== cur) go(i); });
+	// ---------- prossima lezione: solo sul sito, e solo se il file della lezione successiva c'è;
+	// il link compare nell'intestazione dell'ultimo riepilogo ----------
+	if (location.protocol.startsWith('http')) $('homeBtn').hidden = false;   // sul sito si torna all'elenco delle lezioni; da file no
+	const ln = /lezione-(\d+)(?:\.html)?$/.exec(location.pathname);
+	if (ln && location.protocol.startsWith('http')) {
+		const url = location.pathname.replace(/lezione-\d+(?:\.html)?$/, `lezione-${+ln[1] + 1}.html`);
+		fetch(url, { method: 'HEAD', cache: 'no-store' })
+			.then(r => { if (r.ok) { nextLesson = url; renderLeft(); } })
+			.catch(() => {});
+	}
+	go(fromHash() ?? 0);
+})();
+</script>
+</body>
+</html>

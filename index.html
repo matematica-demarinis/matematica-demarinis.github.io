@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Matematica al liceo · Materiali didattici del prof. Paolo De Marinis</title>
+	<meta name="description" content="Lezioni interattive di matematica per il liceo linguistico e il liceo delle scienze umane, a cura del prof. Paolo De Marinis.">
+	<meta name="theme-color" content="#F3F6F9">
+	<link rel="preload" href="assets/fonts/lexend-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="stylesheet" href="assets/css/style.css">
+	<script src="assets/js/main.js"></script>
+</head>
+<body>
+	<a class="skip-link" href="#contenuto">Vai al contenuto</a>
+
+	<header class="site-header" id="top">
+		<div class="wrap header-inner">
+			<div class="brand">
+				<h1 class="site-title"><a href="index.html">Matematica al liceo</a></h1>
+				<p class="site-subtitle">Materiali didattici del prof. Paolo De Marinis</p>
+				<p class="site-schools"><span>Liceo linguistico</span> · <span>Liceo delle scienze umane</span></p>
+			</div>
+			<nav class="site-nav" aria-label="Navigazione principale">
+				<ul>
+					<li><a href="index.html" aria-current="page">Home</a></li>
+					<li><a href="#prima">Prima</a></li>
+					<li><a href="#seconda">Seconda</a></li>
+					<li><a href="#informazioni">Informazioni</a></li>
+				</ul>
+			</nav>
+			<div class="tools">
+				<div class="zmenu" id="zmenu">
+					<button type="button" class="round-btn" id="zoomBtn" aria-label="Dimensione dei contenuti" title="Dimensione dei contenuti" aria-haspopup="dialog" aria-expanded="false" aria-controls="zpanel">
+						<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3 20.5 20.5M8 10.5h5M10.5 8v5"/></svg>
+					</button>
+					<section class="zpanel" id="zpanel" role="dialog" aria-labelledby="ztitle" hidden>
+						<div class="zhead">
+							<span id="ztitle">Dimensione dei contenuti</span>
+							<button type="button" class="round-btn small" id="zclose" aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7 17 17M17 7 7 17"/></svg></button>
+						</div>
+						<div class="zopts" role="radiogroup" aria-labelledby="ztitle">
+							<label><input type="radio" name="zoomLevel" value="100" checked>100%</label>
+							<label><input type="radio" name="zoomLevel" value="115">115%</label>
+							<label><input type="radio" name="zoomLevel" value="130">130%</label>
+							<label><input type="radio" name="zoomLevel" value="150">150%</label>
+						</div>
+					</section>
+				</div>
+				<button type="button" class="round-btn" id="theme" aria-label="Attiva il tema scuro" title="Tema scuro"><span id="themeGlyph" aria-hidden="true">☾</span></button>
+			</div>
+		</div>
+	</header>
+
+	<main id="contenuto">
+		<section class="lessons" aria-labelledby="lezioni-title">
+			<div class="wrap">
+				<h2 class="section-title" id="lezioni-title">Lezioni</h2>
+
+				<!-- ========== Classe prima ========== -->
+				<section class="year" id="prima" aria-labelledby="prima-title">
+					<h3 class="year-title" id="prima-title">Classe prima</h3>
+					<div class="topic-grid">
+
+						<article class="topic" aria-labelledby="t-numeri-naturali">
+							<p class="topic-year">Classe prima</p>
+							<h4 class="topic-title" id="t-numeri-naturali">I numeri naturali</h4>
+							<p class="topic-desc">Costruzione dei numeri naturali, ordine, operazioni e loro proprietà.</p>
+							<ul class="lesson-list">
+								<li>
+									<a class="lesson" href="prima/numeri-naturali/lezione-1.html">
+										<span class="lesson-num">Lezione 1<span class="sr-only"> —</span></span>
+										<span class="lesson-title">Numeri naturali e addizione</span>
+									</a>
+								</li>
+								<li>
+									<a class="lesson" href="prima/numeri-naturali/lezione-2.html">
+										<span class="lesson-num">Lezione 2<span class="sr-only"> —</span></span>
+										<span class="lesson-title">Operazioni nei numeri naturali</span>
+									</a>
+								</li>
+							</ul>
+						</article>
+
+						<!-- Next topics for the first year go here, as copies of the <article> above:
+						     divisibilità, numeri interi, numeri razionali, insiemi,
+						     calcolo letterale, monomi, polinomi, geometria. -->
+
+					</div>
+				</section>
+
+				<!-- ========== Classe seconda ========== -->
+				<section class="year" id="seconda" aria-labelledby="seconda-title">
+					<h3 class="year-title" id="seconda-title">Classe seconda</h3>
+					<div class="topic-grid">
+
+						<article class="topic" aria-labelledby="t-equazioni">
+							<p class="topic-year">Classe seconda</p>
+							<h4 class="topic-title" id="t-equazioni">Equazioni</h4>
+							<p class="topic-desc">Equazioni, insieme universo, insieme delle soluzioni e principi di equivalenza.</p>
+							<ul class="lesson-list">
+								<li>
+									<a class="lesson" href="seconda/equazioni/lezione-1.html">
+										<span class="lesson-num">Lezione 1<span class="sr-only"> —</span></span>
+										<span class="lesson-title">Le equazioni</span>
+									</a>
+								</li>
+								<li>
+									<a class="lesson" href="seconda/equazioni/lezione-2.html">
+										<span class="lesson-num">Lezione 2<span class="sr-only"> —</span></span>
+										<span class="lesson-title">Equivalenza e risoluzione</span>
+									</a>
+								</li>
+							</ul>
+						</article>
+
+						<!-- Next topics for the second year go here:
+						     funzioni, retta, sistemi lineari, disequazioni, radicali, geometria. -->
+
+					</div>
+				</section>
+
+				<!--
+				HOW TO ADD A TOPIC
+				Copy this block inside the .topic-grid of the right year,
+				then change the id (it must be unique), the texts and the links.
+
+				<article class="topic" aria-labelledby="t-numeri-interi">
+					<p class="topic-year">Classe prima</p>
+					<h4 class="topic-title" id="t-numeri-interi">I numeri interi</h4>
+					<p class="topic-desc">One-line description of the topic.</p>
+					<ul class="lesson-list">
+						<li>
+							<a class="lesson" href="prima/numeri-interi/lezione-1.html">
+								<span class="lesson-num">Lezione 1<span class="sr-only"> —</span></span>
+								<span class="lesson-title">Lesson title</span>
+							</a>
+						</li>
+					</ul>
+				</article>
+
+				HOW TO MARK A LESSON AS NEW OR UPDATED
+				Put one badge INSIDE .lesson-title, after the text, only while it is useful:
+					<span class="lesson-title">Le equazioni <span class="badge badge-new">Nuova</span></span>
+					<span class="lesson-title">Le equazioni <span class="badge badge-updated">Aggiornata</span></span>
+				-->
+			</div>
+		</section>
+
+		<section class="info" id="informazioni" aria-labelledby="informazioni-title">
+			<div class="wrap">
+				<h2 class="section-title" id="informazioni-title">Informazioni</h2>
+				<div class="info-panel">
+					<p>Qui trovi le lezioni interattive di matematica del prof. Paolo De Marinis per il liceo linguistico e il liceo delle scienze umane.</p>
+					<p>Le lezioni riprendono quello che abbiamo fatto in classe, per rivederlo con calma a casa.</p>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="wrap">
+			<p class="footer-main">Matematica al liceo · Paolo De Marinis</p>
+			<p class="footer-sub">Materiali didattici per gli studenti</p>
+		</div>
+	</footer>
+</body>
+</html>

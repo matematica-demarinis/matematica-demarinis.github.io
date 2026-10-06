@@ -1,0 +1,635 @@
+/* ==========================================================================
+   Matematica al liceo — home page styles
+   Same palette and grid paper background as the interactive lessons.
+   ========================================================================== */
+
+/* Lexend is served from this site (SIL Open Font License, see assets/fonts/OFL.txt):
+   no request to Google. One variable file covers weights 400–700, Latin characters. */
+@font-face {
+	font-family: "Lexend";
+	font-style: normal;
+	font-weight: 400 700;
+	font-display: swap;
+	src: url("../fonts/lexend-latin.woff2") format("woff2");
+}
+
+:root {
+	--bg: #F3F6F9;
+	--grid: #E2E8EF;
+	--panel: #FFFFFF;
+	--ink: #17212E;
+	--ink-secondary: #4A5566;
+	--line: #D3DBE4;
+	--accent: #2A4DB5;
+	--accent-soft: rgba(42, 77, 181, 0.08);
+	--accent-hover: #1F3C93;
+	--updated: #107443;
+	--control: #8C9AAB;
+	--popup-shadow: rgba(23, 33, 46, 0.18);
+
+	--font: "Lexend", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--radius: 14px;
+	--radius-small: 10px;
+	--shadow: 0 1px 2px rgba(23, 33, 46, 0.04), 0 4px 14px rgba(23, 33, 46, 0.04);
+	--content-width: 68rem;
+	--gutter: 1.25rem;
+}
+
+/* Dark theme: same colours as the dark theme of the lessons */
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--bg: #0F141A;
+	--grid: #19212B;
+	--panel: #161D26;
+	--ink: #E6EBF1;
+	--ink-secondary: #A8B3C0;
+	--line: #2A3440;
+	--accent: #86A5F7;
+	--accent-soft: rgba(134, 165, 247, 0.12);
+	--accent-hover: #AFC4FA;
+	--updated: #4FC98C;
+	--control: #56657A;
+	--popup-shadow: rgba(0, 0, 0, 0.5);
+	--shadow: none;
+}
+
+/* Content size chosen with the magnifier, as in the lessons */
+:root[data-zoom="115"] { font-size: 115%; }
+:root[data-zoom="130"] { font-size: 130%; }
+:root[data-zoom="150"] { font-size: 150%; }
+
+/* ---------- Base ---------- */
+
+[hidden] {
+	display: none !important;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	font-family: var(--font);
+	font-size: 1rem;
+	line-height: 1.55;
+	color: var(--ink);
+	background-color: var(--bg);
+	/* Grid paper, as in the lessons */
+	background-image:
+		linear-gradient(var(--grid) 1px, transparent 1px),
+		linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+	background-size: 24px 24px;
+	-webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul {
+	margin: 0;
+}
+
+a {
+	color: var(--accent);
+}
+
+:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 3px;
+	border-radius: 4px;
+}
+
+/* Content column; respects the iPhone notch in landscape */
+.wrap {
+	width: 100%;
+	max-width: var(--content-width);
+	margin: 0 auto;
+	padding-left: max(var(--gutter), env(safe-area-inset-left));
+	padding-right: max(var(--gutter), env(safe-area-inset-right));
+}
+
+/* Text for screen readers only */
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+/* Keyboard users can jump straight to the lessons */
+.skip-link {
+	position: absolute;
+	left: 1rem;
+	top: -4rem;
+	z-index: 10;
+	padding: 0.6rem 1rem;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--radius-small);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.skip-link:focus {
+	top: 1rem;
+}
+
+/* ---------- Header ---------- */
+
+/* The header is a size container: its layout follows the space actually available,
+   which also shrinks when the content size is raised with the magnifier. */
+.site-header {
+	container-type: inline-size;
+	background: var(--panel);
+	border-top: 4px solid var(--accent);
+	border-bottom: 1px solid var(--line);
+}
+
+/* Phones and tablets: title and buttons on top, links below.
+   Wide screens: title, links and buttons on one row. */
+.header-inner {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	grid-template-areas:
+		"brand tools"
+		"nav   nav";
+	gap: 1.1rem 1rem;
+	padding-top: 1.75rem;
+	padding-bottom: 1.25rem;
+}
+
+.brand {
+	grid-area: brand;
+	min-width: 0;
+}
+
+.site-nav {
+	grid-area: nav;
+}
+
+/* The size panel is anchored to this box, so it never goes past the right edge */
+.tools {
+	grid-area: tools;
+	align-self: start;
+	position: relative;
+	display: flex;
+	gap: 0.5rem;
+}
+
+/* Very narrow (small phones, or large content size): buttons on their own row */
+@container (max-width: 22rem) {
+	.header-inner {
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			"tools"
+			"brand"
+			"nav";
+	}
+
+	.tools {
+		justify-self: end;
+	}
+
+	/* more specific than the base .zopts rule, which comes later in the file */
+	.site-header .zopts {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.site-title {
+	font-size: clamp(1.85rem, 1.45rem + 1.8vw, 2.6rem);
+	font-weight: 700;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+	text-wrap: balance;
+}
+
+.site-title a {
+	color: var(--ink);
+	text-decoration: none;
+}
+
+.site-subtitle {
+	margin-top: 0.45rem;
+	font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+	color: var(--ink-secondary);
+	text-wrap: balance;
+}
+
+.site-schools {
+	margin-top: 0.25rem;
+	font-size: 0.875rem;
+	color: var(--ink-secondary);
+	letter-spacing: 0.01em;
+}
+
+/* Each school stays on one line: on phones the break falls after the dot */
+.site-schools span {
+	white-space: nowrap;
+}
+
+/* Plain links, no hamburger: one row on phones, they wrap only on very narrow screens */
+.site-nav ul {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 0;
+	margin-left: -0.5rem;
+	list-style: none;
+}
+
+.site-nav a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	padding: 0 0.5rem;
+	border-radius: var(--radius-small);
+	color: var(--ink-secondary);
+	font-size: 0.9375rem;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.site-nav a:hover {
+	color: var(--accent);
+	background: var(--accent-soft);
+}
+
+/* Current page: darker and underlined, not colour alone */
+.site-nav a[aria-current="page"] {
+	color: var(--ink);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.35em;
+}
+
+@container (min-width: 60rem) {
+	.header-inner {
+		grid-template-columns: 1fr auto auto;
+		grid-template-areas: "brand nav tools";
+		align-items: start;
+		column-gap: 1.5rem;
+		padding-top: 2.5rem;
+		padding-bottom: 2rem;
+	}
+
+	.site-nav ul {
+		gap: 0.25rem;
+		margin-left: 0;
+		margin-right: -0.6rem;
+	}
+
+	.site-nav a {
+		padding: 0 0.6rem;
+		font-size: 1rem;
+	}
+}
+
+/* ---------- Theme and size buttons (same look as in the lessons) ---------- */
+
+.round-btn {
+	display: grid;
+	place-items: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0;
+	border: 2px solid var(--control);
+	border-radius: 50%;
+	background: var(--panel);
+	color: var(--ink);
+	font: inherit;
+	font-size: 1.3rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.round-btn:hover,
+.round-btn[aria-expanded="true"] {
+	border-color: var(--accent);
+}
+
+.round-btn svg {
+	width: 1.45rem;
+	height: 1.45rem;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2.2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.round-btn.small {
+	width: 2.4rem;
+	height: 2.4rem;
+	min-width: 40px;
+	min-height: 40px;
+}
+
+.round-btn.small svg {
+	width: 1.1rem;
+	height: 1.1rem;
+	stroke-width: 2.4;
+}
+
+.zpanel {
+	position: absolute;
+	top: calc(100% + 0.6rem);
+	right: 0;
+	z-index: 30;
+	/* never wider than the header (cqw ignores the desktop scrollbar, vw does not) */
+	width: min(21rem, calc(100cqw - 2.5rem));
+	padding: 0.8rem 0.9rem 0.9rem;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	box-shadow: 0 12px 32px var(--popup-shadow);
+}
+
+.zhead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 0.55rem;
+	font-weight: 700;
+}
+
+.zopts {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 0.4rem;
+}
+
+.zopts label {
+	position: relative;
+	display: grid;
+	place-items: center;
+	min-height: 44px;
+	border: 2px solid var(--control);
+	border-radius: var(--radius-small);
+	cursor: pointer;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.zopts input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.zopts label:has(input:checked) {
+	border-color: var(--accent);
+	background: var(--accent-soft);
+	color: var(--accent);
+}
+
+.zopts label:has(input:focus-visible) {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+/* ---------- Sections ---------- */
+
+main {
+	flex: 1;
+}
+
+.lessons {
+	padding-top: 2.5rem;
+}
+
+.info {
+	padding-top: 1rem;
+	padding-bottom: 3rem;
+}
+
+.section-title {
+	margin-bottom: 1.5rem;
+	font-size: 1.6rem;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
+/* Anchored sections do not end up glued to the top edge */
+.year,
+.info {
+	scroll-margin-top: 1rem;
+}
+
+.year {
+	margin-bottom: 2.75rem;
+}
+
+/* Year heading with a thin rule that fills the row */
+.year-title {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1rem;
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: var(--ink);
+}
+
+.year-title::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: var(--line);
+}
+
+/* ---------- Topic cards ---------- */
+
+.topic-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+	gap: 1.25rem;
+}
+
+.topic {
+	display: flex;
+	flex-direction: column;
+	padding: 1.25rem 1.25rem 0.75rem;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+}
+
+.topic-year {
+	align-self: flex-start;
+	padding: 0.15rem 0.6rem;
+	border-radius: 999px;
+	background: var(--accent-soft);
+	color: var(--accent);
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+}
+
+.topic-title {
+	margin-top: 0.75rem;
+	font-size: 1.3rem;
+	font-weight: 700;
+	line-height: 1.25;
+	letter-spacing: -0.01em;
+}
+
+.topic-desc {
+	margin-top: 0.4rem;
+	color: var(--ink-secondary);
+	font-size: 0.95rem;
+}
+
+/* ---------- Lesson links ---------- */
+
+.lesson-list {
+	margin: 1rem -0.5rem 0;
+	padding: 0;
+	list-style: none;
+	border-top: 1px solid var(--line);
+}
+
+.lesson-list li + li {
+	border-top: 1px solid var(--line);
+}
+
+.lesson {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	column-gap: 0.85rem;
+	min-height: 3.25rem;
+	margin: 0.25rem 0;
+	padding: 0.6rem 0.5rem;
+	border-radius: var(--radius-small);
+	color: var(--ink);
+	text-decoration: none;
+}
+
+.lesson-num {
+	color: var(--accent);
+	font-size: 0.875rem;
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.lesson-title {
+	font-weight: 500;
+	overflow-wrap: anywhere;
+}
+
+/* Arrow drawn with a mask: nothing for screen readers to announce */
+.lesson::after {
+	content: "";
+	width: 1.1rem;
+	height: 1.1rem;
+	background-color: var(--accent);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+	transition: transform 0.15s ease;
+}
+
+.lesson:hover {
+	background: var(--accent-soft);
+}
+
+.lesson:hover .lesson-title {
+	color: var(--accent-hover);
+}
+
+.lesson:hover::after {
+	transform: translateX(3px);
+}
+
+.lesson:focus-visible {
+	outline-offset: 0;
+	border-radius: var(--radius-small);
+}
+
+/* Optional status, shown only when added in the HTML.
+   The word itself carries the meaning, the colour only helps. */
+.badge {
+	display: inline-block;
+	margin-left: 0.4rem;
+	padding: 0.05rem 0.5rem;
+	border: 1px solid currentColor;
+	border-radius: 999px;
+	font-size: 0.72rem;
+	font-weight: 500;
+	vertical-align: 0.1em;
+	white-space: nowrap;
+}
+
+.badge-new {
+	color: var(--accent);
+}
+
+.badge-updated {
+	color: var(--updated);
+}
+
+/* ---------- Info ---------- */
+
+.info-panel {
+	max-width: 44rem;
+	padding: 1.25rem;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+	color: var(--ink-secondary);
+}
+
+.info-panel p + p {
+	margin-top: 0.6rem;
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+	padding-top: 1.5rem;
+	padding-bottom: max(1.75rem, env(safe-area-inset-bottom));
+	background: var(--panel);
+	border-top: 1px solid var(--line);
+}
+
+.footer-main {
+	font-weight: 500;
+}
+
+.footer-sub {
+	margin-top: 0.15rem;
+	font-size: 0.875rem;
+	color: var(--ink-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lesson::after {
+		transition: none;
+	}
+}
